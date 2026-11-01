@@ -41,7 +41,10 @@ PER_SET_FIELDS <- c("color_by", "size_by", "shape")
     .abort_piece(piece$fn, 'color_by = ".set" needs mira(..., bipartite = TRUE)')
   }
   known <- .node_attr_names(plot$net)
-  .warn_unknown(.data_names(fields$color_by), known, "color_by", piece$fn, "node or state-node")
+  # ".set" works only as a shared value on a bipartite plot
+  color_keywords <- if (plot$bipartite && !is.list(fields$color_by)) SET_KEYWORD else character()
+  .warn_unknown(.data_names(fields$color_by), known, "color_by", piece$fn, "node or state-node",
+                color_keywords)
   .warn_unknown(.data_names(fields$size_by), known, "size_by", piece$fn, "node or state-node")
   .warn_non_numeric(.mapping_names(fields$size_by), plot$net, piece$fn)
 }
@@ -59,7 +62,8 @@ PER_SET_FIELDS <- c("color_by", "size_by", "shape")
 
 .validate_layer <- function(piece, plot) {
   known <- setdiff(names(plot$net$layers), LAYER_HIDDEN_COLUMNS)
-  .warn_unknown(.mapping_names(piece$fields$color_by), known, "color_by", piece$fn, "layer")
+  .warn_unknown(.mapping_names(piece$fields$color_by), known, "color_by", piece$fn, "layer",
+                INDIVIDUAL_KEYWORD)
 }
 
 # ---- Helpers --------------------------------------------------------------------
@@ -93,11 +97,22 @@ PER_SET_FIELDS <- c("color_by", "size_by", "shape")
   used[!grepl(COMPUTED_NODE_ATTR, used)]
 }
 
-.warn_unknown <- function(used, known, arg, fn, what) {
+#' @param keywords Keywords valid here; a name that is a keyword without its
+#'   dot (e.g. "individual") gets a "did you mean" hint.
+#' @keywords internal
+#' @noRd
+.warn_unknown <- function(used, known, arg, fn, what, keywords = character()) {
   unknown <- setdiff(used, known)
   if (length(unknown) == 0) return()
-  warning(sprintf('%s(): `%s`: "%s" is not a %s column; MiRA keeps its default',
-                  fn, arg, paste(unknown, collapse = '", "'), what), call. = FALSE)
+  warning(sprintf('%s(): `%s`: "%s" is not a %s column; MiRA keeps its default%s',
+                  fn, arg, paste(unknown, collapse = '", "'), what,
+                  .keyword_hint(unknown, keywords)), call. = FALSE)
+}
+
+.keyword_hint <- function(names, keywords) {
+  matched <- keywords[keywords %in% paste0(".", tolower(names))]
+  if (length(matched) == 0) return("")
+  sprintf(' (did you mean "%s"?)', matched[1])
 }
 
 .warn_non_numeric <- function(used, net, fn) {

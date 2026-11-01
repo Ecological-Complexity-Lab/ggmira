@@ -127,6 +127,25 @@ test_that("an unknown column is a warning and the setting is still sent", {
   expect_warning(toy_plot() + mira_layer(color_by = "climate"), '"climate" is not a layer column')
 })
 
+test_that("a keyword without its dot gets a hint where the keyword works", {
+  expect_warning(toy_plot() + mira_layer(color_by = "individual"),
+                 'not a layer column; MiRA keeps its default \\(did you mean ".individual"\\?\\)')
+  expect_warning(toy_plot() + mira_layer(color_by = "Individual"), 'did you mean ".individual"')
+  expect_warning(toy_plot() + mira_node(color_by = "set"), 'did you mean ".set"')
+})
+
+test_that("no keyword hint where the keyword would not work", {
+  no_hint <- function(expr) {
+    msg <- tryCatch(expr, warning = conditionMessage)
+    expect_match(msg, "MiRA keeps its default$")
+  }
+  no_hint(toy_plot(bipartite = FALSE) + mira_node(color_by = "set"))
+  no_hint(toy_plot() + mira_node(color_by = c(parasite = "set")))
+  no_hint(toy_plot() + mira_node(size_by = "set"))
+  no_hint(toy_plot() + mira_intralayer(color_by = "individual"))
+  no_hint(toy_plot() + mira_node(color_by = "individual"))
+})
+
 test_that("size_by on a non-numeric column is a warning", {
   expect_warning(toy_plot() + mira_node(size_by = "guild"), '"guild" is not numeric')
 })
