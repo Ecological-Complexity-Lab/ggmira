@@ -84,6 +84,14 @@ mira(net) +
 MiRA keeps one scale per attribute name: if nodes and links are both colored
 by `"module"`, they share its colors (see `?mira`).
 
+### More examples
+
+An example file uses every argument of every piece, on emln network 17:
+
+```r
+file.edit(system.file("examples", "mira_examples.R", package = "ggmira"))
+```
+
 On a bipartite network (`bipartite = TRUE`), `color_by`, `size_by` and
 `shape` also take one value per node set, named by `node_type`, as above
 (`NA` keeps MiRA's default for that set). A bipartite network is drawn
