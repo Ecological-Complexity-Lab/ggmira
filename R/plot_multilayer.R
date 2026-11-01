@@ -3,7 +3,7 @@
 #' Converts an EMLN \code{multilayer} object to JSON and opens MiRA, the
 #' multilayer interactive R-network app, in the default web browser, with
 #' MiRA's default view. To describe how the plot should look in code, use
-#' \code{mira()} instead (coming in a later version).
+#' [mira()] instead.
 #'
 #' @param multilayer A multilayer object (created by \code{create_multilayer_network}
 #'   or \code{load_emln}).

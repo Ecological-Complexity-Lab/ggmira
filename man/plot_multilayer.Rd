@@ -55,7 +55,7 @@ Invisibly returns the server handle. Use
 Converts an EMLN \code{multilayer} object to JSON and opens MiRA, the
 multilayer interactive R-network app, in the default web browser, with
 MiRA's default view. To describe how the plot should look in code, use
-\code{mira()} instead (coming in a later version).
+\code{\link[=mira]{mira()}} instead.
 }
 \details{
 The function:

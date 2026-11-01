@@ -1,0 +1,146 @@
+# Checks of a piece against the network, run when it is added to a plot.
+# Settings that cannot work (per-set values without bipartite = TRUE, set
+# names that are not node types) are errors. A column that is not in the
+# network is only a warning: MiRA has the final say, and keeps its default.
+
+# Columns MiRA does not offer as attributes (js/dataParser.js)
+NODE_HIDDEN_COLUMNS <- c("node_id", "node_name", "layer_name", "layers_present")
+STATE_NODE_HIDDEN_COLUMNS <- c("layer_id", "node_id", "layer_name", "node_name")
+LINK_HIDDEN_COLUMNS <- c("layer_from", "node_from", "layer_to", "node_to", "weight", "directed")
+LAYER_HIDDEN_COLUMNS <- c("layer_id", "layer_name", "bipartite", "latitude", "longitude",
+                          "name") # `name` is dropped by the converter
+# Node attributes MiRA computes (degree and strength)
+COMPUTED_NODE_ATTR <- "^(intra|inter)_((in|out)_)?(degree|strength)(_sum|_mean)?$"
+# Node type column names, in the converter's order of precedence
+TYPE_COLUMNS <- c("node_type", "node_group", "type")
+PER_SET_FIELDS <- c("color_by", "size_by", "shape")
+
+.validate_piece <- function(piece, plot) {
+  switch(piece$section,
+    layout     = .validate_layout(piece, plot),
+    node       = .validate_node(piece, plot),
+    intralayer = .validate_links(piece, plot),
+    interlayer = .validate_links(piece, plot),
+    layer      = .validate_layer(piece, plot)
+  )
+  invisible(NULL)
+}
+
+.validate_layout <- function(piece, plot) {
+  if (identical(piece$fields$type, "bipartite") && !plot$bipartite) {
+    .abort_piece(piece$fn, 'type = "bipartite" needs mira(..., bipartite = TRUE)')
+  }
+}
+
+.validate_node <- function(piece, plot) {
+  fields <- piece$fields
+  for (arg in intersect(names(fields), PER_SET_FIELDS)) {
+    .check_sets(fields[[arg]], arg, piece$fn, plot)
+  }
+  if (identical(fields$color_by, SET_KEYWORD) && !plot$bipartite) {
+    .abort_piece(piece$fn, 'color_by = ".set" needs mira(..., bipartite = TRUE)')
+  }
+  known <- .node_attr_names(plot$net)
+  .warn_unknown(.data_names(fields$color_by), known, "color_by", piece$fn, "node or state-node")
+  .warn_unknown(.data_names(fields$size_by), known, "size_by", piece$fn, "node or state-node")
+  .warn_non_numeric(.mapping_names(fields$size_by), plot$net, piece$fn)
+}
+
+.validate_links <- function(piece, plot) {
+  used <- .mapping_names(piece$fields$color_by)
+  if (identical(used, "weight")) {
+    warning(sprintf("%s(): coloring links by `weight` is not available in MiRA yet; MiRA keeps its default",
+                    piece$fn), call. = FALSE)
+    return()
+  }
+  known <- setdiff(names(plot$net$extended), LINK_HIDDEN_COLUMNS)
+  .warn_unknown(used, known, "color_by", piece$fn, "link")
+}
+
+.validate_layer <- function(piece, plot) {
+  known <- setdiff(names(plot$net$layers), LAYER_HIDDEN_COLUMNS)
+  .warn_unknown(.mapping_names(piece$fields$color_by), known, "color_by", piece$fn, "layer")
+}
+
+# ---- Helpers --------------------------------------------------------------------
+
+#' Per-set values need two node sets, named by the node_type values
+#' @keywords internal
+#' @noRd
+.check_sets <- function(value, arg, fn, plot) {
+  if (!is.list(value)) return()
+  if (!plot$bipartite) {
+    .abort_arg(fn, arg, "per-set values need mira(..., bipartite = TRUE)")
+  }
+  unknown <- setdiff(names(value), plot$set_types)
+  if (length(unknown) > 0) {
+    .abort_arg(fn, arg, sprintf("names must be node_type values (%s); not: %s",
+                                paste(plot$set_types, collapse = ", "),
+                                paste(unknown, collapse = ", ")))
+  }
+}
+
+#' Column names used by a mapping (shared or per set), without keywords
+#' @keywords internal
+#' @noRd
+.mapping_names <- function(value) {
+  setdiff(as.character(unlist(value, use.names = FALSE)), KEYWORDS)
+}
+
+# Node attribute names that should be data columns (MiRA computes the others)
+.data_names <- function(value) {
+  used <- .mapping_names(value)
+  used[!grepl(COMPUTED_NODE_ATTR, used)]
+}
+
+.warn_unknown <- function(used, known, arg, fn, what) {
+  unknown <- setdiff(used, known)
+  if (length(unknown) == 0) return()
+  warning(sprintf('%s(): `%s`: "%s" is not a %s column; MiRA keeps its default',
+                  fn, arg, paste(unknown, collapse = '", "'), what), call. = FALSE)
+}
+
+.warn_non_numeric <- function(used, net, fn) {
+  non_numeric <- Filter(function(col) .is_non_numeric_column(col, net), used)
+  if (length(non_numeric) == 0) return()
+  warning(sprintf('%s(): `size_by`: "%s" is not numeric; MiRA sizes nodes by numeric columns only',
+                  fn, paste(non_numeric, collapse = '", "')), call. = FALSE)
+}
+
+# MiRA looks for a node column first, then a state-node column
+.is_non_numeric_column <- function(col, net) {
+  column <- if (col %in% names(net$nodes)) net$nodes[[col]] else net$state_nodes[[col]]
+  !is.null(column) && !.looks_numeric(column)
+}
+
+# MiRA's rule (isNumericAttr in js/app.js): the first non-empty value is a
+# number or a numeric string, so "6" counts as numeric
+.looks_numeric <- function(column) {
+  if (is.numeric(column)) return(TRUE)
+  values <- as.character(column[!is.na(column)])
+  values <- values[nzchar(values)]
+  length(values) > 0 && !is.na(suppressWarnings(as.numeric(values[1])))
+}
+
+#' Node and state-node columns MiRA offers as node attributes
+#' @keywords internal
+#' @noRd
+.node_attr_names <- function(net) {
+  node_columns <- names(net$nodes)
+  type_column <- .type_column(net$nodes)
+  node_columns[node_columns %in% type_column] <- "node_type" # the converter renames it
+  union(setdiff(node_columns, NODE_HIDDEN_COLUMNS),
+        setdiff(names(net$state_nodes), STATE_NODE_HIDDEN_COLUMNS))
+}
+
+.type_column <- function(nodes) {
+  intersect(TYPE_COLUMNS, names(nodes))[1] # NA when there is none
+}
+
+#' The two node_type values of a bipartite network (mira() has checked there are two)
+#' @keywords internal
+#' @noRd
+.node_types <- function(nodes) {
+  types <- unique(nodes[[.type_column(nodes)]])
+  as.character(types[!is.na(types)])
+}
