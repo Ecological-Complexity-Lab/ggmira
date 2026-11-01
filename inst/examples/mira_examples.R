@@ -1,3 +1,5 @@
+setwd("~/GitHub/ecomplab/ggmira")
+
 # ggmira examples: every argument of every piece, on one network.
 #
 # emln network 17: 4 layers (pollination and seed dispersal on two islands),
@@ -5,7 +7,12 @@
 # Run the examples one at a time; each opens in the browser.
 # When done: httpuv::stopAllServers()
 
-remotes::install_github("Ecological-Complexity-Lab/ggmira")
+# remotes::install_github("Ecological-Complexity-Lab/ggmira")
+# pkgdown::build_site()
+# pkgdown::preview_site()
+
+
+
 library(emln)
 library(ggmira)
 
