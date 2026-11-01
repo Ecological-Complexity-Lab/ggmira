@@ -8,10 +8,9 @@ ggmira works with the multilayer objects of the
 networks in the EMLN repository, `emln::create_multilayer_network()` for
 your own data.
 
-> **Status: development version of the Ecological Complexity Lab.** MiRA
-> is not bundled in the package yet, so plots need `mira_path` pointing to a
-> local MiRA checkout of the `feat/ggmira-view-spec` branch (see
-> [Development](#development)).
+> **Status: development version of the Ecological Complexity Lab.** The
+> package includes its own copy of MiRA, so plots open without internet
+> access to mira.ecomplab.com.
 
 ## Installation
 
@@ -93,18 +92,26 @@ mira(net) + mira_intralayer(color_by = "log_weight")
 
 Link width and `min_weight` always use the `weight` column.
 
+Each print starts a local server; stop them all with
+`httpuv::stopAllServers()`.
+
 ## Development
 
-Point to a local MiRA checkout (branch `feat/ggmira-view-spec`):
+The bundled MiRA in `inst/MiRA` is a copy, made from a MiRA checkout next
+to this one (branch `feat/ggmira` until it is merged):
+
+```bash
+cd ~/GitHub/ecomplab/MiRA-dev
+npm run sync:ggmira   # then commit inst/MiRA here
+```
+
+To try MiRA changes before syncing, point a plot to the checkout:
 
 ```r
 devtools::load_all("~/GitHub/ecomplab/ggmira")
 p <- mira(net, bipartite = TRUE) + mira_node(size = 8)
 print(p, mira_path = "~/GitHub/ecomplab/MiRA-dev")
 ```
-
-Each print starts a local server; stop them all with
-`httpuv::stopAllServers()`.
 
 Design notes, decisions and the roadmap live in the
 [MiRA repository](https://github.com/Ecological-Complexity-Lab/MiRA)
