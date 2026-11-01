@@ -99,6 +99,17 @@ test_that("layout fields are checked", {
   expect_error(mira_layout(nested = "yes"), "`nested` must be TRUE or FALSE")
 })
 
+test_that("a piece prints as the call that makes it", {
+  expect_equal(format(mira_node(color_by = c(parasite = "module", host = NA), size = 8)),
+               'mira_node(color_by = c(parasite = "module", host = NA), size = 8)')
+  expect_equal(format(mira_interlayer(show = TRUE, color = "red", min_weight = 0.5)),
+               'mira_interlayer(show = TRUE, color = "#ff0000", min_weight = 0.5)')
+  expect_equal(format(mira_node(shape = c("filter feeder" = "square"))),
+               'mira_node(shape = c("filter feeder" = "square"))')
+  expect_equal(format(mira_layer()), "mira_layer()")
+  expect_output(print(mira_layout("circle", seed = 1)), 'mira_layout\\(type = "circle", seed = 1\\)')
+})
+
 test_that("shape and show are checked", {
   expect_error(mira_node(shape = "triangle"), '`shape` must be one of "circle", "square"')
   expect_error(mira_interlayer(show = NA), "`show` must be TRUE or FALSE")

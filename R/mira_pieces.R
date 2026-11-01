@@ -266,3 +266,48 @@ mira_layer <- function(color_by, color) {
     .abort_arg(fn, arg, "names must be unique node_type values")
   }
 }
+
+# ---- Printing a piece -----------------------------------------------------------
+
+#' Show a piece as the call that would make it
+#'
+#' Colors are shown as the `"#rrggbb"` sent to MiRA, and `NULL` mappings
+#' (MiRA's default) as `NA`.
+#' @param x A `mira_piece`.
+#' @param ... Not used.
+#' @return `format()`: one string. `print()`: `x`, invisibly.
+#' @keywords internal
+#' @export
+#' @examples
+#' mira_node(color_by = c(pollinator = "module", plant = NA), size = 8)
+format.mira_piece <- function(x, ...) {
+  args <- vapply(names(x$fields), function(arg) {
+    paste(arg, "=", .format_field(x$fields[[arg]]))
+  }, character(1))
+  sprintf("%s(%s)", x$fn, paste(args, collapse = ", "))
+}
+
+#' @rdname format.mira_piece
+#' @export
+print.mira_piece <- function(x, ...) {
+  cat(format(x), "\n", sep = "")
+  invisible(x)
+}
+
+.format_field <- function(value) {
+  if (is.null(value)) return("NA")
+  if (!is.list(value)) return(.format_scalar(value))
+  per_set <- vapply(names(value), function(label) {
+    paste(.format_name(label), "=", .format_field(value[[label]]))
+  }, character(1))
+  sprintf("c(%s)", paste(per_set, collapse = ", "))
+}
+
+.format_scalar <- function(value) {
+  if (is.character(value)) encodeString(value, quote = '"') else as.character(value)
+}
+
+# A set name that is not a valid R name (e.g. "filter feeder") needs quotes
+.format_name <- function(label) {
+  if (identical(make.names(label), label)) label else encodeString(label, quote = '"')
+}
