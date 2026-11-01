@@ -1,8 +1,33 @@
 # ggmira
 
-Plot multilayer networks in [MiRA](https://mira.ecomplab.com/) from R.
+Plot multilayer networks in [MiRA](https://mira.ecomplab.com/) from R, and
+describe how they should look with code, the way ggplot2 does.
 
-Internal development version (Ecological Complexity Lab).
+ggmira works with the multilayer objects of the
+[emln](https://emln.ecomplab.com/) package: `emln::load_emln()` for the
+networks in the EMLN repository, `emln::create_multilayer_network()` for
+your own data.
+
+> **Status: development version of the Ecological Complexity Lab.** MiRA
+> is not bundled in the package yet, so plots need `mira_path` pointing to a
+> local MiRA checkout of the `feat/ggmira-view-spec` branch (see
+> [Development](#development)).
+
+## Installation
+
+```r
+install.packages("emln")
+# install.packages("remotes")
+remotes::install_github("Ecological-Complexity-Lab/ggmira")
+```
+
+The repository is private: `install_github()` needs a GitHub token with
+access to it (create one with `usethis::create_github_token()`, store it
+with `gitcreds::gitcreds_set()`).
+
+## Opening a network
+
+`plot_multilayer()` opens a network in MiRA with MiRA's default view:
 
 ```r
 library(emln)
@@ -10,13 +35,6 @@ library(ggmira)
 
 net <- load_emln(60)
 plot_multilayer(net, bipartite = TRUE, setA_type = "pollinator")
-```
-
-During development, point to a local MiRA checkout:
-
-```r
-devtools::load_all("~/GitHub/ecomplab/ggmira")
-plot_multilayer(net, bipartite = TRUE, mira_path = "~/GitHub/ecomplab/MiRA-dev")
 ```
 
 ## Plots as code: `mira()`
@@ -52,8 +70,43 @@ from the data.
 Anything you leave out keeps MiRA's default. When a setting is given twice,
 the later piece wins. Settings that cannot work (a bipartite layout on a
 network that is not bipartite) are errors; a column that is not in the
-network is a warning, and MiRA keeps its default. `mira_spec(p)` shows what
-a plot `p` sends to MiRA.
+network, or a computed attribute MiRA does not have for it (e.g.
+`"intra_degree_sum"` on a directed network, which has in and out variants),
+is a warning, and MiRA keeps its default. `mira_spec(p)` shows what a plot
+`p` sends to MiRA, and typing a piece shows the call it stands for.
 
-Design notes, decisions and the roadmap live in the MiRA repository
-(`development` branch, `dev/ggmira/`).
+### Where the data comes from
+
+MiRA reads the four tables of the multilayer object. To map a new variable,
+add it as a column to the right one:
+
+| Table | Used by |
+|---|---|
+| `net$nodes`, `net$state_nodes` | `mira_node(color_by, size_by)` |
+| `net$extended` (links) | `mira_intralayer(color_by)`, `mira_interlayer(color_by)` |
+| `net$layers` | `mira_layer(color_by)` |
+
+```r
+net$extended$log_weight <- log10(net$extended$weight)
+mira(net) + mira_intralayer(color_by = "log_weight")
+```
+
+Link width and `min_weight` always use the `weight` column.
+
+## Development
+
+Point to a local MiRA checkout (branch `feat/ggmira-view-spec`):
+
+```r
+devtools::load_all("~/GitHub/ecomplab/ggmira")
+p <- mira(net, bipartite = TRUE) + mira_node(size = 8)
+print(p, mira_path = "~/GitHub/ecomplab/MiRA-dev")
+```
+
+Each print starts a local server; stop them all with
+`httpuv::stopAllServers()`.
+
+Design notes, decisions and the roadmap live in the
+[MiRA repository](https://github.com/Ecological-Complexity-Lab/MiRA)
+(`development` branch, `dev/ggmira/`). Please report MiRA issues at
+<https://github.com/Ecological-Complexity-Lab/MiRA/issues>.
