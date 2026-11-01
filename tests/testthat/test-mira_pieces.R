@@ -85,8 +85,9 @@ test_that("numbers are checked against MiRA's ranges", {
   expect_error(mira_node(size = 26), "between 3 and 25")
   expect_error(mira_node(size = "10"), "between 3 and 25")
   expect_equal(mira_intralayer(min_weight = 1)$fields$min_weight, 1)
-  expect_error(mira_intralayer(min_weight = 1.5), "between 0 and 1")
-  expect_error(mira_interlayer(min_weight = -0.1), "between 0 and 1")
+  expect_equal(mira_intralayer(min_weight = 83.3)$fields$min_weight, 83.3) # weights are not 0-1
+  expect_error(mira_interlayer(min_weight = -0.1), "`min_weight` must be a number of 0 or more")
+  expect_error(mira_interlayer(min_weight = "high"), "of 0 or more")
 })
 
 test_that("layout fields are checked", {

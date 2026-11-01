@@ -8,8 +8,8 @@ LAYOUT_TYPES <- c("fruchterman", "kamada_kawai", "bipartite", "circle", "grid", 
 SHAPES <- c("circle", "square")
 NODE_SIZE_MIN <- 3   # MiRA's node size slider range
 NODE_SIZE_MAX <- 25
-WEIGHT_MIN <- 0      # MiRA's link weight filter range
-WEIGHT_MAX <- 1
+WEIGHT_MIN <- 0      # link weight filter; no upper bound (MiRA's sliders
+                     # run to the largest weight in the data)
 OPAQUE_ALPHA <- 255  # col2rgb() alpha of a fully opaque color
 
 # Keywords that are not column names
@@ -85,7 +85,8 @@ mira_node <- function(color_by, color, size_by, size, shape) {
 #'   = default.
 #' @param color A constant link color: a color name or `"#rrggbb"`. Give
 #'   `color_by` or `color`, not both.
-#' @param min_weight Hide links with weight below this value (0 to 1).
+#' @param min_weight Hide links with weight below this value (0 or more,
+#'   in the units of the data's `weight` column).
 #' @return A `mira_piece`, to add to a plot with `+`.
 #' @seealso [mira()]
 #' @export
@@ -95,7 +96,7 @@ mira_intralayer <- function(color_by, color, min_weight) {
   .build_piece("intralayer", "mira_intralayer", environment(), list(
     color_by   = .mapping(),
     color      = .check_color,
-    min_weight = .number_in(WEIGHT_MIN, WEIGHT_MAX)
+    min_weight = .number_at_least(WEIGHT_MIN)
   ))
 }
 
@@ -115,7 +116,7 @@ mira_interlayer <- function(show, color_by, color, min_weight) {
     show       = .check_flag,
     color_by   = .mapping(),
     color      = .check_color,
-    min_weight = .number_in(WEIGHT_MIN, WEIGHT_MAX)
+    min_weight = .number_at_least(WEIGHT_MIN)
   ))
 }
 
@@ -202,6 +203,14 @@ mira_layer <- function(color_by, color) {
     if (!ok || value < min || value > max) {
       .abort_arg(fn, arg, sprintf("must be a number between %s and %s", min, max))
     }
+    unname(value)
+  }
+}
+
+.number_at_least <- function(min) {
+  function(value, arg, fn) {
+    ok <- is.numeric(value) && .is_scalar(value) && is.finite(value)
+    if (!ok || value < min) .abort_arg(fn, arg, sprintf("must be a number of %s or more", min))
     unname(value)
   }
 }

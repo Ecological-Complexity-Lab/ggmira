@@ -28,7 +28,9 @@ this is the higher trophic level (e.g. \code{"pollinator"},
 \code{bipartite = TRUE}.}
 
 \item{directed}{Logical or NULL. Whether intralayer links are directed.
-If NULL (default), auto-detected by checking intralayer edge symmetry.}
+If NULL (default): undirected when \code{bipartite = TRUE} (bipartite edge
+lists usually store each link once, which would look directed);
+otherwise auto-detected from edge symmetry, as in \code{\link[=plot_multilayer]{plot_multilayer()}}.}
 
 \item{directed_interlayer}{Logical or NULL. Whether interlayer links are
 directed. If NULL (default), inherits from \code{directed}.}

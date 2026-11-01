@@ -25,6 +25,10 @@ VIEW_SPEC_VERSION <- 1
 #' @inheritParams plot_multilayer
 #' @param net A multilayer object (created by `emln::create_multilayer_network()`
 #'   or `emln::load_emln()`).
+#' @param directed Logical or NULL. Whether intralayer links are directed.
+#'   If NULL (default): undirected when `bipartite = TRUE` (bipartite edge
+#'   lists usually store each link once, which would look directed);
+#'   otherwise auto-detected from edge symmetry, as in [plot_multilayer()].
 #' @return A `mira_plot` object.
 #' @seealso [mira_spec()] to see the view spec;
 #'   [print.mira_plot()] for the browser and port options.
@@ -43,6 +47,12 @@ VIEW_SPEC_VERSION <- 1
 #' }
 mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
                  directed_interlayer = NULL) {
+  # Bipartite edge lists usually store each link once (e.g. pollinator ->
+  # plant), which the auto-detection would read as directed
+  if (isTRUE(bipartite) && is.null(directed)) {
+    directed <- FALSE
+    message("Bipartite network: drawn as undirected. Use directed = TRUE for a directed one.")
+  }
   network_json <- .network_json(
     net,
     bipartite           = bipartite,

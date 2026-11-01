@@ -15,7 +15,8 @@ mira_interlayer(show, color_by, color, min_weight)
 \item{color}{A constant link color: a color name or \code{"#rrggbb"}. Give
 \code{color_by} or \code{color}, not both.}
 
-\item{min_weight}{Hide links with weight below this value (0 to 1).}
+\item{min_weight}{Hide links with weight below this value (0 or more,
+in the units of the data's \code{weight} column).}
 }
 \value{
 A \code{mira_piece}, to add to a plot with \code{+}.

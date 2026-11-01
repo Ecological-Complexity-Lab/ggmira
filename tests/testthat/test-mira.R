@@ -31,10 +31,21 @@ test_that("mira() makes a plot with the network JSON and an empty spec", {
   p <- toy_plot()
   expect_s3_class(p, "mira_plot")
   expect_identical(p$network_json,
-                   suppressMessages(.network_json(toy_net(), bipartite = TRUE, setA_type = "parasite")))
+                   suppressMessages(.network_json(toy_net(), bipartite = TRUE, setA_type = "parasite",
+                                                  directed = FALSE)))
   expect_equal(p$set_types, c("parasite", "host"))
   expect_equal(mira_spec(p), list(version = 1))
   expect_equal(mira_spec(p, json = TRUE), '{\n  "version": 1\n}')
+})
+
+test_that("a bipartite network is undirected unless directed is given", {
+  net <- toy_net() # links stored one way, so auto-detection would say directed
+  expect_message(p <- mira(net, bipartite = TRUE), "drawn as undirected")
+  expect_match(p$network_json, '"directed": false', fixed = TRUE)
+  p <- suppressMessages(mira(net, bipartite = TRUE, directed = TRUE))
+  expect_match(p$network_json, '"directed": true', fixed = TRUE)
+  expect_message(p <- mira(net), "Auto-detected directed")
+  expect_match(p$network_json, '"directed": true', fixed = TRUE)
 })
 
 test_that("mira() checks the network like plot_multilayer()", {
