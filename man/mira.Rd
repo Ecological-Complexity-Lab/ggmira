@@ -56,6 +56,31 @@ and the bipartite layout need \code{bipartite = TRUE}, and a column that is not
 in the network gives a warning (MiRA then keeps its default for that
 setting).
 }
+\section{Color scales}{
+
+Each piece's \code{color_by} chooses what is colored; \code{color_values} and
+\code{color_scale} in the same piece choose the colors:
+\itemize{
+\item \code{color_scale = "categorical"} gives each value its own color (MiRA's
+Dark2 palette); \code{"continuous"} a gradient (Viridis, from the column's
+minimum to its maximum; numeric columns only). Without it, MiRA decides
+from the data.
+\item \code{color_values} sets the colors of some values, named by value:
+\code{c("1" = "red", "3" = "#1f77b4")} (numbers need quotes as names). Values
+not listed keep the palette's color. It gives a categorical scale, so
+it cannot be combined with \code{color_scale = "continuous"}.
+\item \code{mira_layer(color_by = "layer_name")} gives each layer its own color;
+\code{color_values} named by layer set some of them.
+}
+
+MiRA keeps one color scale per attribute name, used wherever that
+attribute colors nodes, links or layers. So when two pieces color by the
+same attribute, their settings are merged; if they disagree (a value
+given two colors, or two scale types), the later piece wins, with a
+warning. A new \code{color_by} or \code{color} in a section drops that section's
+earlier \code{color_values} and \code{color_scale}.
+}
+
 \examples{
 if (interactive() && requireNamespace("emln", quietly = TRUE)) {
 library(emln)

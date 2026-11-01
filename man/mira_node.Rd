@@ -4,7 +4,18 @@
 \alias{mira_node}
 \title{Node style of a mira plot}
 \usage{
-mira_node(color_by, color, size_by, size, shape)
+mira_node(
+  color_by,
+  color,
+  size_by,
+  size,
+  shape,
+  labels,
+  label_size,
+  perspective,
+  color_values,
+  color_scale
+)
 }
 \arguments{
 \item{color_by}{Column to color nodes by: a node or state-node column
@@ -20,6 +31,22 @@ Give \code{color_by} or \code{color}, not both.}
 \item{size}{Base node size, between 3 and 25.}
 
 \item{shape}{\code{"circle"} or \code{"square"}.}
+
+\item{labels}{\code{TRUE} or \code{FALSE}: show node names.}
+
+\item{label_size}{Node name size, between 8 and 24.}
+
+\item{perspective}{\code{TRUE} or \code{FALSE}: draw nodes in the layers' 3D
+perspective (MiRA's default) or flat.}
+
+\item{color_values}{Colors for values of the \code{color_by} column, named by
+value: \code{c("1" = "red", "3" = "#1f77b4")}. Values not listed keep MiRA's
+palette. Gives a categorical scale. Per set:
+\code{list(pollinator = c(...))}. See \strong{Color scales} in \code{\link[=mira]{mira()}}.}
+
+\item{color_scale}{\code{"categorical"} (one color per value) or
+\code{"continuous"} (a gradient; numeric columns only). Without it, MiRA
+decides from the data.}
 }
 \value{
 A \code{mira_piece}, to add to a plot with \code{+}.
@@ -40,6 +67,8 @@ other as squares.
 mira_node(color_by = "module", size = 10)
 mira_node(color = "steelblue", shape = "square")
 mira_node(color_by = c(pollinator = "module", plant = NA))
+mira_node(color_by = "module", color_values = c("1" = "red", "3" = "#1f77b4"))
+mira_node(labels = TRUE, label_size = 14)
 }
 \seealso{
 \code{\link[=mira]{mira()}}

@@ -22,6 +22,28 @@ VIEW_SPEC_VERSION <- 1
 #' in the network gives a warning (MiRA then keeps its default for that
 #' setting).
 #'
+#' @section Color scales:
+#' Each piece's `color_by` chooses what is colored; `color_values` and
+#' `color_scale` in the same piece choose the colors:
+#'
+#' - `color_scale = "categorical"` gives each value its own color (MiRA's
+#'   Dark2 palette); `"continuous"` a gradient (Viridis, from the column's
+#'   minimum to its maximum; numeric columns only). Without it, MiRA decides
+#'   from the data.
+#' - `color_values` sets the colors of some values, named by value:
+#'   `c("1" = "red", "3" = "#1f77b4")` (numbers need quotes as names). Values
+#'   not listed keep the palette's color. It gives a categorical scale, so
+#'   it cannot be combined with `color_scale = "continuous"`.
+#' - `mira_layer(color_by = "layer_name")` gives each layer its own color;
+#'   `color_values` named by layer set some of them.
+#'
+#' MiRA keeps one color scale per attribute name, used wherever that
+#' attribute colors nodes, links or layers. So when two pieces color by the
+#' same attribute, their settings are merged; if they disagree (a value
+#' given two colors, or two scale types), the later piece wins, with a
+#' warning. A new `color_by` or `color` in a section drops that section's
+#' earlier `color_values` and `color_scale`.
+#'
 #' @inheritParams plot_multilayer
 #' @param net A multilayer object (created by `emln::create_multilayer_network()`
 #'   or `emln::load_emln()`).
@@ -66,7 +88,8 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
     bipartite    = bipartite,
     set_types    = if (bipartite) .node_types(net$nodes) else NULL,
     computed     = .computed_node_attrs(net, network_json, directed_interlayer),
-    spec         = list()
+    spec         = list(),
+    scale_order  = character() # sections with color scales, the latest last
   ), class = "mira_plot")
 }
 
@@ -87,7 +110,7 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
   }
   .validate_piece(e2, e1)
   e1$spec <- .merge_piece(e1$spec, e2)
-  e1
+  .update_scales(e1, e2)
 }
 
 #' Open a mira plot in the browser
@@ -129,14 +152,17 @@ print.mira_plot <- function(x, port = 8080, mira_path = NULL,
 #' }
 mira_spec <- function(x, json = FALSE) {
   if (!inherits(x, "mira_plot")) stop("`x` must be a mira plot (from mira()).", call. = FALSE)
-  spec <- c(list(version = VIEW_SPEC_VERSION), x$spec)
+  spec <- c(list(version = VIEW_SPEC_VERSION), .spec_for_mira(x))
   if (isTRUE(json)) .to_json(spec) else spec
 }
 
 #' Merge a piece into the spec: its fields replace the same fields
 #'
 #' `color` and `color_by` are one channel, so a later `color` removes an
-#' earlier `color_by` in the same section, and the other way round.
+#' earlier `color_by` in the same section, and the other way round. Either
+#' one also removes earlier `color_values` / `color_scale` (they belong to
+#' the earlier mapping), unless the piece gives them too. `pairs` turns
+#' interlayer links on unless the piece gives `show`.
 #' @keywords internal
 #' @noRd
 .merge_piece <- function(spec, piece) {
@@ -146,6 +172,10 @@ mira_spec <- function(x, json = FALSE) {
   if (is.null(section)) section <- list()
   if ("color" %in% names(fields)) section[["color_by"]] <- NULL
   if ("color_by" %in% names(fields)) section[["color"]] <- NULL
+  if (any(c("color", "color_by") %in% names(fields))) {
+    for (field in setdiff(COLOR_SCALE_FIELDS, names(fields))) section[[field]] <- NULL
+  }
+  if ("pairs" %in% names(fields) && !"show" %in% names(fields)) section$show <- TRUE
   for (field in names(fields)) section[field] <- list(fields[[field]]) # keeps NULL values
   spec[[piece$section]] <- section
   spec

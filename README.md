@@ -54,11 +54,35 @@ mira(net, bipartite = TRUE, setA_type = "pollinator") +
 - `mira_layout()`: layout type; `seed` makes node positions reproducible.
 - `mira_node()`: `color_by` / `size_by` map a node or state-node column, or
   one MiRA computes (e.g. `"intra_degree_sum"`); `color`, `size` and `shape`
-  set constants.
+  set constants; `labels`, `label_size` show node names; `perspective`.
 - `mira_intralayer()`, `mira_interlayer()`: link color and `min_weight`;
-  `mira_interlayer(show = TRUE)` draws interlayer links.
-- `mira_layer()`: layer color by a layer column, or `".individual"` for one
-  color per layer.
+  `arrow_size` (directed networks); `mira_interlayer(show = TRUE)` draws
+  interlayer links, `pairs` only those between some layers, and
+  `curvature` bends them.
+- `mira_layer()`: layer color by a layer column, or `"layer_name"` for one
+  color per layer; `labels`, `label_size` show layer names, `set_labels`
+  node set names; `stack` and `spacing` arrange the layers.
+
+### Color scales
+
+`color_by` chooses what is colored; `color_values` and `color_scale` in the
+same piece choose the colors:
+
+```r
+mira(net) +
+  mira_layer(color_by = "layer_name", color_values = c(layer_1 = "red")) +
+  mira_node(color_by = "module", color_values = c("1" = "red", "3" = "#1f77b4")) +
+  mira_intralayer(color_by = "trophic_level", color_scale = "categorical")
+```
+
+- `color_scale`: `"categorical"` (one color per value) or `"continuous"` (a
+  gradient, numeric columns only). Without it, MiRA decides from the data.
+- `color_values`: colors for some values, named by value (numbers need
+  quotes). Values not listed keep MiRA's palette. They give a categorical
+  scale.
+
+MiRA keeps one scale per attribute name: if nodes and links are both colored
+by `"module"`, they share its colors (see `?mira`).
 
 On a bipartite network (`bipartite = TRUE`), `color_by`, `size_by` and
 `shape` also take one value per node set, named by `node_type`, as above

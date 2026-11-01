@@ -4,7 +4,16 @@
 \alias{mira_interlayer}
 \title{Interlayer link style of a mira plot}
 \usage{
-mira_interlayer(show, color_by, color, min_weight)
+mira_interlayer(
+  show,
+  color_by,
+  color,
+  min_weight,
+  curvature,
+  pairs,
+  color_values,
+  color_scale
+)
 }
 \arguments{
 \item{show}{\code{TRUE} or \code{FALSE}: draw interlayer links.}
@@ -17,6 +26,19 @@ mira_interlayer(show, color_by, color, min_weight)
 
 \item{min_weight}{Hide links with weight below this value (0 or more,
 in the units of the data's \code{weight} column).}
+
+\item{curvature}{Curvature of interlayer links, between 0 (straight) and
+1 (0.35 = MiRA's default).}
+
+\item{pairs}{Show only the interlayer links between these pairs of
+layers: \code{list(c("L1", "L2"), c("L2", "L3"))}, by \code{layer_name}. The order
+within a pair does not matter. Also turns interlayer links on, unless
+\code{show = FALSE} is given.}
+
+\item{color_values}{Colors for values of the \code{color_by} column, named by
+value. See \code{\link[=mira_node]{mira_node()}} and \strong{Color scales} in \code{\link[=mira]{mira()}}.}
+
+\item{color_scale}{\code{"categorical"} or \code{"continuous"}. See \code{\link[=mira_node]{mira_node()}}.}
 }
 \value{
 A \code{mira_piece}, to add to a plot with \code{+}.
@@ -26,6 +48,7 @@ Interlayer link style of a mira plot
 }
 \examples{
 mira_interlayer(show = TRUE, color = "red")
+mira_interlayer(pairs = list(c("L1", "L2")), curvature = 0.6)
 }
 \seealso{
 \code{\link[=mira]{mira()}}

@@ -13,7 +13,7 @@ LAYER_HIDDEN_COLUMNS <- c("layer_id", "layer_name", "bipartite", "latitude", "lo
 COMPUTED_NODE_ATTR <- "^(intra|inter)_((in|out)_)?(degree|strength)(_sum|_mean)?$"
 # Node type column names, in the converter's order of precedence
 TYPE_COLUMNS <- c("node_type", "node_group", "type")
-PER_SET_FIELDS <- c("color_by", "size_by", "shape")
+PER_SET_FIELDS <- c("color_by", "size_by", "shape", "color_values", "color_scale")
 
 .validate_piece <- function(piece, plot) {
   switch(piece$section,
@@ -52,6 +52,11 @@ PER_SET_FIELDS <- c("color_by", "size_by", "shape")
 }
 
 .validate_links <- function(piece, plot) {
+  if (!is.null(piece$fields$arrow_size) && !.is_directed(plot)) {
+    warning(sprintf("%s(): `arrow_size`: the network is undirected, so MiRA draws no arrowheads",
+                    piece$fn), call. = FALSE)
+  }
+  if (!is.null(piece$fields$pairs)) .validate_pairs(piece$fields$pairs, piece$fn, plot)
   used <- .mapping_names(piece$fields$color_by)
   if (identical(used, "weight")) {
     warning(sprintf("%s(): coloring links by `weight` is not available in MiRA yet; MiRA keeps its default",
@@ -63,12 +68,35 @@ PER_SET_FIELDS <- c("color_by", "size_by", "shape")
 }
 
 .validate_layer <- function(piece, plot) {
+  if (isTRUE(piece$fields$set_labels) && !plot$bipartite) {
+    .abort_piece(piece$fn, "set_labels = TRUE needs mira(..., bipartite = TRUE)")
+  }
   known <- setdiff(names(plot$net$layers), LAYER_HIDDEN_COLUMNS)
   .warn_unknown(.mapping_names(piece$fields$color_by), known, "color_by", piece$fn, "layer",
                 INDIVIDUAL_KEYWORD)
 }
 
 # ---- Helpers --------------------------------------------------------------------
+
+# MiRA computes in_ / out_ attributes only for a directed side
+.is_directed <- function(plot) any(grepl("^(intra|inter)_(in|out)_", plot$computed))
+
+#' Pairs must be layer names; a pair without interlayer links is a warning
+#' @keywords internal
+#' @noRd
+.validate_pairs <- function(pairs, fn, plot) {
+  .check_layer_names(unlist(pairs), "pairs", fn, plot)
+  links <- as.data.frame(plot$net$extended)
+  links <- links[links$layer_from != links$layer_to, ]
+  linked <- paste(links$layer_from, links$layer_to, sep = "::")
+  for (pair in pairs) {
+    keys <- c(paste(pair[[1]], pair[[2]], sep = "::"), paste(pair[[2]], pair[[1]], sep = "::"))
+    if (!any(keys %in% linked)) {
+      warning(sprintf('%s(): `pairs`: no interlayer links between "%s" and "%s"',
+                      fn, pair[[1]], pair[[2]]), call. = FALSE)
+    }
+  }
+}
 
 #' Per-set values need two node sets, named by the node_type values
 #' @keywords internal

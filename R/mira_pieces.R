@@ -11,11 +11,25 @@ NODE_SIZE_MAX <- 25
 WEIGHT_MIN <- 0      # link weight filter; no upper bound (MiRA's sliders
                      # run to the largest weight in the data)
 OPAQUE_ALPHA <- 255  # col2rgb() alpha of a fully opaque color
+# MiRA's slider ranges
+LABEL_SIZE_MIN <- 8        # node labels
+LABEL_SIZE_MAX <- 24
+LAYER_LABEL_SIZE_MIN <- 8  # layer names
+LAYER_LABEL_SIZE_MAX <- 32
+LAYER_SPACING_MIN <- 100
+LAYER_SPACING_MAX <- 600
+ARROW_SIZE_MIN <- 0
+ARROW_SIZE_MAX <- 3
+CURVATURE_MIN <- 0
+CURVATURE_MAX <- 1
+STACK_MODES <- c("horizontal", "vertical")
+SCALE_TYPES <- c("categorical", "continuous")
 
 # Keywords that are not column names
 SET_KEYWORD <- ".set"               # node color by set membership
 INDIVIDUAL_KEYWORD <- ".individual" # one color per layer
 KEYWORDS <- c(SET_KEYWORD, INDIVIDUAL_KEYWORD)
+LAYER_NAME_COLUMN <- "layer_name"   # mira_layer(color_by = "layer_name") = ".individual"
 
 #' Layout of a mira plot
 #'
@@ -62,6 +76,17 @@ mira_layout <- function(type, seed, nested) {
 #' @param size_by Numeric column to size nodes by. `NULL` or `NA` = default.
 #' @param size Base node size, between 3 and 25.
 #' @param shape `"circle"` or `"square"`.
+#' @param labels `TRUE` or `FALSE`: show node names.
+#' @param label_size Node name size, between 8 and 24.
+#' @param perspective `TRUE` or `FALSE`: draw nodes in the layers' 3D
+#'   perspective (MiRA's default) or flat.
+#' @param color_values Colors for values of the `color_by` column, named by
+#'   value: `c("1" = "red", "3" = "#1f77b4")`. Values not listed keep MiRA's
+#'   palette. Gives a categorical scale. Per set:
+#'   `list(pollinator = c(...))`. See **Color scales** in [mira()].
+#' @param color_scale `"categorical"` (one color per value) or
+#'   `"continuous"` (a gradient; numeric columns only). Without it, MiRA
+#'   decides from the data.
 #' @return A `mira_piece`, to add to a plot with `+`.
 #' @seealso [mira()]
 #' @export
@@ -69,13 +94,21 @@ mira_layout <- function(type, seed, nested) {
 #' mira_node(color_by = "module", size = 10)
 #' mira_node(color = "steelblue", shape = "square")
 #' mira_node(color_by = c(pollinator = "module", plant = NA))
-mira_node <- function(color_by, color, size_by, size, shape) {
+#' mira_node(color_by = "module", color_values = c("1" = "red", "3" = "#1f77b4"))
+#' mira_node(labels = TRUE, label_size = 14)
+mira_node <- function(color_by, color, size_by, size, shape, labels, label_size, perspective,
+                      color_values, color_scale) {
   .build_piece("node", "mira_node", environment(), list(
-    color_by = .shared_or_per_set(.mapping(SET_KEYWORD), .mapping()),
-    color    = .check_color,
-    size_by  = .shared_or_per_set(.mapping()),
-    size     = .number_in(NODE_SIZE_MIN, NODE_SIZE_MAX),
-    shape    = .shared_or_per_set(.choice(SHAPES))
+    color_by     = .shared_or_per_set(.mapping(SET_KEYWORD), .mapping()),
+    color        = .check_color,
+    size_by      = .shared_or_per_set(.mapping()),
+    size         = .number_in(NODE_SIZE_MIN, NODE_SIZE_MAX),
+    shape        = .shared_or_per_set(.choice(SHAPES)),
+    labels       = .check_flag,
+    label_size   = .number_in(LABEL_SIZE_MIN, LABEL_SIZE_MAX),
+    perspective  = .check_flag,
+    color_values = .check_color_values(per_set = TRUE),
+    color_scale  = .shared_or_per_set(.choice(SCALE_TYPES))
   ))
 }
 
@@ -87,16 +120,25 @@ mira_node <- function(color_by, color, size_by, size, shape) {
 #'   `color_by` or `color`, not both.
 #' @param min_weight Hide links with weight below this value (0 or more,
 #'   in the units of the data's `weight` column).
+#' @param arrow_size Arrowhead size, between 0 and 3 (1 = MiRA's default).
+#'   Directed networks only. MiRA has one arrowhead size, so this also sizes
+#'   the arrowheads of directed interlayer links.
+#' @param color_values Colors for values of the `color_by` column, named by
+#'   value. See [mira_node()] and **Color scales** in [mira()].
+#' @param color_scale `"categorical"` or `"continuous"`. See [mira_node()].
 #' @return A `mira_piece`, to add to a plot with `+`.
 #' @seealso [mira()]
 #' @export
 #' @examples
 #' mira_intralayer(color = "grey60", min_weight = 0.1)
-mira_intralayer <- function(color_by, color, min_weight) {
+mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_values, color_scale) {
   .build_piece("intralayer", "mira_intralayer", environment(), list(
-    color_by   = .mapping(),
-    color      = .check_color,
-    min_weight = .number_at_least(WEIGHT_MIN)
+    color_by     = .mapping(),
+    color        = .check_color,
+    min_weight   = .number_at_least(WEIGHT_MIN),
+    arrow_size   = .number_in(ARROW_SIZE_MIN, ARROW_SIZE_MAX),
+    color_values = .check_color_values(per_set = FALSE),
+    color_scale  = .choice(SCALE_TYPES)
   ))
 }
 
@@ -106,35 +148,70 @@ mira_intralayer <- function(color_by, color, min_weight) {
 #' @inheritParams mira_intralayer
 #' @param color_by Link column to color interlayer links by. `NULL` or `NA`
 #'   = default.
+#' @param curvature Curvature of interlayer links, between 0 (straight) and
+#'   1 (0.35 = MiRA's default).
+#' @param pairs Show only the interlayer links between these pairs of
+#'   layers: `list(c("L1", "L2"), c("L2", "L3"))`, by `layer_name`. The order
+#'   within a pair does not matter. Also turns interlayer links on, unless
+#'   `show = FALSE` is given.
 #' @return A `mira_piece`, to add to a plot with `+`.
 #' @seealso [mira()]
 #' @export
 #' @examples
 #' mira_interlayer(show = TRUE, color = "red")
-mira_interlayer <- function(show, color_by, color, min_weight) {
+#' mira_interlayer(pairs = list(c("L1", "L2")), curvature = 0.6)
+mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs, color_values,
+                            color_scale) {
   .build_piece("interlayer", "mira_interlayer", environment(), list(
-    show       = .check_flag,
-    color_by   = .mapping(),
-    color      = .check_color,
-    min_weight = .number_at_least(WEIGHT_MIN)
+    show         = .check_flag,
+    color_by     = .mapping(),
+    color        = .check_color,
+    min_weight   = .number_at_least(WEIGHT_MIN),
+    curvature    = .number_in(CURVATURE_MIN, CURVATURE_MAX),
+    pairs        = .check_pairs,
+    color_values = .check_color_values(per_set = FALSE),
+    color_scale  = .choice(SCALE_TYPES)
   ))
 }
 
 #' Layer style of a mira plot
 #'
-#' @param color_by Layer column to color layers by, or `".individual"` for
-#'   one color per layer. `NULL` or `NA` = default.
+#' @param color_by Layer column to color layers by, or `"layer_name"` for
+#'   one color per layer (`".individual"` works too). `NULL` or `NA` =
+#'   default.
 #' @param color A constant layer color: a color name or `"#rrggbb"`. Give
 #'   `color_by` or `color`, not both.
+#' @param color_values Colors for values of the `color_by` column, named by
+#'   value. With `color_by = "layer_name"`, named by layer:
+#'   `c(L1 = "red", L3 = "#1f77b4")`; layers not listed keep MiRA's color.
+#'   See **Color scales** in [mira()].
+#' @param color_scale `"categorical"` or `"continuous"`. Not with
+#'   `color_by = "layer_name"`.
+#' @param labels `TRUE` or `FALSE`: show layer names.
+#' @param label_size Layer name size, between 8 and 32.
+#' @param set_labels `TRUE` or `FALSE`: show node set names (bipartite
+#'   layout only; needs `mira(..., bipartite = TRUE)`).
+#' @param stack `"horizontal"` or `"vertical"`: how layers are stacked.
+#' @param spacing Space between layers, between 100 and 600 (300 = MiRA's
+#'   default).
 #' @return A `mira_piece`, to add to a plot with `+`.
 #' @seealso [mira()]
 #' @export
 #' @examples
-#' mira_layer(color_by = ".individual")
-mira_layer <- function(color_by, color) {
+#' mira_layer(color_by = "layer_name", color_values = c(L1 = "red"))
+#' mira_layer(labels = TRUE, stack = "vertical", spacing = 200)
+mira_layer <- function(color_by, color, color_values, color_scale, labels, label_size, set_labels,
+                       stack, spacing) {
   .build_piece("layer", "mira_layer", environment(), list(
-    color_by = .mapping(INDIVIDUAL_KEYWORD),
-    color    = .check_color
+    color_by     = .layer_mapping,
+    color        = .check_color,
+    color_values = .check_color_values(per_set = FALSE),
+    color_scale  = .choice(SCALE_TYPES),
+    labels       = .check_flag,
+    label_size   = .number_in(LAYER_LABEL_SIZE_MIN, LAYER_LABEL_SIZE_MAX),
+    set_labels   = .check_flag,
+    stack        = .choice(STACK_MODES),
+    spacing      = .number_in(LAYER_SPACING_MIN, LAYER_SPACING_MAX)
   ))
 }
 
@@ -261,6 +338,50 @@ mira_layer <- function(color_by, color) {
   }
 }
 
+# "layer_name" means one color per layer, MiRA's ".individual"
+.layer_mapping <- function(value, arg, fn) {
+  value <- .mapping(INDIVIDUAL_KEYWORD)(value, arg, fn)
+  if (identical(value, LAYER_NAME_COLUMN)) INDIVIDUAL_KEYWORD else value
+}
+
+#' Check for color_values: colors named by value (a named character vector)
+#' @param per_set Also accept a list of them named by node_type.
+#' @keywords internal
+#' @noRd
+.check_color_values <- function(per_set) {
+  function(value, arg, fn) {
+    if (!(per_set && is.list(value) && !is.null(names(value)))) return(.check_value_colors(value, arg, fn))
+    .check_set_names(names(value), arg, fn)
+    per_set_values <- lapply(names(value), function(label) {
+      .check_value_colors(value[[label]], sprintf('%s[["%s"]]', arg, label), fn)
+    })
+    names(per_set_values) <- names(value)
+    per_set_values
+  }
+}
+
+.check_value_colors <- function(value, arg, fn) {
+  labels <- names(value)
+  ok <- is.character(value) && length(value) > 0 && !is.null(labels) && !anyNA(labels) &&
+    all(nzchar(labels)) && anyDuplicated(labels) == 0
+  if (!ok) .abort_arg(fn, arg, 'must be colors named by value, e.g. c("1" = "red", "2" = "blue")')
+  colors <- vapply(labels, function(label) {
+    .check_color(value[[label]], sprintf('%s["%s"]', arg, label), fn)
+  }, character(1))
+  names(colors) <- labels
+  colors
+}
+
+# One pair c("L1", "L2") or a list of them; each pair becomes a JSON array
+.check_pairs <- function(value, arg, fn) {
+  if (is.character(value)) value <- list(value)
+  is_pair <- function(pair) is.character(pair) && length(pair) == 2 && !anyNA(pair)
+  if (!is.list(value) || length(value) == 0 || !all(vapply(value, is_pair, logical(1)))) {
+    .abort_arg(fn, arg, 'must be a list of layer-name pairs, e.g. list(c("L1", "L2"))')
+  }
+  lapply(unname(value), function(pair) as.list(unname(pair)))
+}
+
 .check_set_names <- function(labels, arg, fn) {
   if (anyNA(labels) || !all(nzchar(labels)) || anyDuplicated(labels) > 0) {
     .abort_arg(fn, arg, "names must be unique node_type values")
@@ -296,11 +417,13 @@ print.mira_piece <- function(x, ...) {
 
 .format_field <- function(value) {
   if (is.null(value)) return("NA")
-  if (!is.list(value)) return(.format_scalar(value))
-  per_set <- vapply(names(value), function(label) {
-    paste(.format_name(label), "=", .format_field(value[[label]]))
-  }, character(1))
-  sprintf("c(%s)", paste(per_set, collapse = ", "))
+  if (!is.list(value) && length(value) == 1 && is.null(names(value))) return(.format_scalar(value))
+  items <- vapply(seq_along(value), function(i) .format_field(value[[i]]), character(1))
+  if (!is.null(names(value))) items <- paste(vapply(names(value), .format_name, character(1)), "=", items)
+  # Scalars (per-set values, named colors) make a vector; anything else a list
+  is_scalar <- function(v) is.null(v) || (!is.list(v) && length(v) == 1 && is.null(names(v)))
+  wrapper <- if (all(vapply(value, is_scalar, logical(1)))) "c" else "list"
+  sprintf("%s(%s)", wrapper, paste(items, collapse = ", "))
 }
 
 .format_scalar <- function(value) {

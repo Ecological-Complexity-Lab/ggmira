@@ -115,3 +115,61 @@ test_that("shape and show are checked", {
   expect_error(mira_interlayer(show = NA), "`show` must be TRUE or FALSE")
   expect_equal(mira_interlayer(show = FALSE)$fields$show, FALSE)
 })
+
+# ---- Stage 1: labels, layer display, pairs, color scales ----
+
+test_that("label, layer and link display settings are checked against MiRA's ranges", {
+  expect_equal(mira_node(labels = TRUE, label_size = 14, perspective = FALSE)$fields,
+               list(labels = TRUE, label_size = 14, perspective = FALSE))
+  expect_error(mira_node(label_size = 30), "between 8 and 24")
+  expect_error(mira_layer(label_size = 40), "between 8 and 32")
+  expect_error(mira_layer(spacing = 50), "between 100 and 600")
+  expect_error(mira_layer(stack = "diagonal"), '"horizontal", "vertical"')
+  expect_error(mira_intralayer(arrow_size = 4), "between 0 and 3")
+  expect_error(mira_interlayer(curvature = -0.1), "between 0 and 1")
+  expect_error(mira_layer(set_labels = "yes"), "TRUE or FALSE")
+})
+
+test_that("pairs are a list of layer-name pairs; one pair may be a vector", {
+  expect_equal(mira_interlayer(pairs = c("L1", "L2"))$fields$pairs, list(list("L1", "L2")))
+  expect_equal(mira_interlayer(pairs = list(c("L1", "L2"), c("L2", "L3")))$fields$pairs,
+               list(list("L1", "L2"), list("L2", "L3")))
+  expect_error(mira_interlayer(pairs = list(c("L1", "L2", "L3"))), "list of layer-name pairs")
+  expect_error(mira_interlayer(pairs = "L1"), "list of layer-name pairs")
+  expect_error(mira_interlayer(pairs = list(c("L1", NA))), "list of layer-name pairs")
+})
+
+test_that("color_values are colors named by value", {
+  expect_equal(mira_node(color_by = "module", color_values = c("1" = "red", "3" = "#1F77B4"))$fields$color_values,
+               c("1" = "#ff0000", "3" = "#1f77b4"))
+  expect_error(mira_node(color_values = c("red", "blue")), "colors named by value")
+  expect_error(mira_node(color_values = c(a = "red", a = "blue")), "colors named by value")
+  expect_error(mira_node(color_values = c(a = "nocolor")), '`color_values\\["a"\\]` "nocolor" is not a color')
+})
+
+test_that("per-set color_values and color_scale are for nodes only", {
+  piece <- mira_node(color_by = c(parasite = "module"), color_values = list(parasite = c("1" = "red")),
+                     color_scale = c(parasite = "categorical"))
+  expect_equal(piece$fields$color_values, list(parasite = c("1" = "#ff0000")))
+  expect_equal(piece$fields$color_scale, list(parasite = "categorical"))
+  expect_error(mira_intralayer(color_values = list(a = c(x = "red"))), "colors named by value")
+})
+
+test_that("color_scale is categorical or continuous", {
+  expect_equal(mira_layer(color_by = "habitat", color_scale = "continuous")$fields$color_scale, "continuous")
+  expect_error(mira_node(color_scale = "discrete"), '"categorical", "continuous"')
+})
+
+test_that('mira_layer(color_by = "layer_name") means one color per layer', {
+  expect_equal(mira_layer(color_by = "layer_name")$fields$color_by, ".individual")
+  expect_equal(mira_layer(color_by = ".individual")$fields$color_by, ".individual")
+})
+
+test_that("new arguments print as the call", {
+  expect_equal(format(mira_node(color_by = "module", color_values = c("1" = "red"), labels = TRUE)),
+               'mira_node(color_by = "module", labels = TRUE, color_values = c("1" = "#ff0000"))')
+  expect_equal(format(mira_interlayer(pairs = list(c("L1", "L2"), c("L2", "L3")))),
+               'mira_interlayer(pairs = list(c("L1", "L2"), c("L2", "L3")))')
+  expect_equal(format(mira_node(color_by = c(parasite = "module"), color_values = list(parasite = c(a = "red")))),
+               'mira_node(color_by = c(parasite = "module"), color_values = list(parasite = c(a = "#ff0000")))')
+})

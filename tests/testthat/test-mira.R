@@ -230,3 +230,117 @@ test_that("printing serves the network and the view spec", {
   expect_identical(served$view_json, mira_spec(p, json = TRUE))
   expect_equal(served$port, 9000)
 })
+
+# ---- Stage 1: labels, layer display, pairs, color scales ----
+
+test_that("display settings go to their sections", {
+  p <- toy_plot() +
+    mira_node(labels = TRUE, label_size = 14, perspective = FALSE) +
+    mira_layer(labels = TRUE, label_size = 20, set_labels = TRUE, stack = "vertical", spacing = 200) +
+    mira_interlayer(curvature = 0.6)
+  spec <- mira_spec(p)
+  expect_equal(spec$node, list(labels = TRUE, label_size = 14, perspective = FALSE))
+  expect_equal(spec$layer, list(labels = TRUE, label_size = 20, set_labels = TRUE,
+                                stack = "vertical", spacing = 200))
+  expect_equal(spec$interlayer, list(curvature = 0.6))
+})
+
+test_that("set_labels needs bipartite = TRUE", {
+  expect_error(toy_plot(bipartite = FALSE) + mira_layer(set_labels = TRUE), "needs mira\\(..., bipartite = TRUE\\)")
+  expect_silent(toy_plot(bipartite = FALSE) + mira_layer(set_labels = FALSE))
+})
+
+test_that("arrow_size on an undirected network is a warning", {
+  expect_warning(toy_plot() + mira_intralayer(arrow_size = 2), "undirected, so MiRA draws no arrowheads")
+  directed <- suppressMessages(mira(toy_net(), bipartite = TRUE, directed = TRUE))
+  expect_silent(directed + mira_intralayer(arrow_size = 2))
+})
+
+test_that("pairs turn interlayer links on unless show is given", {
+  expect_equal(mira_spec(toy_plot() + mira_interlayer(pairs = c("L1", "L2")))$interlayer,
+               list(show = TRUE, pairs = list(list("L1", "L2"))))
+  p <- toy_plot() + mira_interlayer(pairs = c("L1", "L2"), show = FALSE)
+  expect_false(mira_spec(p)$interlayer$show)
+  expect_match(mira_spec(p, json = TRUE), '"pairs": [\n      [\n        "L1",\n        "L2"\n      ]\n    ]',
+               fixed = TRUE)
+})
+
+test_that("pairs must be layer names; a pair without interlayer links is a warning", {
+  expect_error(toy_plot() + mira_interlayer(pairs = c("L1", "L9")),
+               "`pairs` must use layer_name values \\(L1, L2\\); not: L9")
+  expect_warning(toy_plot() + mira_interlayer(pairs = c("L2", "L2")), 'no interlayer links between "L2" and "L2"')
+  expect_silent(toy_plot() + mira_interlayer(pairs = c("L2", "L1")))
+})
+
+test_that("color_values and color_scale become a scale for the color_by attribute", {
+  p <- toy_plot() + mira_node(color_by = "module", color_values = c("1" = "red"))
+  spec <- mira_spec(p)
+  expect_equal(spec$node, list(color_by = "module"))
+  expect_equal(spec$scales, list(module = list(type = "categorical", values = list("1" = "#ff0000"))))
+  p <- toy_plot() + mira_intralayer(color_by = "kind", color_scale = "categorical")
+  expect_equal(mira_spec(p)$scales, list(kind = list(type = "categorical")))
+})
+
+test_that("per-set color_values follow each set's color_by; shared ones apply to every set", {
+  p <- toy_plot() + mira_node(color_by = c(parasite = "module", host = "guild"),
+                              color_values = list(parasite = c("1" = "red"), host = c(a = "blue")))
+  expect_equal(names(mira_spec(p)$scales), c("module", "guild"))
+  p <- toy_plot() + mira_node(color_by = c(parasite = "module", host = "abundance"), color_scale = "categorical")
+  expect_equal(mira_spec(p)$scales, list(module = list(type = "categorical"), abundance = list(type = "categorical")))
+  expect_error(toy_plot() + mira_node(color_by = "module", color_values = list(parasite = c("1" = "red"))),
+               "per-set `color_values` and `color_scale` need a per-set `color_by`")
+  expect_error(toy_plot() + mira_node(color_by = c(parasite = "module", host = NA),
+                                      color_values = list(host = c(a = "red"))),
+               'need a column in `color_by` for "host"')
+})
+
+test_that("color_values need a categorical scale and a column in color_by", {
+  expect_error(toy_plot() + mira_node(color_by = "module", color_scale = "continuous", color_values = c("1" = "red")),
+               'need a categorical scale, not color_scale = "continuous"')
+  expect_error(toy_plot() + mira_node(color_values = c("1" = "red")), "need a column in `color_by`")
+  expect_error(toy_plot() + mira_node(color_by = ".set", color_values = c("1" = "red")), "need a column in `color_by`")
+})
+
+test_that("color_values may come in a later piece; a new color_by drops the earlier ones", {
+  p <- toy_plot() + mira_node(color_by = "module") + mira_node(color_values = c("2" = "red"))
+  expect_equal(mira_spec(p)$scales$module$values, list("2" = "#ff0000"))
+  p <- p + mira_node(color_by = "abundance")
+  expect_null(mira_spec(p)$scales)
+  p <- toy_plot() + mira_node(color_by = "module", color_values = c("2" = "red")) + mira_node(color = "blue")
+  expect_null(mira_spec(p)$scales)
+})
+
+test_that("values not in the column and continuous text columns are warnings", {
+  expect_warning(toy_plot() + mira_node(color_by = "module", color_values = c("1" = "red", "9" = "red")),
+                 '"9" is not a value of "module"')
+  expect_warning(toy_plot() + mira_node(color_by = "guild", color_scale = "continuous"),
+                 '"guild" is not numeric; MiRA uses a categorical scale')
+  expect_warning(toy_plot() + mira_layer(color_by = "habitat", color_values = c(cold = "blue")),
+                 '"cold" is not a value of "habitat"')
+  expect_silent(toy_plot() + mira_node(color_by = "intra_degree", color_values = c("3" = "red")))
+})
+
+test_that("the same attribute in two pieces is merged; disagreements warn and the later piece wins", {
+  net <- toy_net()
+  net$extended$module <- c(1, 2, 1, 2)
+  p <- suppressMessages(mira(net, bipartite = TRUE)) +
+    mira_node(color_by = "module", color_values = c("1" = "red"))
+  q <- p + mira_intralayer(color_by = "module", color_values = c("2" = "blue"))
+  expect_equal(mira_spec(q)$scales$module$values, list("1" = "#ff0000", "2" = "#0000ff"))
+  expect_warning(q <- p + mira_intralayer(color_by = "module", color_values = c("1" = "blue")),
+                 'color_values "1" for "module" replaces the setting in mira_node\\(\\)')
+  expect_equal(mira_spec(q)$scales$module$values, list("1" = "#0000ff"))
+  expect_warning(p + mira_intralayer(color_by = "module", color_scale = "continuous"),
+                 'color_scale "continuous" for "module" replaces the setting in mira_node\\(\\)')
+})
+
+test_that('color_by = "layer_name" with color_values sends per-layer colors', {
+  p <- toy_plot() + mira_layer(color_by = "layer_name", color_values = c(L2 = "orange"))
+  spec <- mira_spec(p)
+  expect_equal(spec$layer, list(color_by = ".individual", colors = list(L2 = "#ffa500")))
+  expect_null(spec$scales)
+  expect_error(toy_plot() + mira_layer(color_by = "layer_name", color_values = c(L9 = "red")),
+               "must use layer_name values \\(L1, L2\\); not: L9")
+  expect_error(toy_plot() + mira_layer(color_by = "layer_name", color_scale = "categorical"),
+               "does not apply to one color per layer")
+})

@@ -4,14 +4,45 @@
 \alias{mira_layer}
 \title{Layer style of a mira plot}
 \usage{
-mira_layer(color_by, color)
+mira_layer(
+  color_by,
+  color,
+  color_values,
+  color_scale,
+  labels,
+  label_size,
+  set_labels,
+  stack,
+  spacing
+)
 }
 \arguments{
-\item{color_by}{Layer column to color layers by, or \code{".individual"} for
-one color per layer. \code{NULL} or \code{NA} = default.}
+\item{color_by}{Layer column to color layers by, or \code{"layer_name"} for
+one color per layer (\code{".individual"} works too). \code{NULL} or \code{NA} =
+default.}
 
 \item{color}{A constant layer color: a color name or \code{"#rrggbb"}. Give
 \code{color_by} or \code{color}, not both.}
+
+\item{color_values}{Colors for values of the \code{color_by} column, named by
+value. With \code{color_by = "layer_name"}, named by layer:
+\code{c(L1 = "red", L3 = "#1f77b4")}; layers not listed keep MiRA's color.
+See \strong{Color scales} in \code{\link[=mira]{mira()}}.}
+
+\item{color_scale}{\code{"categorical"} or \code{"continuous"}. Not with
+\code{color_by = "layer_name"}.}
+
+\item{labels}{\code{TRUE} or \code{FALSE}: show layer names.}
+
+\item{label_size}{Layer name size, between 8 and 32.}
+
+\item{set_labels}{\code{TRUE} or \code{FALSE}: show node set names (bipartite
+layout only; needs \code{mira(..., bipartite = TRUE)}).}
+
+\item{stack}{\code{"horizontal"} or \code{"vertical"}: how layers are stacked.}
+
+\item{spacing}{Space between layers, between 100 and 600 (300 = MiRA's
+default).}
 }
 \value{
 A \code{mira_piece}, to add to a plot with \code{+}.
@@ -20,7 +51,8 @@ A \code{mira_piece}, to add to a plot with \code{+}.
 Layer style of a mira plot
 }
 \examples{
-mira_layer(color_by = ".individual")
+mira_layer(color_by = "layer_name", color_values = c(L1 = "red"))
+mira_layer(labels = TRUE, stack = "vertical", spacing = 200)
 }
 \seealso{
 \code{\link[=mira]{mira()}}

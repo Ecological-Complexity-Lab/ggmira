@@ -4,7 +4,14 @@
 \alias{mira_intralayer}
 \title{Intralayer link style of a mira plot}
 \usage{
-mira_intralayer(color_by, color, min_weight)
+mira_intralayer(
+  color_by,
+  color,
+  min_weight,
+  arrow_size,
+  color_values,
+  color_scale
+)
 }
 \arguments{
 \item{color_by}{Link column to color intralayer links by. \code{NULL} or \code{NA}
@@ -15,6 +22,15 @@ mira_intralayer(color_by, color, min_weight)
 
 \item{min_weight}{Hide links with weight below this value (0 or more,
 in the units of the data's \code{weight} column).}
+
+\item{arrow_size}{Arrowhead size, between 0 and 3 (1 = MiRA's default).
+Directed networks only. MiRA has one arrowhead size, so this also sizes
+the arrowheads of directed interlayer links.}
+
+\item{color_values}{Colors for values of the \code{color_by} column, named by
+value. See \code{\link[=mira_node]{mira_node()}} and \strong{Color scales} in \code{\link[=mira]{mira()}}.}
+
+\item{color_scale}{\code{"categorical"} or \code{"continuous"}. See \code{\link[=mira_node]{mira_node()}}.}
 }
 \value{
 A \code{mira_piece}, to add to a plot with \code{+}.

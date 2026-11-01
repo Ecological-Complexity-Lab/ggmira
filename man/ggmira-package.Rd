@@ -8,6 +8,13 @@
 \description{
 Opens multilayer networks in MiRA, the browser-based multilayer network visualizer (\url{https://mira.ecomplab.com/}), and describes how they should look with composable functions for the layout, nodes, links and layers. Works with multilayer objects from the 'emln' package. Internal development version.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/Ecological-Complexity-Lab/ggmira}
+}
+
+}
 \author{
 \strong{Maintainer}: Shai Pilosof \email{pilos@bgu.ac.il}
 
