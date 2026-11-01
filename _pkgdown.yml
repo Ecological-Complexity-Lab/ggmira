@@ -1,0 +1,33 @@
+url: ~
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left: [intro, reference, articles]
+    right: [search, github]
+
+reference:
+- title: Plots
+  desc: Start a plot from a multilayer network, see what it sends to MiRA, and open it.
+  contents:
+  - mira
+  - mira_spec
+  - print.mira_plot
+- title: Pieces
+  desc: Add these to a plot with `+` to set its layout and the look of nodes, links and layers.
+  contents:
+  - mira_layout
+  - mira_node
+  - mira_intralayer
+  - mira_interlayer
+  - mira_layer
+- title: Opening a network with MiRA's defaults
+  contents:
+  - plot_multilayer
+
+articles:
+- title: Get started
+  navbar: ~
+  contents:
+  - articles/getting-started
