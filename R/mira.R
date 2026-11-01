@@ -65,6 +65,7 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
     network_json = network_json,
     bipartite    = bipartite,
     set_types    = if (bipartite) .node_types(net$nodes) else NULL,
+    computed     = .computed_node_attrs(net, network_json, directed_interlayer),
     spec         = list()
   ), class = "mira_plot")
 }

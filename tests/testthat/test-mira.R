@@ -126,7 +126,40 @@ test_that("node columns, state-node columns and computed attributes are accepted
   expect_silent(toy_plot() + mira_node(color_by = "node_type"))
   expect_silent(toy_plot() + mira_node(size_by = "abundance"))
   expect_silent(toy_plot() + mira_node(size_by = "intra_degree_sum"))
-  expect_silent(toy_plot() + mira_node(color_by = "inter_in_strength_mean"))
+  expect_silent(toy_plot() + mira_node(color_by = "inter_strength_mean"))
+})
+
+# ---- Computed attributes ----
+
+test_that("a computed name MiRA will not have is a warning with the variants it has", {
+  directed <- suppressMessages(mira(toy_net(), bipartite = TRUE, directed = TRUE))
+  expect_warning(directed + mira_node(size_by = "intra_degree_sum"),
+                 paste0('"intra_degree_sum" is not computed by MiRA for this network; MiRA keeps ',
+                        'its default \\(did you mean "intra_in_degree_sum" or "intra_out_degree_sum"\\?\\)'))
+  expect_silent(directed + mira_node(size_by = "intra_in_degree_sum"))
+  expect_silent(directed + mira_node(color_by = "inter_out_strength")) # directed network: inter too
+  expect_warning(toy_plot() + mira_node(color_by = c(parasite = "intra_in_degree")),
+                 'did you mean "intra_degree"')
+})
+
+test_that("interlayer attributes need interlayer links with a weight", {
+  net <- toy_net()
+  net$extended$weight[4] <- 0 # MiRA drops weight-0 links
+  p <- suppressMessages(mira(net, bipartite = TRUE))
+  expect_warning(p + mira_node(size_by = "inter_degree_sum"), "the network has no interlayer links")
+  expect_silent(p + mira_node(size_by = "intra_degree_sum"))
+})
+
+test_that("directed flags follow MiRA: directed_interlayer, and logical directed columns", {
+  p <- suppressMessages(mira(toy_net(), bipartite = TRUE, directed_interlayer = TRUE))
+  expect_silent(p + mira_node(size_by = "inter_in_degree_sum") + mira_node(size_by = "intra_degree_sum"))
+  net <- toy_net()
+  net$layers$directed <- c(TRUE, FALSE)
+  p <- suppressMessages(mira(net, bipartite = TRUE))
+  expect_silent(p + mira_node(size_by = "intra_in_degree_sum"))
+  net$layers$directed <- c("TRUE", "FALSE") # text is not true in MiRA
+  p <- suppressMessages(mira(net, bipartite = TRUE))
+  expect_silent(p + mira_node(size_by = "intra_degree_sum"))
 })
 
 test_that("an unknown column is a warning and the setting is still sent", {

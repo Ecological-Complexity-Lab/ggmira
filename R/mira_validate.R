@@ -46,6 +46,8 @@ PER_SET_FIELDS <- c("color_by", "size_by", "shape")
   .warn_unknown(.data_names(fields$color_by), known, "color_by", piece$fn, "node or state-node",
                 color_keywords)
   .warn_unknown(.data_names(fields$size_by), known, "size_by", piece$fn, "node or state-node")
+  .warn_not_computed(fields$color_by, plot, "color_by", piece$fn)
+  .warn_not_computed(fields$size_by, plot, "size_by", piece$fn)
   .warn_non_numeric(.mapping_names(fields$size_by), plot$net, piece$fn)
 }
 
