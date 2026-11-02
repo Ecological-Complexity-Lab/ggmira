@@ -76,6 +76,31 @@ p1c <- p1 +
   mira_node(highlight = "Geospiza_fortis")
 print(p1c)
 
+# ---- 1d. Views (MiRA's modes) --------------------------------------------------
+# One view per plot: a second mira_mode_*() of another view replaces the first,
+# with a warning. mira_camera() works in network mode only, mira_filter() in
+# network and map modes only (R warns otherwise).
+
+print(p1 + mira_mode_grid(columns = 2))
+
+p1d <- p1 +
+  mira_node(highlight = "Geospiza_fortis") +
+  mira_mode_meta(aggregation = "weights", layout = "bipartite", color_by = "uniform",
+                 size_by = "participation", size = 1.5, min_weight = 0.1, nested = FALSE,
+                 labels = TRUE, label_size = 14)
+print(p1d)
+
+# One color per node set (color replaces color_by)
+print(p1 + mira_mode_meta(color = c(bird = "orange", plant = "darkgreen")))
+
+print(p1 + mira_mode_map())       # the layers have latitude and longitude
+print(p1 + mira_mode_layer())
+print(p1 + mira_mode_dashboard())
+print(p1 + mira_mode_data())
+
+# Any view with MiRA's defaults and no components
+plot_mira(net, bipartite = TRUE, setA_type = "bird", mode = "meta")
+
 # ---- 2. Color scales ---------------------------------------------------------
 
 # directed = TRUE: in/out degrees and arrowheads

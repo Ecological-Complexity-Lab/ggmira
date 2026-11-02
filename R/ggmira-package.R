@@ -35,8 +35,16 @@
 #' @section Data (what is drawn):
 #' - [mira_filter()]: draw only some nodes or links.
 #'
+#' @section Views (modes):
+#' One view per plot; the other components still apply.
+#' - [mira_mode_grid()]: the layers side by side.
+#' - [mira_mode_meta()]: the network aggregated over layers.
+#' - [mira_mode_map()], [mira_mode_layer()], [mira_mode_dashboard()],
+#'   [mira_mode_data()]: the other views, with MiRA's defaults.
+#'
 #' @section Opening a network with MiRA's defaults:
-#' - [plot_multilayer()]: open a network with no components.
+#' - [plot_mira()]: open a network with no components, in any view
+#'   (`plot_multilayer()` is the same, in network mode).
 #'
 #' @section Networks:
 #' ggmira works with the multilayer objects of the emln package

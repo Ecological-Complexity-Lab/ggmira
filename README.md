@@ -72,14 +72,18 @@ Report also what you could not figure out how to do, even if nothing broke.
 
 ## Opening a network
 
-`plot_multilayer()` opens a network in MiRA with MiRA's default view:
+`plot_mira()` opens a network in MiRA with MiRA's default view, in any of
+MiRA's views (`mode`): network (the default), grid, map, layer, meta
+(the meta-network), dashboard or data. `plot_multilayer()`, the name emln
+uses, is the same in network mode.
 
 ```r
 library(emln)
 library(ggmira)
 
 net <- load_emln(60)
-plot_multilayer(net, bipartite = TRUE, setA_type = "pollinator")
+plot_mira(net, bipartite = TRUE, setA_type = "pollinator")
+plot_mira(net, bipartite = TRUE, setA_type = "pollinator", mode = "meta")
 ```
 
 ## Plots as code: `mira()`
@@ -127,6 +131,15 @@ The components, grouped as in `?ggmira` and the reference index:
 - **Data.** `mira_filter()`: draw only some nodes (`nodes = type == "bird"`,
   or node names) or links (`links = weight > 0.1`), with conditions as in
   `subset()`.
+- **Views.** `mira_mode_grid(columns)` (layers side by side),
+  `mira_mode_meta()` (the meta-network: `aggregation`, `layout`,
+  `color_by`, `size_by`, `min_weight`, `labels`...), and
+  `mira_mode_map()`, `mira_mode_layer()`, `mira_mode_dashboard()`,
+  `mira_mode_data()` with MiRA's defaults. A plot opens in one view: a
+  later `mira_mode_*()` of another view replaces the earlier one, with a
+  warning. The other components still apply where MiRA uses them;
+  `mira_camera()` works in network mode only and `mira_filter()` in
+  network and map modes only, with a warning otherwise (see `?mira_mode`).
 
 ### Color scales
 
