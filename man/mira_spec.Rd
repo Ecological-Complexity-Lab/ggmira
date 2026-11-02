@@ -2,7 +2,7 @@
 % Please edit documentation in R/mira.R
 \name{mira_spec}
 \alias{mira_spec}
-\title{The view spec of a mira plot}
+\title{What a plot sends to MiRA}
 \usage{
 mira_spec(x, json = FALSE)
 }
@@ -16,13 +16,16 @@ MiRA receives.}
 A list, or a JSON string.
 }
 \description{
-Shows what a plot sends to MiRA: the settings from its pieces, after
+Shows the settings a plot sends to MiRA: those of its components, after
 merging. Useful to check a plot before opening it.
 }
 \examples{
-if (requireNamespace("emln", quietly = TRUE)) {
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 library(emln)
-p <- mira(load_emln(60), bipartite = TRUE) + mira_node(size = 10)
+p <- mira(load_emln(17), bipartite = TRUE, setA_type = "bird") +
+  mira_node(color_by = "verification_level", color_values = c(genus = "red")) +
+  mira_layer(labels = TRUE)
 mira_spec(p)
-}
+cat(mira_spec(p, json = TRUE))
+\dontshow{\}) # examplesIf}
 }

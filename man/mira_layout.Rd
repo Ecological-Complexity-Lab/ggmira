@@ -2,7 +2,7 @@
 % Please edit documentation in R/mira_pieces.R
 \name{mira_layout}
 \alias{mira_layout}
-\title{Layout of a mira plot}
+\title{Layout: where the nodes go}
 \usage{
 mira_layout(type, seed, nested)
 }
@@ -18,14 +18,38 @@ node positions, so a figure can be reproduced.}
 degree (nested order).}
 }
 \value{
-A \code{mira_piece}, to add to a plot with \code{+}.
+A component, to add to a plot with \code{+}.
 }
 \description{
-Chooses MiRA's network layout. Add it to a plot made with \code{\link[=mira]{mira()}}.
+Chooses MiRA's network layout, the one setting that places the nodes.
+Add it to a plot made with \code{\link[=mira]{mira()}}; without it, MiRA uses its default
+(the bipartite layout for a bipartite network, Fruchterman-Reingold
+otherwise).
 }
 \examples{
-mira_layout("kamada_kawai", seed = 42)
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+library(emln)
+net <- load_emln(17)
+
+# A reproducible force-directed layout
+p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_layout("kamada_kawai", seed = 42)
+mira_spec(p)
+if (interactive()) p # opens in the browser
+
+# The bipartite layout, nodes sorted by degree
+p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_layout("bipartite", seed = 42, nested = TRUE)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=mira]{mira()}}
+\code{\link[=mira]{mira()}} to start a plot; \code{\link[=mira_node]{mira_node()}}, \code{\link[=mira_intralayer]{mira_intralayer()}},
+\code{\link[=mira_interlayer]{mira_interlayer()}} and \code{\link[=mira_layer]{mira_layer()}} for the elements it draws.
+
+Other components: 
+\code{\link{mira_interlayer}()},
+\code{\link{mira_intralayer}()},
+\code{\link{mira_layer}()},
+\code{\link{mira_node}()}
 }
+\concept{components}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mira.R
 \name{mira}
 \alias{mira}
-\title{Start a mira plot}
+\title{Start a plot: a multilayer network to draw in MiRA}
 \usage{
 mira(
   net,
@@ -39,68 +39,71 @@ directed. If NULL (default), inherits from \code{directed}.}
 A \code{mira_plot} object.
 }
 \description{
-Creates a plot of a multilayer network that opens in MiRA, the browser-based
-multilayer network visualizer. Describe how it should look by adding
-pieces with \code{+}, as in ggplot2: \code{\link[=mira_layout]{mira_layout()}}, \code{\link[=mira_node]{mira_node()}},
-\code{\link[=mira_intralayer]{mira_intralayer()}}, \code{\link[=mira_interlayer]{mira_interlayer()}}, \code{\link[=mira_layer]{mira_layer()}}. Printing the plot
-(typing its name at the console) opens it in the browser.
+Creates a plot of a multilayer network that opens in MiRA, the
+browser-based multilayer network visualizer. Describe how it should look
+by adding components with \code{+}, as in ggplot2; printing the plot (typing
+its name at the console) opens it in the browser.
 }
-\details{
-Anything not set keeps MiRA's default, and everything can still be changed
-in MiRA's interface. When the same setting is given twice, the later piece
-wins. A later \code{color} replaces an earlier \code{color_by} in the same section,
-and the other way round.
+\section{Components}{
 
-Pieces are checked against the network as they are added: per-set values
-and the bipartite layout need \code{bipartite = TRUE}, and a column that is not
-in the network gives a warning (MiRA then keeps its default for that
-setting).
-}
-\section{Color scales}{
-
-Each piece's \code{color_by} chooses what is colored; \code{color_values} and
-\code{color_scale} in the same piece choose the colors:
+Each component sets one part of the plot. Add them in any order:
 \itemize{
-\item \code{color_scale = "categorical"} gives each value its own color (MiRA's
-Dark2 palette); \code{"continuous"} a gradient (Viridis, from the column's
-minimum to its maximum; numeric columns only). Without it, MiRA decides
-from the data.
-\item \code{color_values} sets the colors of some values, named by value:
-\code{c("1" = "red", "3" = "#1f77b4")} (numbers need quotes as names). Values
-not listed keep the palette's color. It gives a categorical scale, so
-it cannot be combined with \code{color_scale = "continuous"}.
-\item \code{mira_layer(color_by = "layer_name")} gives each layer its own color;
-\code{color_values} named by layer set some of them. Likewise
-\code{mira_node(color_by = ".set")} colors nodes by set membership and
-\code{color_values} named by node set set the two colors.
+\item \code{\link[=mira_layout]{mira_layout()}}: where the nodes go (the layout algorithm, a seed).
+\item \code{\link[=mira_node]{mira_node()}}: node color, size, shape, labels.
+\item \code{\link[=mira_intralayer]{mira_intralayer()}}: the links within layers.
+\item \code{\link[=mira_interlayer]{mira_interlayer()}}: the links between layers.
+\item \code{\link[=mira_layer]{mira_layer()}}: layer colors, names and arrangement.
 }
 
-MiRA keeps one color scale per attribute name, used wherever that
-attribute colors nodes, links or layers (as in MiRA's legends, where
-changing a color changes it for every element). So when two pieces color
-by the same attribute name, their settings are merged: a value that
-appears in both tables (node \code{module} 1 and link \code{module} 1) has one
-color. If the pieces disagree (a value given two colors, or two scale
-types), the later piece wins, with a warning; a continuous scale cannot
-be combined with \code{color_values} for the same attribute (an error). A
-\code{color}, or a \code{color_by} of a different column, drops that section's
-earlier \code{color_values} and \code{color_scale}.
+In each, \code{color_by} and \code{size_by} map an attribute of the data (a column
+of the network's tables, or one MiRA computes, such as a degree); \code{color},
+\code{size} and \code{shape} set constants. The colors of a mapping are chosen with
+\code{color_values} and \code{color_scale} in the same component: see
+\link{mira_scales}.
+
+Anything not set keeps MiRA's default, and everything can still be
+changed in MiRA's interface. When the same setting is given twice, the
+later component wins. A later \code{color} replaces an earlier \code{color_by} of
+the same element, and the other way round.
+
+Components are checked against the network as they are added: settings
+that cannot work (per-set values or the bipartite layout without
+\code{bipartite = TRUE}, a layer name that does not exist) are errors; a column
+that is not in the network is a warning, and MiRA keeps its default for
+that setting. \code{\link[=mira_spec]{mira_spec()}} shows what a plot sends to MiRA.
 }
 
 \examples{
-if (interactive() && requireNamespace("emln", quietly = TRUE)) {
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 library(emln)
-net <- load_emln(60)
-mira(net, bipartite = TRUE, setA_type = "pollinator") +
-  mira_layout("kamada_kawai", seed = 42) +
-  mira_node(color_by = c(pollinator = "module", plant = NA)) +
-  mira_interlayer(color = "red")
+net <- load_emln(17) # 4 layers; bird and plant nodes
 
-# When done:
+# The network with MiRA's default view
+p <- mira(net, bipartite = TRUE, setA_type = "bird")
+if (interactive()) p # opens in the browser
+
+# Build the plot up, one component at a time
+p <- p + mira_layout("kamada_kawai", seed = 42)
+p <- p + mira_node(color_by = "verification_level", size_by = "intra_degree_sum")
+p <- p + mira_intralayer(color_by = "type", min_weight = 0.01)
+p <- p + mira_interlayer(show = TRUE, color = "grey40")
+p <- p + mira_layer(labels = TRUE, stack = "vertical")
+mira_spec(p)
+if (interactive()) p
+
+# Or in one expression, as in ggplot2
+p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_layout("kamada_kawai", seed = 42) +
+  mira_node(color_by = "verification_level", size_by = "intra_degree_sum") +
+  mira_layer(labels = TRUE)
+
+# When done, stop the servers the plots started:
 httpuv::stopAllServers()
-}
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=mira_spec]{mira_spec()}} to see the view spec;
-\code{\link[=print.mira_plot]{print.mira_plot()}} for the browser and port options.
+\code{\link[=mira_spec]{mira_spec()}} to see what a plot sends to MiRA;
+\code{\link[=print.mira_plot]{print.mira_plot()}} for the browser and port options;
+\code{\link[=plot_multilayer]{plot_multilayer()}} to open a network with MiRA's defaults and no
+components.
 }

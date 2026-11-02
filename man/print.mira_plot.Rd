@@ -29,6 +29,7 @@ Invisibly, the server handle. Stop it with
 }
 \description{
 Starts a local server with the network and its view spec and opens MiRA.
-Each print starts a new server (on the next free port when \code{port} is
-taken).
+Typing a plot's name at the console does this; call \code{print()} to choose
+the port or the browser. Each print starts a new server (on the next free
+port when \code{port} is taken).
 }

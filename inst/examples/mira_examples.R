@@ -1,6 +1,4 @@
-setwd("~/GitHub/ecomplab/ggmira")
-
-# ggmira examples: every argument of every piece, on one network.
+# ggmira examples: every argument of every component, on one network.
 #
 # emln network 17: 4 layers (pollination and seed dispersal on two islands),
 # two node sets (bird, plant), interlayer links between layers 1-2 and 3-4.
@@ -61,17 +59,18 @@ print(p1)
 p2 <- mira(net, bipartite = TRUE, setA_type = "bird", directed = TRUE) +
   mira_layout("kamada_kawai", seed = 3) +
   mira_node(
-    color_by = c(bird = "verification_level", plant = "intra_in_degree"),
-    # birds: categorical, two levels with manual colors
-    # plants: no manual colors; in-degree is numeric, so a gradient
-    color_values = list(bird = c(species = "#1f77b4", genus = "#ff7f0e")),
-    # birds sized by out-degree; plants keep the default size
-    size_by = c(bird = "intra_out_degree", plant = NA),
+    # links run plant -> bird, so birds have in-degrees, plants out-degrees
+    color_by = c(bird = "intra_in_strength", plant = "verification_level"),
+    # birds: no manual colors; in-strength is numeric, so a gradient
+    # plants: categorical, two levels with manual colors
+    color_values = list(plant = c(species = "#1f77b4", genus = "#ff7f0e")),
+    # birds sized by in-degree; plants keep the default size
+    size_by = c(bird = "intra_in_degree", plant = NA),
     # flat nodes
     perspective = FALSE
   ) +
   # links colored by "type" both here and in mira_interlayer(): one shared
-  # scale; the two pieces name different values, so their colors merge
+  # scale; the two components name different values, so their colors merge
   mira_intralayer(
     color_by = "type", color_values = c(pollination = "#d62728"),
     arrow_size = 0.5
@@ -113,4 +112,4 @@ print(p4)
 
 mira_spec(p2) # as an R list
 cat(mira_spec(p2, json = TRUE)) # as JSON
-mira_node(color_by = "module", color_values = c("1" = "red")) # a piece prints as its call
+mira_node(color_by = "module", color_values = c("1" = "red")) # a component prints as its call

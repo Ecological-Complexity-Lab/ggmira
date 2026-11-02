@@ -2,7 +2,7 @@
 % Please edit documentation in R/mira_pieces.R
 \name{mira_node}
 \alias{mira_node}
-\title{Node style of a mira plot}
+\title{Nodes: color, size, shape and labels}
 \usage{
 mira_node(
   color_by,
@@ -43,19 +43,22 @@ perspective (MiRA's default) or flat.}
 value: \code{c("1" = "red", "3" = "#1f77b4")}. Values not listed keep MiRA's
 palette. Gives a categorical scale. Per set:
 \code{list(pollinator = c(...))}. With \code{color_by = ".set"}, the colors of
-the sets: \code{c(pollinator = "red", plant = "green")}. See \strong{Color
-scales} in \code{\link[=mira]{mira()}}.}
+the sets: \code{c(pollinator = "red", plant = "green")}. See
+\link{mira_scales}.}
 
 \item{color_scale}{\code{"categorical"} (one color per value) or
 \code{"continuous"} (a gradient; numeric columns only). Without it, MiRA
-decides from the data. Per set: \code{c(pollinator = "continuous")}.}
+decides from the data. Per set: \code{c(pollinator = "continuous")}. See
+\link{mira_scales}.}
 }
 \value{
-A \code{mira_piece}, to add to a plot with \code{+}.
+A component, to add to a plot with \code{+}.
 }
 \description{
-Maps node color and size to node attributes, or sets them to constants.
-Add it to a plot made with \code{\link[=mira]{mira()}}.
+Maps node color and size to node attributes (\code{color_by}, \code{size_by}), or
+sets them to constants (\code{color}, \code{size}, \code{shape}), and shows node names.
+Add it to a plot made with \code{\link[=mira]{mira()}}. Anything not given keeps MiRA's
+default.
 }
 \details{
 \strong{Per set.} On a bipartite network (\code{mira(..., bipartite = TRUE)}),
@@ -67,12 +70,39 @@ or size is per set and \code{shape} is not given, MiRA draws one set as
 circles and the other as squares.
 }
 \examples{
-mira_node(color_by = "module", size = 10)
-mira_node(color = "steelblue", shape = "square")
-mira_node(color_by = c(pollinator = "module", plant = NA))
-mira_node(color_by = "module", color_values = c("1" = "red", "3" = "#1f77b4"))
-mira_node(labels = TRUE, label_size = 14)
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+library(emln)
+net <- load_emln(17) # birds and plants; node column verification_level
+
+# Color by a node column, size by a degree MiRA computes, node names
+p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_node(color_by = "verification_level", size_by = "intra_degree_sum",
+            size = 8, labels = TRUE, label_size = 10)
+mira_spec(p)
+if (interactive()) p # opens in the browser
+
+# One setting per node set: birds by degree, plants in the default color
+p2 <- p + mira_node(color_by = c(bird = "intra_degree_sum", plant = NA),
+                    shape = c(bird = "square", plant = "circle"))
+mira_spec(p2)$node
+
+# Colors of some values (see ?mira_scales)
+p3 <- p + mira_node(color_by = "verification_level",
+                    color_values = c(species = "#1f77b4", genus = "orange"))
+mira_spec(p3)$scales
+
+# Constants, flat nodes; a component prints as its call
+mira_node(color = "steelblue", shape = "circle", perspective = FALSE)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=mira]{mira()}}
+\link{mira_scales} for \code{color_values}, \code{color_scale} and sizes;
+\code{\link[=mira]{mira()}} for how components combine.
+
+Other components: 
+\code{\link{mira_interlayer}()},
+\code{\link{mira_intralayer}()},
+\code{\link{mira_layer}()},
+\code{\link{mira_layout}()}
 }
+\concept{components}

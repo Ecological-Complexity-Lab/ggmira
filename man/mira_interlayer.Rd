@@ -2,7 +2,7 @@
 % Please edit documentation in R/mira_pieces.R
 \name{mira_interlayer}
 \alias{mira_interlayer}
-\title{Interlayer link style of a mira plot}
+\title{Interlayer links: show, color, curvature and layer pairs}
 \usage{
 mira_interlayer(
   show,
@@ -37,20 +37,44 @@ not matter. Also turns interlayer links on, unless the same piece gives
 \code{show = FALSE}.}
 
 \item{color_values}{Colors for values of the \code{color_by} column, named by
-value. See \code{\link[=mira_node]{mira_node()}} and \strong{Color scales} in \code{\link[=mira]{mira()}}.}
+value. See \link{mira_scales}.}
 
-\item{color_scale}{\code{"categorical"} or \code{"continuous"}. See \code{\link[=mira_node]{mira_node()}}.}
+\item{color_scale}{\code{"categorical"} or \code{"continuous"}. See \link{mira_scales}.}
 }
 \value{
-A \code{mira_piece}, to add to a plot with \code{+}.
+A component, to add to a plot with \code{+}.
 }
 \description{
-Interlayer link style of a mira plot
+Styles the links between layers: whether they are drawn (\code{show}; MiRA
+hides them by default), their color, a weight filter, how much they
+curve, and between which layers they are shown (\code{pairs}). Add it to a
+plot made with \code{\link[=mira]{mira()}}.
 }
 \examples{
-mira_interlayer(show = TRUE, color = "red")
-mira_interlayer(pairs = list(c("L1", "L2")), curvature = 0.6)
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+library(emln)
+net <- load_emln(17) # interlayer links between layers 1-2 and 3-4
+
+# Show interlayer links, in one color, curved
+p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_interlayer(show = TRUE, color = "grey40", curvature = 0.8)
+mira_spec(p)
+if (interactive()) p # opens in the browser
+
+# Only the links between some layers (this also turns them on)
+p2 <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_interlayer(pairs = list(c("layer_1", "layer_2")), min_weight = 0.5)
+mira_spec(p2)$interlayer
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=mira]{mira()}}
+\code{\link[=mira_intralayer]{mira_intralayer()}} for the links within layers;
+\link{mira_scales} for \code{color_values} and \code{color_scale}.
+
+Other components: 
+\code{\link{mira_intralayer}()},
+\code{\link{mira_layer}()},
+\code{\link{mira_layout}()},
+\code{\link{mira_node}()}
 }
+\concept{components}

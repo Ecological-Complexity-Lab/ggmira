@@ -3,14 +3,14 @@
 \name{format.mira_piece}
 \alias{format.mira_piece}
 \alias{print.mira_piece}
-\title{Show a piece as the call that would make it}
+\title{Show a component as the call that would make it}
 \usage{
 \method{format}{mira_piece}(x, ...)
 
 \method{print}{mira_piece}(x, ...)
 }
 \arguments{
-\item{x}{A \code{mira_piece}.}
+\item{x}{A component (class \code{mira_piece}).}
 
 \item{...}{Not used.}
 }

@@ -4,10 +4,68 @@
 \name{ggmira-package}
 \alias{ggmira}
 \alias{ggmira-package}
-\title{ggmira: Plot Multilayer Networks in MiRA from R}
+\title{ggmira: Plot multilayer networks in MiRA from R}
 \description{
-Opens multilayer networks in MiRA, the browser-based multilayer network visualizer (\url{https://mira.ecomplab.com/}), and describes how they should look with composable functions for the layout, nodes, links and layers. Works with multilayer objects from the 'emln' package. Internal development version.
+ggmira draws multilayer networks in MiRA, the browser-based multilayer
+network visualizer, and describes how they should look with code, the way
+ggplot2 does: start from the network with \code{\link[=mira]{mira()}}, add components with
+\code{+}, and print the plot to open it in the browser. Everything can still
+be changed in MiRA's interface.
 }
+\section{Plot basics}{
+
+\itemize{
+\item \code{\link[=mira]{mira()}}: start a plot from a multilayer network.
+\item \code{+}: add a component to a plot.
+\item \code{\link[=print.mira_plot]{print.mira_plot()}}: open the plot in the browser (typing its name
+does this too).
+\item \code{\link[=mira_spec]{mira_spec()}}: what the plot sends to MiRA.
+}
+}
+
+\section{Elements (nodes, links, layers)}{
+
+\itemize{
+\item \code{\link[=mira_node]{mira_node()}}: node color, size, shape and labels.
+\item \code{\link[=mira_intralayer]{mira_intralayer()}}: the links within layers.
+\item \code{\link[=mira_interlayer]{mira_interlayer()}}: the links between layers.
+\item \code{\link[=mira_layer]{mira_layer()}}: layer colors, names and arrangement.
+}
+}
+
+\section{Scales}{
+
+\itemize{
+\item \link{mira_scales}: how values become colors (\code{color_values},
+\code{color_scale}) and sizes.
+}
+}
+
+\section{Layout}{
+
+\itemize{
+\item \code{\link[=mira_layout]{mira_layout()}}: where the nodes go.
+}
+}
+
+\section{Opening a network with MiRA's defaults}{
+
+\itemize{
+\item \code{\link[=plot_multilayer]{plot_multilayer()}}: open a network with no components.
+}
+}
+
+\section{Data}{
+
+ggmira works with the multilayer objects of the emln package
+(\code{emln::load_emln()}, \code{emln::create_multilayer_network()}). MiRA reads
+their four tables; a column added to \code{net$nodes}, \code{net$state_nodes},
+\code{net$extended} or \code{net$layers} can be mapped like any other.
+
+The full list of functions: \code{help(package = "ggmira")}. Please report
+MiRA issues at \url{https://github.com/Ecological-Complexity-Lab/MiRA/issues}.
+}
+
 \seealso{
 Useful links:
 \itemize{

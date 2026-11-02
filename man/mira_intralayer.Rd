@@ -2,7 +2,7 @@
 % Please edit documentation in R/mira_pieces.R
 \name{mira_intralayer}
 \alias{mira_intralayer}
-\title{Intralayer link style of a mira plot}
+\title{Intralayer links: color, weight filter and arrowheads}
 \usage{
 mira_intralayer(
   color_by,
@@ -14,8 +14,8 @@ mira_intralayer(
 )
 }
 \arguments{
-\item{color_by}{Link column to color intralayer links by. \code{NULL} or \code{NA}
-= default.}
+\item{color_by}{Link column to color intralayer links by (a column of
+\code{net$extended}, e.g. \code{"type"}). \code{NULL} or \code{NA} = default.}
 
 \item{color}{A constant link color: a color name or \code{"#rrggbb"}. Give
 \code{color_by} or \code{color}, not both.}
@@ -28,19 +28,47 @@ Directed networks only. MiRA has one arrowhead size, so this also sizes
 the arrowheads of directed interlayer links.}
 
 \item{color_values}{Colors for values of the \code{color_by} column, named by
-value. See \code{\link[=mira_node]{mira_node()}} and \strong{Color scales} in \code{\link[=mira]{mira()}}.}
+value. See \link{mira_scales}.}
 
-\item{color_scale}{\code{"categorical"} or \code{"continuous"}. See \code{\link[=mira_node]{mira_node()}}.}
+\item{color_scale}{\code{"categorical"} or \code{"continuous"}. See \link{mira_scales}.}
 }
 \value{
-A \code{mira_piece}, to add to a plot with \code{+}.
+A component, to add to a plot with \code{+}.
 }
 \description{
-Intralayer link style of a mira plot
+Styles the links within layers: color by a link column (\code{color_by}) or
+one constant (\code{color}), hide weak links (\code{min_weight}), size arrowheads
+(\code{arrow_size}). Add it to a plot made with \code{\link[=mira]{mira()}}.
 }
 \examples{
-mira_intralayer(color = "grey60", min_weight = 0.1)
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+library(emln)
+net <- load_emln(17) # link column type: pollination / seed-dispersal
+
+# Color by a link column; hide links with weight below 0.01
+p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_intralayer(color_by = "type", min_weight = 0.01)
+mira_spec(p)
+if (interactive()) p # opens in the browser
+
+# Colors of some values (see ?mira_scales)
+p2 <- p + mira_intralayer(color_by = "type",
+                          color_values = c(pollination = "#d62728"))
+mira_spec(p2)$scales
+
+# One constant color; smaller arrowheads on a directed network
+p3 <- mira(net, bipartite = TRUE, setA_type = "bird", directed = TRUE) +
+  mira_intralayer(color = "grey60", arrow_size = 0.5)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=mira]{mira()}}
+\code{\link[=mira_interlayer]{mira_interlayer()}} for the links between layers;
+\link{mira_scales} for \code{color_values} and \code{color_scale}.
+
+Other components: 
+\code{\link{mira_interlayer}()},
+\code{\link{mira_layer}()},
+\code{\link{mira_layout}()},
+\code{\link{mira_node}()}
 }
+\concept{components}

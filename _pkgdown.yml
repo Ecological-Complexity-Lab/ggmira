@@ -8,20 +8,29 @@ navbar:
     right: [search, github]
 
 reference:
-- title: Plots
-  desc: Start a plot from a multilayer network, see what it sends to MiRA, and open it.
+- title: Plot basics
+  desc: Start a plot from a multilayer network, see what it sends to MiRA, and open it in the browser.
   contents:
   - mira
   - mira_spec
   - print.mira_plot
-- title: Pieces
-  desc: Add these to a plot with `+` to set its layout and the look of nodes, links and layers.
+- title: "Elements: nodes, links, layers"
+  desc: >
+    One component per element of the plot. `color_by` and `size_by` map an
+    attribute of the data; `color`, `size` and `shape` set constants.
   contents:
-  - mira_layout
   - mira_node
   - mira_intralayer
   - mira_interlayer
   - mira_layer
+- title: Scales
+  desc: How data values become colors and sizes.
+  contents:
+  - mira_scales
+- title: Layout
+  desc: Where the nodes go.
+  contents:
+  - mira_layout
 - title: Opening a network with MiRA's defaults
   contents:
   - plot_multilayer

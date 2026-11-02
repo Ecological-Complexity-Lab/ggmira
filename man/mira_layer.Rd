@@ -2,7 +2,7 @@
 % Please edit documentation in R/mira_pieces.R
 \name{mira_layer}
 \alias{mira_layer}
-\title{Layer style of a mira plot}
+\title{Layers: color, names and arrangement}
 \usage{
 mira_layer(
   color_by,
@@ -17,9 +17,9 @@ mira_layer(
 )
 }
 \arguments{
-\item{color_by}{Layer column to color layers by, or \code{"layer_name"} for
-one color per layer (\code{".individual"} works too). \code{NULL} or \code{NA} =
-default.}
+\item{color_by}{Layer column to color layers by (a column of
+\code{net$layers}), or \code{"layer_name"} for one color per layer
+(\code{".individual"} works too). \code{NULL} or \code{NA} = default.}
 
 \item{color}{A constant layer color: a color name or \code{"#rrggbb"}. Give
 \code{color_by} or \code{color}, not both.}
@@ -27,10 +27,10 @@ default.}
 \item{color_values}{Colors for values of the \code{color_by} column, named by
 value. With \code{color_by = "layer_name"}, named by layer:
 \code{c(L1 = "red", L3 = "#1f77b4")}; layers not listed keep MiRA's color.
-See \strong{Color scales} in \code{\link[=mira]{mira()}}.}
+See \link{mira_scales}.}
 
 \item{color_scale}{\code{"categorical"} or \code{"continuous"}. Not with
-\code{color_by = "layer_name"}.}
+\code{color_by = "layer_name"}. See \link{mira_scales}.}
 
 \item{labels}{\code{TRUE} or \code{FALSE}: show layer names.}
 
@@ -45,15 +45,40 @@ layout only; needs \code{mira(..., bipartite = TRUE)}).}
 (300 = MiRA's default).}
 }
 \value{
-A \code{mira_piece}, to add to a plot with \code{+}.
+A component, to add to a plot with \code{+}.
 }
 \description{
-Layer style of a mira plot
+Styles the layers: their color (by a layer column, one per layer, or one
+constant), their names and the node set names, and how they are stacked
+and spaced. Add it to a plot made with \code{\link[=mira]{mira()}}.
 }
 \examples{
-mira_layer(color_by = "layer_name", color_values = c(L1 = "red"))
-mira_layer(labels = TRUE, stack = "vertical", spacing = 200)
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+library(emln)
+net <- load_emln(17) # layer columns interaction_type and location
+
+# Layer names, stacked top to bottom, colored by a layer column
+p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_layer(color_by = "interaction_type", labels = TRUE, label_size = 18,
+             stack = "vertical", spacing = 250)
+mira_spec(p)
+if (interactive()) p # opens in the browser
+
+# One color per layer, two of them set by hand; node set names
+p2 <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_layer(color_by = "layer_name",
+             color_values = c(layer_1 = "orange", layer_3 = "#9467bd"),
+             set_labels = TRUE)
+mira_spec(p2)$layer
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=mira]{mira()}}
+\link{mira_scales} for \code{color_values} and \code{color_scale}.
+
+Other components: 
+\code{\link{mira_interlayer}()},
+\code{\link{mira_intralayer}()},
+\code{\link{mira_layout}()},
+\code{\link{mira_node}()}
 }
+\concept{components}

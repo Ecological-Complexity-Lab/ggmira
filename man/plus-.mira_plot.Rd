@@ -2,19 +2,19 @@
 % Please edit documentation in R/mira.R
 \name{+.mira_plot}
 \alias{+.mira_plot}
-\title{Add a piece to a mira plot}
+\title{Add a component to a mira plot}
 \usage{
 \method{+}{mira_plot}(e1, e2)
 }
 \arguments{
 \item{e1}{A \code{mira_plot}.}
 
-\item{e2}{A \code{mira_piece} (from a \verb{mira_*()} function), or \code{NULL} (no change).}
+\item{e2}{A component (from a \verb{mira_*()} function), or \code{NULL} (no change).}
 }
 \value{
-The \code{mira_plot} with the piece added.
+The \code{mira_plot} with the component added.
 }
 \description{
-Add a piece to a mira plot
+Add a component to a mira plot
 }
 \keyword{internal}

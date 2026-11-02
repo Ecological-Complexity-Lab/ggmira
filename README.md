@@ -39,8 +39,9 @@ plot_multilayer(net, bipartite = TRUE, setA_type = "pollinator")
 ## Plots as code: `mira()`
 
 `mira()` describes a plot the way ggplot2 does: start from the network and
-add pieces with `+`. Printing the plot opens it in MiRA with those settings
-already applied; everything can still be changed in MiRA's interface.
+add components with `+`, one per part of the plot. Printing the plot opens
+it in MiRA with those settings already applied; everything can still be
+changed in MiRA's interface.
 
 ```r
 net <- load_emln(14)
@@ -51,22 +52,27 @@ mira(net, bipartite = TRUE, setA_type = "pollinator") +
   mira_layer(color_by = ".individual")
 ```
 
-- `mira_layout()`: layout type; `seed` makes node positions reproducible.
-- `mira_node()`: `color_by` / `size_by` map a node or state-node column, or
-  one MiRA computes (e.g. `"intra_degree_sum"`); `color`, `size` and `shape`
-  set constants; `labels`, `label_size` show node names; `perspective`.
-- `mira_intralayer()`, `mira_interlayer()`: link color and `min_weight`;
-  `arrow_size` (directed networks); `mira_interlayer(show = TRUE)` draws
-  interlayer links, `pairs` only those between some layers, and
-  `curvature` bends them.
-- `mira_layer()`: layer color by a layer column, or `"layer_name"` for one
-  color per layer; `labels`, `label_size` show layer names, `set_labels`
-  node set names; `stack` and `spacing` arrange the layers.
+The components, grouped as in `?ggmira` and the reference index:
+
+- **Elements.** `mira_node()`: `color_by` / `size_by` map a node or
+  state-node column, or one MiRA computes (e.g. `"intra_degree_sum"`);
+  `color`, `size` and `shape` set constants; `labels`, `label_size` show
+  node names; `perspective`. `mira_intralayer()`, `mira_interlayer()`: link
+  color and `min_weight`; `arrow_size` (directed networks);
+  `mira_interlayer(show = TRUE)` draws interlayer links, `pairs` only those
+  between some layers, and `curvature` bends them. `mira_layer()`: layer
+  color by a layer column, or `"layer_name"` for one color per layer;
+  `labels`, `label_size` show layer names, `set_labels` node set names;
+  `stack` and `spacing` arrange the layers.
+- **Scales** (`?mira_scales`): `color_values` and `color_scale` in the
+  component that maps the attribute.
+- **Layout.** `mira_layout()`: layout type; `seed` makes node positions
+  reproducible.
 
 ### Color scales
 
 `color_by` chooses what is colored; `color_values` and `color_scale` in the
-same piece choose the colors:
+same component choose the colors:
 
 ```r
 mira(net) +
@@ -82,11 +88,13 @@ mira(net) +
   scale.
 
 MiRA keeps one scale per attribute name: if nodes and links are both colored
-by `"module"`, they share its colors (see `?mira`).
+by `"module"`, they share its colors (see `?mira_scales`).
 
 ### More examples
 
-An example file uses every argument of every piece, on emln network 17:
+Every function's help page builds a plot step by step on emln network 17
+(`?mira_node`, `example(mira_layer)`, ...), and an example file uses every
+argument of every component on the same network:
 
 ```r
 file.edit(system.file("examples", "mira_examples.R", package = "ggmira"))
@@ -99,12 +107,12 @@ undirected unless you pass `directed = TRUE`; other networks are detected
 from the data.
 
 Anything you leave out keeps MiRA's default. When a setting is given twice,
-the later piece wins. Settings that cannot work (a bipartite layout on a
+the later component wins. Settings that cannot work (a bipartite layout on a
 network that is not bipartite) are errors; a column that is not in the
 network, or a computed attribute MiRA does not have for it (e.g.
 `"intra_degree_sum"` on a directed network, which has in and out variants),
 is a warning, and MiRA keeps its default. `mira_spec(p)` shows what a plot
-`p` sends to MiRA, and typing a piece shows the call it stands for.
+`p` sends to MiRA, and typing a component shows the call it stands for.
 
 ### Where the data comes from
 
