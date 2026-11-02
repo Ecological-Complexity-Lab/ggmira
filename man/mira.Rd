@@ -53,9 +53,10 @@ Each component sets one part of the plot. Add them in any order:
 \item \code{\link[=mira_intralayer]{mira_intralayer()}}: the links within layers.
 \item \code{\link[=mira_interlayer]{mira_interlayer()}}: the links between layers.
 \item \code{\link[=mira_layer]{mira_layer()}}: layer colors, names and arrangement.
+\item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes or links.
 }
 
-In each, \code{color_by} and \code{size_by} map an attribute of the data (a column
+In each element component, \code{color_by} and \code{size_by} map an attribute of the data (a column
 of the network's tables, or one MiRA computes, such as a degree); \code{color},
 \code{size} and \code{shape} set constants. The colors of a mapping are chosen with
 \code{color_values} and \code{color_scale} in the same component: see

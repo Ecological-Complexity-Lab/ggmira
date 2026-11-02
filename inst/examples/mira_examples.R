@@ -55,6 +55,15 @@ p1 <- mira(net, bipartite = TRUE, setA_type = "bird") +
   )
 print(p1)
 
+# ---- 1b. Filter: all plants and two finches; strong links only ------------
+
+p1b <- p1 +
+  mira_filter(
+    nodes = type == "plant" | node_name %in% c("Geospiza_fuliginosa", "Geospiza_fortis"),
+    links = weight > 0.05
+  )
+print(p1b)
+
 # ---- 2. Color scales ---------------------------------------------------------
 
 # directed = TRUE: in/out degrees and arrowheads

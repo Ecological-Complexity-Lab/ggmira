@@ -114,6 +114,9 @@ The components, grouped as in `?ggmira` and the reference index:
   component that maps the attribute.
 - **Layout.** `mira_layout()`: layout type; `seed` makes node positions
   reproducible.
+- **Data.** `mira_filter()`: draw only some nodes (`nodes = type == "bird"`,
+  or node names) or links (`links = weight > 0.1`), with conditions as in
+  `subset()`.
 
 ### Color scales
 

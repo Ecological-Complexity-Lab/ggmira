@@ -26,6 +26,9 @@
 #' @section Layout:
 #' - [mira_layout()]: where the nodes go.
 #'
+#' @section Data (what is drawn):
+#' - [mira_filter()]: draw only some nodes or links.
+#'
 #' @section Opening a network with MiRA's defaults:
 #' - [plot_multilayer()]: open a network with no components.
 #'

@@ -48,6 +48,13 @@ does this too).
 }
 }
 
+\section{Data (what is drawn)}{
+
+\itemize{
+\item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes or links.
+}
+}
+
 \section{Opening a network with MiRA's defaults}{
 
 \itemize{

@@ -31,6 +31,10 @@ reference:
   desc: Where the nodes go.
   contents:
   - mira_layout
+- title: "Data: what is drawn"
+  desc: Draw only part of the network.
+  contents:
+  - mira_filter
 - title: Opening a network with MiRA's defaults
   contents:
   - plot_multilayer
