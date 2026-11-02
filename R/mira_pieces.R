@@ -50,19 +50,18 @@ LAYER_NAME_COLUMN <- "layer_name"   # mira_layer(color_by = "layer_name") = ".in
 #'   [mira_interlayer()] and [mira_layer()] for the elements it draws.
 #' @family components
 #' @export
-#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' @examplesIf interactive()
 #' library(emln)
-#' net <- load_emln(17)
+#' net <- load_emln(17) # 4 layers; bird and plant nodes
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird")
 #'
-#' # A reproducible force-directed layout
-#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-#'   mira_layout("kamada_kawai", seed = 42)
-#' mira_spec(p)
-#' if (interactive()) p # opens in the browser
+#' p + mira_layout("kamada_kawai")
 #'
-#' # The bipartite layout, nodes sorted by degree
-#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-#'   mira_layout("bipartite", seed = 42, nested = TRUE)
+#' # The same node positions every time
+#' p + mira_layout("fruchterman", seed = 42)
+#'
+#' # Bipartite layout, nodes sorted by degree
+#' p + mira_layout("bipartite", nested = TRUE)
 mira_layout <- function(type, seed, nested) {
   .build_piece("layout", "mira_layout", environment(), list(
     type   = .choice(LAYOUT_TYPES),
@@ -114,29 +113,28 @@ mira_layout <- function(type, seed, nested) {
 #'   [mira()] for how components combine.
 #' @family components
 #' @export
-#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' @examplesIf interactive()
 #' library(emln)
-#' net <- load_emln(17) # birds and plants; node column verification_level
+#' net <- load_emln(17) # 4 layers; bird and plant nodes
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird")
 #'
-#' # Color by a node column, size by a degree MiRA computes, node names
-#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-#'   mira_node(color_by = "verification_level", size_by = "intra_degree_sum",
-#'             size = 8, labels = TRUE, label_size = 10)
-#' mira_spec(p)
-#' if (interactive()) p # opens in the browser
+#' # Map color and size to attributes
+#' p + mira_node(color_by = "verification_level", size_by = "intra_degree_sum")
 #'
-#' # One setting per node set: birds by degree, plants in the default color
-#' p2 <- p + mira_node(color_by = c(bird = "intra_degree_sum", plant = NA),
-#'                     shape = c(bird = "square", plant = "circle"))
-#' mira_spec(p2)$node
+#' # Constants
+#' p + mira_node(color = "steelblue", size = 8, shape = "square")
 #'
-#' # Colors of some values (see ?mira_scales)
-#' p3 <- p + mira_node(color_by = "verification_level",
-#'                     color_values = c(species = "#1f77b4", genus = "orange"))
-#' mira_spec(p3)$scales
+#' # One setting per node set
+#' p + mira_node(color_by = c(bird = "intra_degree_sum", plant = NA),
+#'               shape = c(bird = "square", plant = "circle"))
 #'
-#' # Constants, flat nodes; a component prints as its call
-#' mira_node(color = "steelblue", shape = "circle", perspective = FALSE)
+#' # Node names; flat nodes
+#' p + mira_node(labels = TRUE, label_size = 10, perspective = FALSE)
+#'
+#' # Choose the colors (see ?mira_scales)
+#' p + mira_node(color_by = "verification_level",
+#'               color_values = c(species = "#1f77b4", genus = "orange"))
+#' p + mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
 mira_node <- function(color_by, color, size_by, size, shape, labels, label_size, perspective,
                       color_values, color_scale) {
   .build_piece("node", "mira_node", environment(), list(
@@ -176,24 +174,24 @@ mira_node <- function(color_by, color, size_by, size, shape, labels, label_size,
 #'   [mira_scales] for `color_values` and `color_scale`.
 #' @family components
 #' @export
-#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' @examplesIf interactive()
 #' library(emln)
-#' net <- load_emln(17) # link column type: pollination / seed-dispersal
+#' net <- load_emln(17) # 4 layers; bird and plant nodes
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird")
 #'
-#' # Color by a link column; hide links with weight below 0.01
-#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-#'   mira_intralayer(color_by = "type", min_weight = 0.01)
-#' mira_spec(p)
-#' if (interactive()) p # opens in the browser
+#' # Color by a link column
+#' p + mira_intralayer(color_by = "type")
 #'
-#' # Colors of some values (see ?mira_scales)
-#' p2 <- p + mira_intralayer(color_by = "type",
-#'                           color_values = c(pollination = "#d62728"))
-#' mira_spec(p2)$scales
+#' # One color; hide links with weight below 0.05
+#' p + mira_intralayer(color = "grey60", min_weight = 0.05)
 #'
-#' # One constant color; smaller arrowheads on a directed network
-#' p3 <- mira(net, bipartite = TRUE, setA_type = "bird", directed = TRUE) +
-#'   mira_intralayer(color = "grey60", arrow_size = 0.5)
+#' # Choose the colors (see ?mira_scales)
+#' p + mira_intralayer(color_by = "type", color_values = c(pollination = "#d62728"))
+#' p + mira_intralayer(color_by = "type", color_scale = "categorical")
+#'
+#' # Arrowheads, on a directed network
+#' mira(net, bipartite = TRUE, setA_type = "bird", directed = TRUE) +
+#'   mira_intralayer(arrow_size = 0.5)
 mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_values, color_scale) {
   .build_piece("intralayer", "mira_intralayer", environment(), list(
     color_by     = .mapping(),
@@ -228,20 +226,24 @@ mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_value
 #'   [mira_scales] for `color_values` and `color_scale`.
 #' @family components
 #' @export
-#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' @examplesIf interactive()
 #' library(emln)
-#' net <- load_emln(17) # interlayer links between layers 1-2 and 3-4
+#' net <- load_emln(17) # 4 layers; bird and plant nodes
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird")
 #'
-#' # Show interlayer links, in one color, curved
-#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-#'   mira_interlayer(show = TRUE, color = "grey40", curvature = 0.8)
-#' mira_spec(p)
-#' if (interactive()) p # opens in the browser
+#' # Show interlayer links (hidden by default)
+#' p + mira_interlayer(show = TRUE)
 #'
-#' # Only the links between some layers (this also turns them on)
-#' p2 <- mira(net, bipartite = TRUE, setA_type = "bird") +
-#'   mira_interlayer(pairs = list(c("layer_1", "layer_2")), min_weight = 0.5)
-#' mira_spec(p2)$interlayer
+#' # One color, more curved; hide links with weight below 0.5
+#' p + mira_interlayer(show = TRUE, color = "red", curvature = 0.8, min_weight = 0.5)
+#'
+#' # Only between some layers (this also shows them)
+#' p + mira_interlayer(pairs = list(c("layer_1", "layer_2")))
+#'
+#' # Color by a link column, and choose the colors (see ?mira_scales)
+#' p + mira_interlayer(show = TRUE, color_by = "type",
+#'                     color_values = c(interlayer = "black"))
+#' p + mira_interlayer(show = TRUE, color_by = "type", color_scale = "categorical")
 mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs, color_values,
                             color_scale) {
   .build_piece("interlayer", "mira_interlayer", environment(), list(
@@ -284,23 +286,28 @@ mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs,
 #' @seealso [mira_scales] for `color_values` and `color_scale`.
 #' @family components
 #' @export
-#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' @examplesIf interactive()
 #' library(emln)
-#' net <- load_emln(17) # layer columns interaction_type and location
+#' net <- load_emln(17) # 4 layers; bird and plant nodes
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird")
 #'
-#' # Layer names, stacked top to bottom, colored by a layer column
-#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-#'   mira_layer(color_by = "interaction_type", labels = TRUE, label_size = 18,
-#'              stack = "vertical", spacing = 250)
-#' mira_spec(p)
-#' if (interactive()) p # opens in the browser
+#' # Color by a layer column, or one color for all
+#' p + mira_layer(color_by = "interaction_type")
+#' p + mira_layer(color = "#e5e7eb")
 #'
-#' # One color per layer, two of them set by hand; node set names
-#' p2 <- mira(net, bipartite = TRUE, setA_type = "bird") +
-#'   mira_layer(color_by = "layer_name",
-#'              color_values = c(layer_1 = "orange", layer_3 = "#9467bd"),
-#'              set_labels = TRUE)
-#' mira_spec(p2)$layer
+#' # One color per layer, two of them set by hand
+#' p + mira_layer(color_by = "layer_name",
+#'                color_values = c(layer_1 = "orange", layer_3 = "#9467bd"))
+#'
+#' # Choose the colors of a column (see ?mira_scales)
+#' p + mira_layer(color_by = "interaction_type", color_scale = "categorical",
+#'                color_values = c("seed-dispersal" = "#17becf"))
+#'
+#' # Layer names and node set names
+#' p + mira_layer(labels = TRUE, label_size = 18, set_labels = TRUE)
+#'
+#' # Stack the layers top to bottom, closer together
+#' p + mira_layer(stack = "vertical", spacing = 250)
 mira_layer <- function(color_by, color, color_values, color_scale, labels, label_size, set_labels,
                        stack, spacing) {
   .build_piece("layer", "mira_layer", environment(), list(

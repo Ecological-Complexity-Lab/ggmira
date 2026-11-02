@@ -51,20 +51,24 @@ curve, and between which layers they are shown (\code{pairs}). Add it to a
 plot made with \code{\link[=mira]{mira()}}.
 }
 \examples{
-\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 library(emln)
-net <- load_emln(17) # interlayer links between layers 1-2 and 3-4
+net <- load_emln(17) # 4 layers; bird and plant nodes
+p <- mira(net, bipartite = TRUE, setA_type = "bird")
 
-# Show interlayer links, in one color, curved
-p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_interlayer(show = TRUE, color = "grey40", curvature = 0.8)
-mira_spec(p)
-if (interactive()) p # opens in the browser
+# Show interlayer links (hidden by default)
+p + mira_interlayer(show = TRUE)
 
-# Only the links between some layers (this also turns them on)
-p2 <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_interlayer(pairs = list(c("layer_1", "layer_2")), min_weight = 0.5)
-mira_spec(p2)$interlayer
+# One color, more curved; hide links with weight below 0.5
+p + mira_interlayer(show = TRUE, color = "red", curvature = 0.8, min_weight = 0.5)
+
+# Only between some layers (this also shows them)
+p + mira_interlayer(pairs = list(c("layer_1", "layer_2")))
+
+# Color by a link column, and choose the colors (see ?mira_scales)
+p + mira_interlayer(show = TRUE, color_by = "type",
+                    color_values = c(interlayer = "black"))
+p + mira_interlayer(show = TRUE, color_by = "type", color_scale = "categorical")
 \dontshow{\}) # examplesIf}
 }
 \seealso{

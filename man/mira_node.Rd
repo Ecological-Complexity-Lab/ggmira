@@ -70,29 +70,28 @@ or size is per set and \code{shape} is not given, MiRA draws one set as
 circles and the other as squares.
 }
 \examples{
-\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 library(emln)
-net <- load_emln(17) # birds and plants; node column verification_level
+net <- load_emln(17) # 4 layers; bird and plant nodes
+p <- mira(net, bipartite = TRUE, setA_type = "bird")
 
-# Color by a node column, size by a degree MiRA computes, node names
-p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_node(color_by = "verification_level", size_by = "intra_degree_sum",
-            size = 8, labels = TRUE, label_size = 10)
-mira_spec(p)
-if (interactive()) p # opens in the browser
+# Map color and size to attributes
+p + mira_node(color_by = "verification_level", size_by = "intra_degree_sum")
 
-# One setting per node set: birds by degree, plants in the default color
-p2 <- p + mira_node(color_by = c(bird = "intra_degree_sum", plant = NA),
-                    shape = c(bird = "square", plant = "circle"))
-mira_spec(p2)$node
+# Constants
+p + mira_node(color = "steelblue", size = 8, shape = "square")
 
-# Colors of some values (see ?mira_scales)
-p3 <- p + mira_node(color_by = "verification_level",
-                    color_values = c(species = "#1f77b4", genus = "orange"))
-mira_spec(p3)$scales
+# One setting per node set
+p + mira_node(color_by = c(bird = "intra_degree_sum", plant = NA),
+              shape = c(bird = "square", plant = "circle"))
 
-# Constants, flat nodes; a component prints as its call
-mira_node(color = "steelblue", shape = "circle", perspective = FALSE)
+# Node names; flat nodes
+p + mira_node(labels = TRUE, label_size = 10, perspective = FALSE)
+
+# Choose the colors (see ?mira_scales)
+p + mira_node(color_by = "verification_level",
+              color_values = c(species = "#1f77b4", genus = "orange"))
+p + mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
 \dontshow{\}) # examplesIf}
 }
 \seealso{

@@ -109,9 +109,3 @@ p4 <- mira(net, bipartite = TRUE, setA_type = "bird") +
   mira_interlayer(show = TRUE, color = "red") +
   mira_layer(color = "#e5e7eb")
 print(p4)
-
-# ---- What a plot sends to MiRA ---------------------------------------------------
-
-mira_spec(p2) # as an R list
-cat(mira_spec(p2, json = TRUE)) # as JSON
-mira_node(color_by = "module", color_values = c("1" = "red")) # a component prints as its call

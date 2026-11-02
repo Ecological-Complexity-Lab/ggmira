@@ -20,12 +20,12 @@ Shows the settings a plot sends to MiRA: those of its components, after
 merging. Useful to check a plot before opening it.
 }
 \examples{
-\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 library(emln)
-p <- mira(load_emln(17), bipartite = TRUE, setA_type = "bird") +
-  mira_node(color_by = "verification_level", color_values = c(genus = "red")) +
-  mira_layer(labels = TRUE)
-mira_spec(p)
-cat(mira_spec(p, json = TRUE))
+net <- load_emln(17) # 4 layers; bird and plant nodes
+p <- mira(net, bipartite = TRUE, setA_type = "bird")
+
+mira_spec(p + mira_node(color = "red"))
+mira_spec(p + mira_node(color = "red"), json = TRUE)
 \dontshow{\}) # examplesIf}
 }

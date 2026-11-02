@@ -238,21 +238,7 @@ mira(net, bipartite = TRUE, setA_type = "bird") +
 knitr::include_graphics("figures/constant.png")
 ```
 
-## What a plot sends to MiRA
-
-`mira_spec()` shows the settings a plot sends, after merging its
-components: as an R list, or as the JSON MiRA receives.
-
-```{r}
-mira_spec(p)
-cat(mira_spec(p, json = TRUE))
-```
-
-A component prints as the call that makes it:
-
-```{r, eval = TRUE}
-mira_node(color_by = "module", color_values = c("1" = "red"))
-```
+## When something is wrong
 
 When a setting cannot work (a bipartite layout on a network that is not
 bipartite, a layer name that does not exist), adding the component is an

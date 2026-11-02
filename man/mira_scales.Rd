@@ -53,35 +53,30 @@ MiRA from the smallest to the largest value; \code{size} sets the base size
 }
 
 \examples{
-\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 library(emln)
-net <- load_emln(17)
+net <- load_emln(17) # 4 layers; bird and plant nodes
+p <- mira(net, bipartite = TRUE, setA_type = "bird")
 
-# Manual colors for two values; the others keep the palette
-p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_node(color_by = "verification_level",
-            color_values = c(species = "#1f77b4", genus = "orange"))
-mira_spec(p)$scales
-if (interactive()) p # opens in the browser
+# Colors of some values; the others keep MiRA's palette
+p + mira_node(color_by = "verification_level",
+              color_values = c(species = "#1f77b4", genus = "orange"))
 
 # The same numeric attribute as a gradient, or one color per value
-p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_node(color_by = "intra_degree_sum", color_scale = "continuous")
-p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
+p + mira_node(color_by = "intra_degree_sum", color_scale = "continuous")
+p + mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
 
-# Links and nodes colored by columns that share a name share the scale:
-# the two components merge into one "type" scale
-p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_node(color_by = "type", color_values = c(bird = "#1f77b4")) +
-  mira_intralayer(color_by = "type", color_values = c(pollination = "#d62728"))
-mira_spec(p)$scales
+# Per node set
+p + mira_node(color_by = c(bird = "intra_degree_sum", plant = "verification_level"),
+              color_scale = c(bird = "continuous"),
+              color_values = list(plant = c(species = "blue")))
 
-# One color per layer, two set by hand; the two node sets
-p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_layer(color_by = "layer_name", color_values = c(layer_1 = "orange")) +
-  mira_node(color_by = ".set", color_values = c(bird = "red", plant = "green"))
-mira_spec(p)
+# One color per layer; the colors of the two node sets
+p + mira_layer(color_by = "layer_name", color_values = c(layer_1 = "orange"))
+p + mira_node(color_by = ".set", color_values = c(bird = "red", plant = "green"))
+
+# Size by an attribute, from a base size
+p + mira_node(size_by = "intra_degree_sum", size = 6)
 \dontshow{\}) # examplesIf}
 }
 \seealso{

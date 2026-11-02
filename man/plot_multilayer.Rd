@@ -88,13 +88,21 @@ Feedback and bug reports:
 \url{https://github.com/Ecological-Complexity-Lab/MiRA/issues}.
 }
 \examples{
-if (interactive() && requireNamespace("emln", quietly = TRUE)) {
-net <- emln::load_emln(60)
-srv <- plot_multilayer(net, bipartite = TRUE, setA_type = "pollinator")
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+library(emln)
+net <- load_emln(17)
 
-# When done:
+# Open with MiRA's defaults; returns the server
+srv <- plot_multilayer(net, bipartite = TRUE, setA_type = "bird")
+
+# Directed links, another port and browser, a local copy of MiRA
+plot_multilayer(net, bipartite = TRUE, setA_type = "bird",
+                directed = TRUE, directed_interlayer = TRUE,
+                port = 9000, browser = "firefox", mira_path = "~/MiRA")
+
+# When done
 httpuv::stopServer(srv)
-}
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 \code{emln::load_emln},

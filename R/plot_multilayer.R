@@ -67,14 +67,20 @@
 #'
 #' @export
 #'
-#' @examples
-#' if (interactive() && requireNamespace("emln", quietly = TRUE)) {
-#' net <- emln::load_emln(60)
-#' srv <- plot_multilayer(net, bipartite = TRUE, setA_type = "pollinator")
+#' @examplesIf interactive()
+#' library(emln)
+#' net <- load_emln(17)
 #'
-#' # When done:
+#' # Open with MiRA's defaults; returns the server
+#' srv <- plot_multilayer(net, bipartite = TRUE, setA_type = "bird")
+#'
+#' # Directed links, another port and browser, a local copy of MiRA
+#' plot_multilayer(net, bipartite = TRUE, setA_type = "bird",
+#'                 directed = TRUE, directed_interlayer = TRUE,
+#'                 port = 9000, browser = "firefox", mira_path = "~/MiRA")
+#'
+#' # When done
 #' httpuv::stopServer(srv)
-#' }
 plot_multilayer <- function(multilayer, bipartite = FALSE, setA_type = NULL,
                             directed = NULL, directed_interlayer = NULL,
                             port = 8080, mira_path = NULL,

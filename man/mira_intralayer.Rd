@@ -41,24 +41,24 @@ one constant (\code{color}), hide weak links (\code{min_weight}), size arrowhead
 (\code{arrow_size}). Add it to a plot made with \code{\link[=mira]{mira()}}.
 }
 \examples{
-\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 library(emln)
-net <- load_emln(17) # link column type: pollination / seed-dispersal
+net <- load_emln(17) # 4 layers; bird and plant nodes
+p <- mira(net, bipartite = TRUE, setA_type = "bird")
 
-# Color by a link column; hide links with weight below 0.01
-p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_intralayer(color_by = "type", min_weight = 0.01)
-mira_spec(p)
-if (interactive()) p # opens in the browser
+# Color by a link column
+p + mira_intralayer(color_by = "type")
 
-# Colors of some values (see ?mira_scales)
-p2 <- p + mira_intralayer(color_by = "type",
-                          color_values = c(pollination = "#d62728"))
-mira_spec(p2)$scales
+# One color; hide links with weight below 0.05
+p + mira_intralayer(color = "grey60", min_weight = 0.05)
 
-# One constant color; smaller arrowheads on a directed network
-p3 <- mira(net, bipartite = TRUE, setA_type = "bird", directed = TRUE) +
-  mira_intralayer(color = "grey60", arrow_size = 0.5)
+# Choose the colors (see ?mira_scales)
+p + mira_intralayer(color_by = "type", color_values = c(pollination = "#d62728"))
+p + mira_intralayer(color_by = "type", color_scale = "categorical")
+
+# Arrowheads, on a directed network
+mira(net, bipartite = TRUE, setA_type = "bird", directed = TRUE) +
+  mira_intralayer(arrow_size = 0.5)
 \dontshow{\}) # examplesIf}
 }
 \seealso{

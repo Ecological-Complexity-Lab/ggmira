@@ -33,3 +33,21 @@ Typing a plot's name at the console does this; call \code{print()} to choose
 the port or the browser. Each print starts a new server (on the next free
 port when \code{port} is taken).
 }
+\examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+library(emln)
+net <- load_emln(17) # 4 layers; bird and plant nodes
+p <- mira(net, bipartite = TRUE, setA_type = "bird")
+
+p        # the same as print(p)
+
+# Another port and browser
+print(p, port = 9000, browser = "firefox")
+
+# A local copy of MiRA instead of the one in the package
+print(p, mira_path = "~/MiRA")
+
+# When done, stop the servers the plots started
+httpuv::stopAllServers()
+\dontshow{\}) # examplesIf}
+}

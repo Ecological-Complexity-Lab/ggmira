@@ -50,30 +50,26 @@ VIEW_SPEC_VERSION <- 1
 #'   [plot_multilayer()] to open a network with MiRA's defaults and no
 #'   components.
 #' @export
-#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' @examplesIf interactive()
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #'
-#' # The network with MiRA's default view
-#' p <- mira(net, bipartite = TRUE, setA_type = "bird")
-#' if (interactive()) p # opens in the browser
+#' # MiRA's default view
+#' mira(net, bipartite = TRUE, setA_type = "bird")
 #'
-#' # Build the plot up, one component at a time
-#' p <- p + mira_layout("kamada_kawai", seed = 42)
-#' p <- p + mira_node(color_by = "verification_level", size_by = "intra_degree_sum")
-#' p <- p + mira_intralayer(color_by = "type", min_weight = 0.01)
-#' p <- p + mira_interlayer(show = TRUE, color = "grey40")
-#' p <- p + mira_layer(labels = TRUE, stack = "vertical")
-#' mira_spec(p)
-#' if (interactive()) p
+#' # Directed links, within and between layers
+#' mira(net, bipartite = TRUE, setA_type = "bird",
+#'      directed = TRUE, directed_interlayer = TRUE)
 #'
-#' # Or in one expression, as in ggplot2
-#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#' # Add components with +
+#' mira(net, bipartite = TRUE, setA_type = "bird") +
 #'   mira_layout("kamada_kawai", seed = 42) +
 #'   mira_node(color_by = "verification_level", size_by = "intra_degree_sum") +
+#'   mira_intralayer(color_by = "type") +
+#'   mira_interlayer(show = TRUE) +
 #'   mira_layer(labels = TRUE)
 #'
-#' # When done, stop the servers the plots started:
+#' # When done, stop the servers the plots started
 #' httpuv::stopAllServers()
 mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
                  directed_interlayer = NULL) {
@@ -135,6 +131,21 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
 #'   `httpuv::stopServer(handle)`, or stop all servers with
 #'   `httpuv::stopAllServers()`.
 #' @export
+#' @examplesIf interactive()
+#' library(emln)
+#' net <- load_emln(17) # 4 layers; bird and plant nodes
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird")
+#'
+#' p        # the same as print(p)
+#'
+#' # Another port and browser
+#' print(p, port = 9000, browser = "firefox")
+#'
+#' # A local copy of MiRA instead of the one in the package
+#' print(p, mira_path = "~/MiRA")
+#'
+#' # When done, stop the servers the plots started
+#' httpuv::stopAllServers()
 print.mira_plot <- function(x, port = 8080, mira_path = NULL,
                             browser = getOption("browser"), ...) {
   message("Please report issues at ",
@@ -153,13 +164,13 @@ print.mira_plot <- function(x, port = 8080, mira_path = NULL,
 #'   MiRA receives.
 #' @return A list, or a JSON string.
 #' @export
-#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' @examplesIf interactive()
 #' library(emln)
-#' p <- mira(load_emln(17), bipartite = TRUE, setA_type = "bird") +
-#'   mira_node(color_by = "verification_level", color_values = c(genus = "red")) +
-#'   mira_layer(labels = TRUE)
-#' mira_spec(p)
-#' cat(mira_spec(p, json = TRUE))
+#' net <- load_emln(17) # 4 layers; bird and plant nodes
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird")
+#'
+#' mira_spec(p + mira_node(color = "red"))
+#' mira_spec(p + mira_node(color = "red"), json = TRUE)
 mira_spec <- function(x, json = FALSE) {
   if (!inherits(x, "mira_plot")) stop("`x` must be a mira plot (from mira()).", call. = FALSE)
   spec <- c(list(version = VIEW_SPEC_VERSION), .spec_for_mira(x))

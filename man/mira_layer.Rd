@@ -53,23 +53,28 @@ constant), their names and the node set names, and how they are stacked
 and spaced. Add it to a plot made with \code{\link[=mira]{mira()}}.
 }
 \examples{
-\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 library(emln)
-net <- load_emln(17) # layer columns interaction_type and location
+net <- load_emln(17) # 4 layers; bird and plant nodes
+p <- mira(net, bipartite = TRUE, setA_type = "bird")
 
-# Layer names, stacked top to bottom, colored by a layer column
-p <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_layer(color_by = "interaction_type", labels = TRUE, label_size = 18,
-             stack = "vertical", spacing = 250)
-mira_spec(p)
-if (interactive()) p # opens in the browser
+# Color by a layer column, or one color for all
+p + mira_layer(color_by = "interaction_type")
+p + mira_layer(color = "#e5e7eb")
 
-# One color per layer, two of them set by hand; node set names
-p2 <- mira(net, bipartite = TRUE, setA_type = "bird") +
-  mira_layer(color_by = "layer_name",
-             color_values = c(layer_1 = "orange", layer_3 = "#9467bd"),
-             set_labels = TRUE)
-mira_spec(p2)$layer
+# One color per layer, two of them set by hand
+p + mira_layer(color_by = "layer_name",
+               color_values = c(layer_1 = "orange", layer_3 = "#9467bd"))
+
+# Choose the colors of a column (see ?mira_scales)
+p + mira_layer(color_by = "interaction_type", color_scale = "categorical",
+               color_values = c("seed-dispersal" = "#17becf"))
+
+# Layer names and node set names
+p + mira_layer(labels = TRUE, label_size = 18, set_labels = TRUE)
+
+# Stack the layers top to bottom, closer together
+p + mira_layer(stack = "vertical", spacing = 250)
 \dontshow{\}) # examplesIf}
 }
 \seealso{
