@@ -31,7 +31,8 @@ Give \code{color_by} or \code{color}, not both.}
 
 \item{size}{Base node size, a whole number between 3 and 25.}
 
-\item{shape}{\code{"circle"} or \code{"square"}.}
+\item{shape}{\code{"circle"}, \code{"square"}, \code{"triangle"} or \code{"diamond"}. Every
+shape has the circle's area, so node sizes stay comparable.}
 
 \item{labels}{\code{TRUE} or \code{FALSE}: show node names.}
 
@@ -84,11 +85,11 @@ p <- mira(net, bipartite = TRUE, setA_type = "bird")
 p + mira_node(color_by = "verification_level", size_by = "intra_degree_sum")
 
 # Constants
-p + mira_node(color = "steelblue", size = 8, shape = "square")
+p + mira_node(color = "steelblue", size = 8, shape = "triangle")
 
 # One setting per node set
 p + mira_node(color_by = c(bird = "intra_degree_sum", plant = NA),
-              shape = c(bird = "square", plant = "circle"))
+              shape = c(bird = "diamond", plant = "circle"))
 
 # Node names; flat nodes
 p + mira_node(labels = TRUE, label_size = 10, perspective = FALSE)

@@ -111,7 +111,11 @@ test_that("a piece prints as the call that makes it", {
 })
 
 test_that("shape and show are checked", {
-  expect_error(mira_node(shape = "triangle"), '`shape` must be one of "circle", "square"')
+  expect_error(mira_node(shape = "hexagon"),
+               '`shape` must be one of "circle", "square", "triangle", "diamond"')
+  expect_equal(mira_node(shape = "triangle")$fields$shape, "triangle")
+  expect_equal(mira_node(shape = c(parasite = "diamond", host = "triangle"))$fields$shape,
+               list(parasite = "diamond", host = "triangle"))
   expect_error(mira_interlayer(show = NA), "`show` must be TRUE or FALSE")
   expect_equal(mira_interlayer(show = FALSE)$fields$show, FALSE)
 })

@@ -5,7 +5,7 @@
 # (mira_validate.R).
 
 LAYOUT_TYPES <- c("fruchterman", "kamada_kawai", "bipartite", "circle", "grid", "random")
-SHAPES <- c("circle", "square")
+SHAPES <- c("circle", "square", "triangle", "diamond")
 NODE_SIZE_MIN <- 3   # MiRA's node size slider range
 NODE_SIZE_MAX <- 25
 WEIGHT_MIN <- 0      # link weight filter; no upper bound (MiRA's sliders
@@ -93,7 +93,8 @@ mira_layout <- function(type, seed, nested) {
 #'   Give `color_by` or `color`, not both.
 #' @param size_by Numeric column to size nodes by. `NULL` or `NA` = default.
 #' @param size Base node size, a whole number between 3 and 25.
-#' @param shape `"circle"` or `"square"`.
+#' @param shape `"circle"`, `"square"`, `"triangle"` or `"diamond"`. Every
+#'   shape has the circle's area, so node sizes stay comparable.
 #' @param labels `TRUE` or `FALSE`: show node names.
 #' @param label_size Node name size, a whole number between 8 and 24.
 #' @param perspective `TRUE` or `FALSE`: draw nodes in the layers' 3D
@@ -125,11 +126,11 @@ mira_layout <- function(type, seed, nested) {
 #' p + mira_node(color_by = "verification_level", size_by = "intra_degree_sum")
 #'
 #' # Constants
-#' p + mira_node(color = "steelblue", size = 8, shape = "square")
+#' p + mira_node(color = "steelblue", size = 8, shape = "triangle")
 #'
 #' # One setting per node set
 #' p + mira_node(color_by = c(bird = "intra_degree_sum", plant = NA),
-#'               shape = c(bird = "square", plant = "circle"))
+#'               shape = c(bird = "diamond", plant = "circle"))
 #'
 #' # Node names; flat nodes
 #' p + mira_node(labels = TRUE, label_size = 10, perspective = FALSE)
