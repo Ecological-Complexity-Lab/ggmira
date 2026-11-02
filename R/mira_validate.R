@@ -49,6 +49,9 @@ PER_SET_FIELDS <- c("color_by", "size_by", "shape", "color_values", "color_scale
   .warn_not_computed(fields$color_by, plot, "color_by", piece$fn)
   .warn_not_computed(fields$size_by, plot, "size_by", piece$fn)
   .warn_non_numeric(.mapping_names(fields$size_by), plot$net, piece$fn)
+  if (!is.null(fields$highlight) && !fields$highlight %in% as.character(plot$net$nodes$node_name)) {
+    .abort_arg(piece$fn, "highlight", sprintf('"%s" is not a node name', fields$highlight))
+  }
 }
 
 .validate_links <- function(piece, plot) {

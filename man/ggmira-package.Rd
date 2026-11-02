@@ -26,7 +26,7 @@ does this too).
 \section{Elements (nodes, links, layers)}{
 
 \itemize{
-\item \code{\link[=mira_node]{mira_node()}}: node color, size, shape and labels.
+\item \code{\link[=mira_node]{mira_node()}}: node color, size, shape, labels and a highlighted node.
 \item \code{\link[=mira_intralayer]{mira_intralayer()}}: the links within layers.
 \item \code{\link[=mira_interlayer]{mira_interlayer()}}: the links between layers.
 \item \code{\link[=mira_layer]{mira_layer()}}: layer colors, names and arrangement.
@@ -45,6 +45,20 @@ does this too).
 
 \itemize{
 \item \code{\link[=mira_layout]{mira_layout()}}: where the nodes go.
+}
+}
+
+\section{Camera}{
+
+\itemize{
+\item \code{\link[=mira_camera]{mira_camera()}}: rotate, tilt, zoom and pan the view.
+}
+}
+
+\section{Legends}{
+
+\itemize{
+\item \code{\link[=mira_legends]{mira_legends()}}: which legends are open, and where.
 }
 }
 

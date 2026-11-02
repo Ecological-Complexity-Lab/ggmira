@@ -31,6 +31,14 @@ reference:
   desc: Where the nodes go.
   contents:
   - mira_layout
+- title: Camera
+  desc: How the stack of layers is looked at.
+  contents:
+  - mira_camera
+- title: Legends
+  desc: Which legends are open, and where.
+  contents:
+  - mira_legends
 - title: "Data: what is drawn"
   desc: Draw only part of the network.
   contents:

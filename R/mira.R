@@ -20,6 +20,8 @@ VIEW_SPEC_VERSION <- 1
 #' - [mira_interlayer()]: the links between layers.
 #' - [mira_layer()]: layer colors, names and arrangement.
 #' - [mira_filter()]: draw only some nodes or links.
+#' - [mira_camera()]: rotate, tilt, zoom and pan the view.
+#' - [mira_legends()]: which legends are open, and where.
 #'
 #' In each element component, `color_by` and `size_by` map an attribute of the data (a column
 #' of the network's tables, or one MiRA computes, such as a degree); `color`,

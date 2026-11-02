@@ -114,6 +114,11 @@ The components, grouped as in `?ggmira` and the reference index:
   component that maps the attribute.
 - **Layout.** `mira_layout()`: layout type; `seed` makes node positions
   reproducible.
+- **Camera.** `mira_camera()`: `rotate`, `tilt` (degrees), `zoom`, `pan`.
+- **Legends.** `mira_legends()`: legends start minimized; this opens all
+  of them or those in `show`, at a `position`; `show = FALSE` hides them.
+- **Highlight.** `mira_node(highlight = "Apis_mellifera")`: a node and its
+  neighbors stand out, as in MiRA's Search Node.
 - **Data.** `mira_filter()`: draw only some nodes (`nodes = type == "bird"`,
   or node names) or links (`links = weight > 0.1`), with conditions as in
   `subset()`.

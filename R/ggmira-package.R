@@ -14,7 +14,7 @@
 #' - [mira_spec()]: what the plot sends to MiRA.
 #'
 #' @section Elements (nodes, links, layers):
-#' - [mira_node()]: node color, size, shape and labels.
+#' - [mira_node()]: node color, size, shape, labels and a highlighted node.
 #' - [mira_intralayer()]: the links within layers.
 #' - [mira_interlayer()]: the links between layers.
 #' - [mira_layer()]: layer colors, names and arrangement.
@@ -25,6 +25,12 @@
 #'
 #' @section Layout:
 #' - [mira_layout()]: where the nodes go.
+#'
+#' @section Camera:
+#' - [mira_camera()]: rotate, tilt, zoom and pan the view.
+#'
+#' @section Legends:
+#' - [mira_legends()]: which legends are open, and where.
 #'
 #' @section Data (what is drawn):
 #' - [mira_filter()]: draw only some nodes or links.

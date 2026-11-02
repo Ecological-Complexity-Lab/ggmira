@@ -108,6 +108,9 @@ mira_layout <- function(type, seed, nested) {
 #'   `"continuous"` (a gradient; numeric columns only). Without it, MiRA
 #'   decides from the data. Per set: `c(pollinator = "continuous")`. See
 #'   [mira_scales].
+#' @param highlight A node name: the node and its neighbors stand out in
+#'   every layer and the rest is dimmed, as when the node is picked in
+#'   MiRA's Search Node. The banner "Selected node" clears it.
 #' @return A component, to add to a plot with `+`.
 #' @seealso [mira_scales] for `color_values`, `color_scale` and sizes;
 #'   [mira()] for how components combine.
@@ -131,12 +134,15 @@ mira_layout <- function(type, seed, nested) {
 #' # Node names; flat nodes
 #' p + mira_node(labels = TRUE, label_size = 10, perspective = FALSE)
 #'
+#' # Highlight a node and its neighbors
+#' p + mira_node(highlight = "Geospiza_fortis")
+#'
 #' # Choose the colors (see ?mira_scales)
 #' p + mira_node(color_by = "verification_level",
 #'               color_values = c(species = "#1f77b4", genus = "orange"))
 #' p + mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
 mira_node <- function(color_by, color, size_by, size, shape, labels, label_size, perspective,
-                      color_values, color_scale) {
+                      color_values, color_scale, highlight) {
   .build_piece("node", "mira_node", environment(), list(
     color_by     = .shared_or_per_set(.mapping(SET_KEYWORD), .mapping()),
     color        = .check_color,
@@ -147,7 +153,8 @@ mira_node <- function(color_by, color, size_by, size, shape, labels, label_size,
     label_size   = .whole_number_in(LABEL_SIZE_MIN, LABEL_SIZE_MAX),
     perspective  = .check_flag,
     color_values = .check_color_values(per_set = TRUE),
-    color_scale  = .shared_or_per_set(.choice(SCALE_TYPES))
+    color_scale  = .shared_or_per_set(.choice(SCALE_TYPES)),
+    highlight    = .check_name
   ))
 }
 
@@ -366,6 +373,14 @@ mira_layer <- function(color_by, color, color_values, color_scale, labels, label
     warning(sprintf("%s(): `%s` transparency is ignored", fn, arg), call. = FALSE)
   }
   sprintf("#%02x%02x%02x", rgb[1], rgb[2], rgb[3])
+}
+
+# One non-empty string (a node name; checked against the network when added)
+.check_name <- function(value, arg, fn) {
+  if (!is.character(value) || !.is_scalar(value) || is.na(value) || !nzchar(value)) {
+    .abort_arg(fn, arg, "must be one name")
+  }
+  unname(value)
 }
 
 .check_flag <- function(value, arg, fn) {

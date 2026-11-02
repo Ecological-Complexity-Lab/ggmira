@@ -149,6 +149,24 @@ p + mira_filter(nodes = type == "plant" |
 knitr::include_graphics("figures/step-6-filter.png")
 ```
 
+## 7. Camera, legends and a highlighted node
+
+Legends start minimized; `mira_legends()` opens them, all or some, and
+`position` moves them. `mira_camera()` turns, tilts, zooms and pans the
+view. `mira_node(highlight = )` makes a node and its neighbors stand out,
+as when it is picked in MiRA's Search Node. In MiRA, all of this can
+still be changed with the mouse.
+
+```{r}
+p + mira_legends(show = c("node_color", "layer_color"), position = "top-right") +
+  mira_camera(rotate = 60, tilt = 25) +
+  mira_node(highlight = "Geospiza_fortis")
+```
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
+knitr::include_graphics("figures/step-7-view.png")
+```
+
 The same plot in one expression, as in ggplot2:
 
 ```{r}

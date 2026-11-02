@@ -14,7 +14,8 @@ mira_node(
   label_size,
   perspective,
   color_values,
-  color_scale
+  color_scale,
+  highlight
 )
 }
 \arguments{
@@ -50,6 +51,10 @@ the sets: \code{c(pollinator = "red", plant = "green")}. See
 \code{"continuous"} (a gradient; numeric columns only). Without it, MiRA
 decides from the data. Per set: \code{c(pollinator = "continuous")}. See
 \link{mira_scales}.}
+
+\item{highlight}{A node name: the node and its neighbors stand out in
+every layer and the rest is dimmed, as when the node is picked in
+MiRA's Search Node. The banner "Selected node" clears it.}
 }
 \value{
 A component, to add to a plot with \code{+}.
@@ -88,6 +93,9 @@ p + mira_node(color_by = c(bird = "intra_degree_sum", plant = NA),
 # Node names; flat nodes
 p + mira_node(labels = TRUE, label_size = 10, perspective = FALSE)
 
+# Highlight a node and its neighbors
+p + mira_node(highlight = "Geospiza_fortis")
+
 # Choose the colors (see ?mira_scales)
 p + mira_node(color_by = "verification_level",
               color_values = c(species = "#1f77b4", genus = "orange"))
@@ -99,10 +107,12 @@ p + mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
 \code{\link[=mira]{mira()}} for how components combine.
 
 Other components: 
+\code{\link{mira_camera}()},
 \code{\link{mira_filter}()},
 \code{\link{mira_interlayer}()},
 \code{\link{mira_intralayer}()},
 \code{\link{mira_layer}()},
-\code{\link{mira_layout}()}
+\code{\link{mira_layout}()},
+\code{\link{mira_legends}()}
 }
 \concept{components}

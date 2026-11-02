@@ -64,6 +64,14 @@ p1b <- p1 +
   )
 print(p1b)
 
+# ---- 1c. Camera, legends, highlight -------------------------------------------
+
+p1c <- p1 +
+  mira_camera(rotate = 60, tilt = 25, zoom = 1.2, pan = c(0, 0.05)) +
+  mira_legends(show = c("node_color", "layer_color"), position = "top-right") +
+  mira_node(highlight = "Geospiza_fortis")
+print(p1c)
+
 # ---- 2. Color scales ---------------------------------------------------------
 
 # directed = TRUE: in/out degrees and arrowheads

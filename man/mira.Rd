@@ -54,6 +54,8 @@ Each component sets one part of the plot. Add them in any order:
 \item \code{\link[=mira_interlayer]{mira_interlayer()}}: the links between layers.
 \item \code{\link[=mira_layer]{mira_layer()}}: layer colors, names and arrangement.
 \item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes or links.
+\item \code{\link[=mira_camera]{mira_camera()}}: rotate, tilt, zoom and pan the view.
+\item \code{\link[=mira_legends]{mira_legends()}}: which legends are open, and where.
 }
 
 In each element component, \code{color_by} and \code{size_by} map an attribute of the data (a column

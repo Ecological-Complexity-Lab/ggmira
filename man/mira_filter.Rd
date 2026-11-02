@@ -58,10 +58,12 @@ p + mira_filter(nodes = verification_level \%in\% keep, links = weight > 0.05)
 which hides weak links without a filter.
 
 Other components: 
+\code{\link{mira_camera}()},
 \code{\link{mira_interlayer}()},
 \code{\link{mira_intralayer}()},
 \code{\link{mira_layer}()},
 \code{\link{mira_layout}()},
+\code{\link{mira_legends}()},
 \code{\link{mira_node}()}
 }
 \concept{components}
