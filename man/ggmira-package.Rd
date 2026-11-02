@@ -112,7 +112,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Shai Pilosof \email{pilos@bgu.ac.il}
+\strong{Maintainer}: Shai Pilosof \email{pilos@bgu.ac.il} (\href{https://orcid.org/0000-0003-0430-5568}{ORCID})
+
+Authors:
+\itemize{
+  \item Shir Miryam Nehoray (\href{https://orcid.org/0009-0001-8453-4426}{ORCID})
+}
 
 }
 \keyword{internal}

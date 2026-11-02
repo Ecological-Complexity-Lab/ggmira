@@ -1,0 +1,25 @@
+bibentry(
+  bibtype = "Article",
+  header = "To cite MiRA, which ggmira opens, please use:",
+  title = "Interactively visualizing biological multilayer networks using {MiRA}",
+  author = c(person("Shir Miryam", "Nehoray"), person("Yuval", "Bloch"), person("Shai", "Pilosof")),
+  journal = "arXiv",
+  year = "2026",
+  doi = "10.48550/arXiv.2605.09597",
+  textVersion = paste("Nehoray S. M., Bloch Y. and Pilosof S. (2026).",
+                      "Interactively visualizing biological multilayer networks using MiRA.",
+                      "arXiv. https://doi.org/10.48550/arXiv.2605.09597")
+)
+
+bibentry(
+  bibtype = "Manual",
+  header = "To cite the ggmira package:",
+  title = "ggmira: Plot Multilayer Networks in MiRA from R",
+  author = c(person("Shai", "Pilosof"), person("Shir Miryam", "Nehoray")),
+  year = "2026",
+  note = sprintf("R package version %s", meta$Version),
+  url = "https://github.com/Ecological-Complexity-Lab/ggmira",
+  textVersion = sprintf(paste("Pilosof S. and Nehoray S. M. (2026). ggmira: Plot Multilayer",
+                              "Networks in MiRA from R. R package version %s.",
+                              "https://github.com/Ecological-Complexity-Lab/ggmira"), meta$Version)
+)

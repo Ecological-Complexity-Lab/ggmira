@@ -337,6 +337,25 @@ mira(net, bipartite = TRUE, setA_type = "bird") +
 knitr::include_graphics("figures/constant.png")
 ```
 
+## Where the data comes from
+
+MiRA reads the four tables of the multilayer object. To map a new variable,
+add it as a column to the right one:
+
+| Table | Used by |
+|---|---|
+| `net$nodes`, `net$state_nodes` | `mira_node(color_by, size_by)` |
+| `net$extended` (links) | `mira_intralayer(color_by)`, `mira_interlayer(color_by)` |
+| `net$layers` | `mira_layer(color_by)`, `mira_mode_meta(layers)` |
+
+```{r}
+net$extended$log_weight <- log10(net$extended$weight)
+mira(net) + mira_intralayer(color_by = "log_weight")
+```
+
+Link width and `min_weight` always use the `weight` column, and MiRA does
+not draw links with weight 0 (R warns how many there are).
+
 ## When something is wrong
 
 When a setting cannot work (a bipartite layout on a network that is not

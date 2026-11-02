@@ -1,0 +1,17 @@
+<!doctype html>
+<!-- ggmira hex logo: MiRA's layers (MiRA_logo.svg, a copy of MiRA's assets/MiRA_logo.svg)
+     in a hexagon. To rebuild man/figures/logo.png (520 x 600): open this file in a browser
+     and screenshot the #hex element with a transparent background at 2x (e.g. Playwright:
+     page.locator('#hex').screenshot({ omitBackground: true })), then resize to 520 x 600. -->
+<html><body style="margin:0;background:transparent">
+<svg id="hex" xmlns="http://www.w3.org/2000/svg" width="520" height="600" viewBox="0 0 520 600">
+  <!-- pointy-top hexagon: width 520, height 600 -->
+  <polygon points="260,8 512,153 512,447 260,592 8,447 8,153" fill="#ffffff" stroke="#6259a6" stroke-width="14" stroke-linejoin="round"/>
+  <!-- MiRA's layers only: the top 780 units of its 696.45 x 999.14 logo -->
+  <svg x="80" y="78" width="360" height="388" viewBox="0 0 696.45 772" preserveAspectRatio="xMidYMid meet">
+    <image href="MiRA_logo.svg" width="696.45" height="999.14"/>
+    <!-- hide the tops of MiRA's eyebrows, just below the last layer -->
+    <rect x="205" y="752" width="112" height="38" fill="#ffffff"/><rect x="317" y="760" width="12" height="30" fill="#ffffff"/>
+  </svg>
+  <text x="260" y="522" text-anchor="middle" font-family="Arial Rounded MT Bold, Arial Rounded MT, Arial, sans-serif" font-weight="700" font-size="66" fill="#1a1a1a">ggmira</text>
+</svg></body></html>
