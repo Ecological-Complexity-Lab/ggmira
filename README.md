@@ -115,6 +115,8 @@ The components, grouped as in `?ggmira` and the reference index:
 - **Layout.** `mira_layout()`: layout type; `seed` makes node positions
   reproducible.
 - **Camera.** `mira_camera()`: `rotate`, `tilt` (degrees), `zoom`, `pan`.
+  MiRA shows the current values under its zoom buttons; set the view with
+  the mouse and click *Copy for R* to get the call.
 - **Legends.** `mira_legends()`: legends start minimized; this opens all
   of them or those in `show`, at a `position`; `show = FALSE` hides them.
 - **Highlight.** `mira_node(highlight = "Apis_mellifera")`: a node and its

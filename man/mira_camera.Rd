@@ -28,6 +28,12 @@ it, MiRA uses its default angles and fits the network to the window.
 Everything can still be changed in MiRA: drag to rotate and tilt, use the
 mouse wheel to zoom, Shift+drag to pan.
 }
+\details{
+\strong{Finding the values.} When a plot is opened from R, MiRA shows the
+current camera under its zoom buttons, in these units, and updates it as
+you move the view. Set the view with the mouse, click \strong{Copy for R}, and
+paste the \code{mira_camera()} call into your script.
+}
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 library(emln)

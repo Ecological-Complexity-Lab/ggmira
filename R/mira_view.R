@@ -19,6 +19,11 @@ LEGEND_POSITIONS <- c("bottom-right", "top-right", "bottom-left")
 #' Everything can still be changed in MiRA: drag to rotate and tilt, use the
 #' mouse wheel to zoom, Shift+drag to pan.
 #'
+#' **Finding the values.** When a plot is opened from R, MiRA shows the
+#' current camera under its zoom buttons, in these units, and updates it as
+#' you move the view. Set the view with the mouse, click **Copy for R**, and
+#' paste the `mira_camera()` call into your script.
+#'
 #' @param rotate Rotation around the vertical axis, in degrees (MiRA's
 #'   default is 40).
 #' @param tilt Tilt toward the viewer, in degrees, between -45 and 45

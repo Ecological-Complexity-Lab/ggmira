@@ -153,7 +153,8 @@ knitr::include_graphics("figures/step-6-filter.png")
 
 Legends start minimized; `mira_legends()` opens them, all or some, and
 `position` moves them. `mira_camera()` turns, tilts, zooms and pans the
-view. `mira_node(highlight = )` makes a node and its neighbors stand out,
+view; to find the values, move the view with the mouse in MiRA and click
+*Copy for R* under the zoom buttons. `mira_node(highlight = )` makes a node and its neighbors stand out,
 as when it is picked in MiRA's Search Node. In MiRA, all of this can
 still be changed with the mouse.
 
