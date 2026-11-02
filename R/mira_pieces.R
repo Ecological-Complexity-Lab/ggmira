@@ -554,6 +554,7 @@ mira_layer <- function(color_by, color, color_values, color_scale, labels, label
 format.mira_piece <- function(x, ...) {
   fields <- x$fields
   if (identical(fields$color_by, INDIVIDUAL_KEYWORD)) fields$color_by <- LAYER_NAME_COLUMN
+  if (x$section == "mode") fields$view <- NULL # the function's name says the view
   args <- vapply(names(fields), function(arg) {
     paste(arg, "=", .format_field(fields[[arg]]))
   }, character(1))

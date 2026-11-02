@@ -113,6 +113,8 @@ Other components:
 \code{\link{mira_intralayer}()},
 \code{\link{mira_layer}()},
 \code{\link{mira_layout}()},
-\code{\link{mira_legends}()}
+\code{\link{mira_legends}()},
+\code{\link{mira_mode}},
+\code{\link{mira_mode_meta}()}
 }
 \concept{components}
