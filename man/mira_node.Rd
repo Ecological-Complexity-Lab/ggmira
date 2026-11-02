@@ -42,7 +42,9 @@ perspective (MiRA's default) or flat.}
 \item{color_values}{Colors for values of the \code{color_by} column, named by
 value: \code{c("1" = "red", "3" = "#1f77b4")}. Values not listed keep MiRA's
 palette. Gives a categorical scale. Per set:
-\code{list(pollinator = c(...))}. See \strong{Color scales} in \code{\link[=mira]{mira()}}.}
+\code{list(pollinator = c(...))}. With \code{color_by = ".set"}, the colors of
+the sets: \code{c(pollinator = "red", plant = "green")}. See \strong{Color
+scales} in \code{\link[=mira]{mira()}}.}
 
 \item{color_scale}{\code{"categorical"} (one color per value) or
 \code{"continuous"} (a gradient; numeric columns only). Without it, MiRA

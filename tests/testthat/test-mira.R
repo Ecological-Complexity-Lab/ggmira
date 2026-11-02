@@ -301,7 +301,17 @@ test_that("color_values need a categorical scale and a column in color_by", {
   expect_error(toy_plot() + mira_node(color_by = "module", color_scale = "continuous", color_values = c("1" = "red")),
                'need a categorical scale, not color_scale = "continuous"')
   expect_error(toy_plot() + mira_node(color_values = c("1" = "red")), "need a column in `color_by`")
-  expect_error(toy_plot() + mira_node(color_by = ".set", color_values = c("1" = "red")), "need a column in `color_by`")
+})
+
+test_that('color_by = ".set" with color_values colors the two node sets', {
+  p <- toy_plot() + mira_node(color_by = ".set", color_values = c(parasite = "red"))
+  expect_equal(mira_spec(p)$scales, list(.set = list(values = list(parasite = "#ff0000"))))
+  expect_error(toy_plot() + mira_node(color_by = ".set", color_values = c("1" = "red")),
+               "must use node_type values \\(parasite, host\\); not: 1")
+  expect_error(toy_plot() + mira_node(color_by = ".set", color_scale = "categorical"),
+               '`color_scale` does not apply to color_by = ".set"')
+  expect_error(toy_plot() + mira_node(color_by = ".set", color_values = list(parasite = c(a = "red"))),
+               "named by node set")
 })
 
 test_that("color_values may come in a later piece; a new color_by drops the earlier ones", {
@@ -316,8 +326,11 @@ test_that("color_values may come in a later piece; a new color_by drops the earl
 test_that("values not in the column and continuous text columns are warnings", {
   expect_warning(toy_plot() + mira_node(color_by = "module", color_values = c("1" = "red", "9" = "red")),
                  '"9" is not a value of "module"')
-  expect_warning(toy_plot() + mira_node(color_by = "guild", color_scale = "continuous"),
+  expect_warning(p <- toy_plot() + mira_node(color_by = "guild", color_scale = "continuous"),
                  '"guild" is not numeric; MiRA uses a categorical scale')
+  expect_null(mira_spec(p)$scales) # the type is not sent
+  expect_equal(mira_spec(toy_plot() + mira_node(color_by = "intra_degree", color_scale = "continuous"))$scales,
+               list(intra_degree = list(type = "continuous")))
   expect_warning(toy_plot() + mira_layer(color_by = "habitat", color_values = c(cold = "blue")),
                  '"cold" is not a value of "habitat"')
   expect_silent(toy_plot() + mira_node(color_by = "intra_degree", color_values = c("3" = "red")))

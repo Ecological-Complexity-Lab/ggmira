@@ -35,7 +35,9 @@ VIEW_SPEC_VERSION <- 1
 #'   not listed keep the palette's color. It gives a categorical scale, so
 #'   it cannot be combined with `color_scale = "continuous"`.
 #' - `mira_layer(color_by = "layer_name")` gives each layer its own color;
-#'   `color_values` named by layer set some of them.
+#'   `color_values` named by layer set some of them. Likewise
+#'   `mira_node(color_by = ".set")` colors nodes by set membership and
+#'   `color_values` named by node set set the two colors.
 #'
 #' MiRA keeps one color scale per attribute name, used wherever that
 #' attribute colors nodes, links or layers (as in MiRA's legends, where

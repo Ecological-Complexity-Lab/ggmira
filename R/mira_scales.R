@@ -79,6 +79,7 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
     .check_layer_colors(section, fn, plot)
     return(list()) # sent as layer colors, not as a scale
   }
+  if (identical(section$color_by, SET_KEYWORD)) return(.set_colors(section, fn, plot))
   scales <- list()
   set_of <- list() # attr -> the set that last set it
   for (set in .scale_sets(section, fn)) {
@@ -127,6 +128,29 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
 }
 
 .set_suffix <- function(set) if (is.na(set)) "" else sprintf(' for "%s"', set)
+
+#' Node color by set membership: `color_values` named by the two node_type
+#' values color the sets; sent as the scale of ".set". No scale type.
+#' @keywords internal
+#' @noRd
+.set_colors <- function(section, fn, plot) {
+  if (!is.null(fn)) {
+    if (!is.null(section$color_scale)) {
+      .abort_piece(fn, '`color_scale` does not apply to color_by = ".set"')
+    }
+    if (is.list(section$color_values)) {
+      .abort_piece(fn, 'with color_by = ".set", `color_values` are named by node set: c(pollinator = "red")')
+    }
+    unknown <- setdiff(names(section$color_values), plot$set_types)
+    if (length(unknown) > 0) {
+      .abort_arg(fn, "color_values", sprintf("with color_by = \".set\" must use node_type values (%s); not: %s",
+                                             paste(plot$set_types, collapse = ", "),
+                                             paste(unknown, collapse = ", ")))
+    }
+  }
+  if (is.null(section$color_values)) return(list())
+  stats::setNames(list(list(values = section$color_values)), SET_KEYWORD)
+}
 
 # Links colored by weight: R has warned that MiRA keeps its default, so
 # neither the mapping nor its scale is sent
@@ -227,6 +251,7 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
 # The data column an attribute comes from; NULL when there is none.
 # "node_type" is the converter's name for the type column (type, node_group).
 .scale_column <- function(attr, section_name, net) {
+  if (attr %in% KEYWORDS) return(NULL)
   switch(section_name,
     node = {
       column <- if (attr == "node_type") .type_column(net$nodes) else attr
@@ -259,6 +284,11 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
     if (is.null(setting)) next
     scales <- .combine_scales(scales, stats::setNames(list(stats::setNames(list(setting), parts[3])), parts[2]))
   }
+  for (attr in names(scales)) { # R has warned; MiRA would use a categorical scale anyway
+    if (identical(scales[[attr]]$type, "continuous") && !.numeric_attr(attr, plot$net)) {
+      scales[[attr]] <- NULL
+    }
+  }
   layer <- spec$layer
   if (identical(layer$color_by, INDIVIDUAL_KEYWORD) && !is.null(layer$color_values)) {
     spec$layer$colors <- as.list(layer$color_values)
@@ -267,6 +297,15 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
   spec <- Filter(length, spec)
   if (length(scales) > 0) spec$scales <- lapply(scales, .scale_json)
   spec
+}
+
+# Whether an attribute is numeric in the table that has it; TRUE when no
+# table has it (MiRA's computed attributes are numeric)
+.numeric_attr <- function(attr, net) {
+  for (table in list(net$nodes, net$state_nodes, net$extended, net$layers)) {
+    if (!is.null(table[[attr]])) return(.looks_numeric(table[[attr]]))
+  }
+  TRUE
 }
 
 .scale_json <- function(scale) {

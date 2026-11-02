@@ -70,7 +70,9 @@ from the data.
 not listed keep the palette's color. It gives a categorical scale, so
 it cannot be combined with \code{color_scale = "continuous"}.
 \item \code{mira_layer(color_by = "layer_name")} gives each layer its own color;
-\code{color_values} named by layer set some of them.
+\code{color_values} named by layer set some of them. Likewise
+\code{mira_node(color_by = ".set")} colors nodes by set membership and
+\code{color_values} named by node set set the two colors.
 }
 
 MiRA keeps one color scale per attribute name, used wherever that

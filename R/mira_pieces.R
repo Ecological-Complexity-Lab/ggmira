@@ -84,7 +84,9 @@ mira_layout <- function(type, seed, nested) {
 #' @param color_values Colors for values of the `color_by` column, named by
 #'   value: `c("1" = "red", "3" = "#1f77b4")`. Values not listed keep MiRA's
 #'   palette. Gives a categorical scale. Per set:
-#'   `list(pollinator = c(...))`. See **Color scales** in [mira()].
+#'   `list(pollinator = c(...))`. With `color_by = ".set"`, the colors of
+#'   the sets: `c(pollinator = "red", plant = "green")`. See **Color
+#'   scales** in [mira()].
 #' @param color_scale `"categorical"` (one color per value) or
 #'   `"continuous"` (a gradient; numeric columns only). Without it, MiRA
 #'   decides from the data. Per set: `c(pollinator = "continuous")`.
