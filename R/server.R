@@ -53,6 +53,10 @@ BINARY_EXTENSIONS <- c("png", "jpg", "jpeg", "gif", "ico", "woff", "woff2")
 #' @keywords internal
 #' @noRd
 .mira_app <- function(network_json, view_json, mira_path) {
+  # Evaluate now: the handler runs later, when the plot the arguments were
+  # computed from may have been changed or reassigned
+  force(network_json)
+  force(view_json)
   list(
     call = function(req) {
       path <- req$PATH_INFO

@@ -1,13 +1,90 @@
 # Color scales: color_values and color_scale in mira_node(),
 # mira_intralayer(), mira_interlayer() and mira_layer().
 #
-# In R each piece describes the colors of its own color_by. MiRA keeps one
-# scale per attribute name, used wherever that attribute colors nodes, links
-# or layers, so the spec sends them as one `scales` section:
+# In R each component describes the colors of its own color_by. MiRA keeps
+# one scale per attribute name, used wherever that attribute colors nodes,
+# links or layers, so the spec sends them as one `scales` section:
 # { <attr>: { type, values } }. Settings for the same attribute from
-# different pieces are merged; when they disagree, the later piece wins, with
-# a warning. One color per layer (color_by = "layer_name") is not a scale: its
-# colors go to the layer section as `colors`.
+# different components are merged; when they disagree, the later one wins,
+# with a warning. One color per layer (color_by = "layer_name") is not a
+# scale: its colors go to the layer section as `colors`.
+
+#' Scales: how data values become colors and sizes
+#'
+#' A scale turns the values of a mapped attribute into colors or sizes. In
+#' ggmira the scale lives in the component that maps the attribute: in
+#' [mira_node()], [mira_intralayer()], [mira_interlayer()] and [mira_layer()],
+#' `color_by` chooses what is colored, and `color_values` and `color_scale`
+#' in the same call choose the colors.
+#'
+#' @section Color:
+#' - `color_scale = "categorical"` gives each value its own color (MiRA's
+#'   Dark2 palette); `"continuous"` a gradient (Viridis, from the column's
+#'   minimum to its maximum; numeric columns only). Without it, MiRA decides
+#'   from the data: a gradient for a numeric column with many values, one
+#'   color per value otherwise.
+#' - `color_values` sets the colors of some values, named by value:
+#'   `c("1" = "red", "3" = "#1f77b4")` (numbers need quotes as names). Values
+#'   not listed keep the palette's color. It gives a categorical scale, so it
+#'   cannot be combined with `color_scale = "continuous"`.
+#' - On a bipartite network, `mira_node()` takes both per node set:
+#'   `color_scale = c(bird = "continuous")`,
+#'   `color_values = list(plant = c(species = "blue"))`.
+#' - Two special mappings take colors named by element rather than by
+#'   value: `mira_layer(color_by = "layer_name", color_values = c(L1 = "red"))`
+#'   colors layers one by one, and
+#'   `mira_node(color_by = ".set", color_values = c(bird = "red"))` colors
+#'   the two node sets.
+#'
+#' **One scale per attribute name.** MiRA keeps one color scale per
+#' attribute name, used wherever that attribute colors nodes, links or
+#' layers (as in MiRA's legends, where changing a color changes it for every
+#' element). So when two components color by the same attribute name, their
+#' settings are merged: a value that appears in both tables (node `module`
+#' 1 and link `module` 1) has one color. If the components disagree (a value
+#' given two colors, or two scale types), the later one wins, with a
+#' warning; a continuous scale cannot be combined with `color_values` for the
+#' same attribute (an error). A `color`, or a `color_by` of a different
+#' column, drops that component's earlier `color_values` and `color_scale`.
+#'
+#' @section Size:
+#' `mira_node(size_by = )` sizes nodes by a numeric attribute, scaled by
+#' MiRA from the smallest to the largest value; `size` sets the base size
+#' (and the only size, without `size_by`). Link width always follows the
+#' `weight` column. A size range from R is planned.
+#'
+#' @name mira_scales
+#' @seealso [mira()] for how components combine.
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' library(emln)
+#' net <- load_emln(17)
+#'
+#' # Manual colors for two values; the others keep the palette
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_node(color_by = "verification_level",
+#'             color_values = c(species = "#1f77b4", genus = "orange"))
+#' mira_spec(p)$scales
+#' if (interactive()) p # opens in the browser
+#'
+#' # The same numeric attribute as a gradient, or one color per value
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_node(color_by = "intra_degree_sum", color_scale = "continuous")
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
+#'
+#' # Links and nodes colored by columns that share a name share the scale:
+#' # the two components merge into one "type" scale
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_node(color_by = "type", color_values = c(bird = "#1f77b4")) +
+#'   mira_intralayer(color_by = "type", color_values = c(pollination = "#d62728"))
+#' mira_spec(p)$scales
+#'
+#' # One color per layer, two set by hand; the two node sets
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_layer(color_by = "layer_name", color_values = c(layer_1 = "orange")) +
+#'   mira_node(color_by = ".set", color_values = c(bird = "red", plant = "green"))
+#' mira_spec(p)
+NULL
 
 COLOR_SCALE_FIELDS <- c("color_values", "color_scale")
 COLOR_FIELDS <- c("color_by", "color", COLOR_SCALE_FIELDS)

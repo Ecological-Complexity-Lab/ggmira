@@ -1,5 +1,5 @@
-# The grammar pieces. Each mira_*() function records only the arguments it
-# was given, as one section of the view spec (contract: dev/ggmira/view-spec.md
+# The components of a plot. Each mira_*() function records only the arguments
+# it was given, as one section of the view spec (contract: dev/ggmira/view-spec.md
 # on MiRA's development branch). Checks that need no network run here;
 # checks against the network run when the piece is added to a plot
 # (mira_validate.R).
@@ -31,9 +31,12 @@ INDIVIDUAL_KEYWORD <- ".individual" # one color per layer
 KEYWORDS <- c(SET_KEYWORD, INDIVIDUAL_KEYWORD)
 LAYER_NAME_COLUMN <- "layer_name"   # mira_layer(color_by = "layer_name") = ".individual"
 
-#' Layout of a mira plot
+#' Layout: where the nodes go
 #'
-#' Chooses MiRA's network layout. Add it to a plot made with [mira()].
+#' Chooses MiRA's network layout, the one setting that places the nodes.
+#' Add it to a plot made with [mira()]; without it, MiRA uses its default
+#' (the bipartite layout for a bipartite network, Fruchterman-Reingold
+#' otherwise).
 #'
 #' @param type One of `"fruchterman"`, `"kamada_kawai"`, `"bipartite"`,
 #'   `"circle"`, `"grid"`, `"random"`. `"bipartite"` needs
@@ -42,11 +45,24 @@ LAYER_NAME_COLUMN <- "layer_name"   # mira_layer(color_by = "layer_name") = ".in
 #'   node positions, so a figure can be reproduced.
 #' @param nested `TRUE` or `FALSE`. Bipartite layout only: sort nodes by
 #'   degree (nested order).
-#' @return A `mira_piece`, to add to a plot with `+`.
-#' @seealso [mira()]
+#' @return A component, to add to a plot with `+`.
+#' @seealso [mira()] to start a plot; [mira_node()], [mira_intralayer()],
+#'   [mira_interlayer()] and [mira_layer()] for the elements it draws.
+#' @family components
 #' @export
-#' @examples
-#' mira_layout("kamada_kawai", seed = 42)
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' library(emln)
+#' net <- load_emln(17)
+#'
+#' # A reproducible force-directed layout
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_layout("kamada_kawai", seed = 42)
+#' mira_spec(p)
+#' if (interactive()) p # opens in the browser
+#'
+#' # The bipartite layout, nodes sorted by degree
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_layout("bipartite", seed = 42, nested = TRUE)
 mira_layout <- function(type, seed, nested) {
   .build_piece("layout", "mira_layout", environment(), list(
     type   = .choice(LAYOUT_TYPES),
@@ -55,10 +71,12 @@ mira_layout <- function(type, seed, nested) {
   ))
 }
 
-#' Node style of a mira plot
+#' Nodes: color, size, shape and labels
 #'
-#' Maps node color and size to node attributes, or sets them to constants.
-#' Add it to a plot made with [mira()].
+#' Maps node color and size to node attributes (`color_by`, `size_by`), or
+#' sets them to constants (`color`, `size`, `shape`), and shows node names.
+#' Add it to a plot made with [mira()]. Anything not given keeps MiRA's
+#' default.
 #'
 #' **Per set.** On a bipartite network (`mira(..., bipartite = TRUE)`),
 #' `color_by`, `size_by`, `shape` and `color_scale` also take a vector named
@@ -89,16 +107,36 @@ mira_layout <- function(type, seed, nested) {
 #'   scales** in [mira()].
 #' @param color_scale `"categorical"` (one color per value) or
 #'   `"continuous"` (a gradient; numeric columns only). Without it, MiRA
-#'   decides from the data. Per set: `c(pollinator = "continuous")`.
-#' @return A `mira_piece`, to add to a plot with `+`.
-#' @seealso [mira()]
+#'   decides from the data. Per set: `c(pollinator = "continuous")`. See
+#'   [mira_scales].
+#' @return A component, to add to a plot with `+`.
+#' @seealso [mira_scales] for `color_values`, `color_scale` and sizes;
+#'   [mira()] for how components combine.
+#' @family components
 #' @export
-#' @examples
-#' mira_node(color_by = "module", size = 10)
-#' mira_node(color = "steelblue", shape = "square")
-#' mira_node(color_by = c(pollinator = "module", plant = NA))
-#' mira_node(color_by = "module", color_values = c("1" = "red", "3" = "#1f77b4"))
-#' mira_node(labels = TRUE, label_size = 14)
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' library(emln)
+#' net <- load_emln(17) # birds and plants; node column verification_level
+#'
+#' # Color by a node column, size by a degree MiRA computes, node names
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_node(color_by = "verification_level", size_by = "intra_degree_sum",
+#'             size = 8, labels = TRUE, label_size = 10)
+#' mira_spec(p)
+#' if (interactive()) p # opens in the browser
+#'
+#' # One setting per node set: birds by degree, plants in the default color
+#' p2 <- p + mira_node(color_by = c(bird = "intra_degree_sum", plant = NA),
+#'                     shape = c(bird = "square", plant = "circle"))
+#' mira_spec(p2)$node
+#'
+#' # Colors of some values (see ?mira_scales)
+#' p3 <- p + mira_node(color_by = "verification_level",
+#'                     color_values = c(species = "#1f77b4", genus = "orange"))
+#' mira_spec(p3)$scales
+#'
+#' # Constants, flat nodes; a component prints as its call
+#' mira_node(color = "steelblue", shape = "circle", perspective = FALSE)
 mira_node <- function(color_by, color, size_by, size, shape, labels, label_size, perspective,
                       color_values, color_scale) {
   .build_piece("node", "mira_node", environment(), list(
@@ -115,10 +153,14 @@ mira_node <- function(color_by, color, size_by, size, shape, labels, label_size,
   ))
 }
 
-#' Intralayer link style of a mira plot
+#' Intralayer links: color, weight filter and arrowheads
 #'
-#' @param color_by Link column to color intralayer links by. `NULL` or `NA`
-#'   = default.
+#' Styles the links within layers: color by a link column (`color_by`) or
+#' one constant (`color`), hide weak links (`min_weight`), size arrowheads
+#' (`arrow_size`). Add it to a plot made with [mira()].
+#'
+#' @param color_by Link column to color intralayer links by (a column of
+#'   `net$extended`, e.g. `"type"`). `NULL` or `NA` = default.
 #' @param color A constant link color: a color name or `"#rrggbb"`. Give
 #'   `color_by` or `color`, not both.
 #' @param min_weight Hide links with weight below this value (0 or more,
@@ -127,13 +169,31 @@ mira_node <- function(color_by, color, size_by, size, shape, labels, label_size,
 #'   Directed networks only. MiRA has one arrowhead size, so this also sizes
 #'   the arrowheads of directed interlayer links.
 #' @param color_values Colors for values of the `color_by` column, named by
-#'   value. See [mira_node()] and **Color scales** in [mira()].
-#' @param color_scale `"categorical"` or `"continuous"`. See [mira_node()].
-#' @return A `mira_piece`, to add to a plot with `+`.
-#' @seealso [mira()]
+#'   value. See [mira_scales].
+#' @param color_scale `"categorical"` or `"continuous"`. See [mira_scales].
+#' @return A component, to add to a plot with `+`.
+#' @seealso [mira_interlayer()] for the links between layers;
+#'   [mira_scales] for `color_values` and `color_scale`.
+#' @family components
 #' @export
-#' @examples
-#' mira_intralayer(color = "grey60", min_weight = 0.1)
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' library(emln)
+#' net <- load_emln(17) # link column type: pollination / seed-dispersal
+#'
+#' # Color by a link column; hide links with weight below 0.01
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_intralayer(color_by = "type", min_weight = 0.01)
+#' mira_spec(p)
+#' if (interactive()) p # opens in the browser
+#'
+#' # Colors of some values (see ?mira_scales)
+#' p2 <- p + mira_intralayer(color_by = "type",
+#'                           color_values = c(pollination = "#d62728"))
+#' mira_spec(p2)$scales
+#'
+#' # One constant color; smaller arrowheads on a directed network
+#' p3 <- mira(net, bipartite = TRUE, setA_type = "bird", directed = TRUE) +
+#'   mira_intralayer(color = "grey60", arrow_size = 0.5)
 mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_values, color_scale) {
   .build_piece("intralayer", "mira_intralayer", environment(), list(
     color_by     = .mapping(),
@@ -145,7 +205,12 @@ mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_value
   ))
 }
 
-#' Interlayer link style of a mira plot
+#' Interlayer links: show, color, curvature and layer pairs
+#'
+#' Styles the links between layers: whether they are drawn (`show`; MiRA
+#' hides them by default), their color, a weight filter, how much they
+#' curve, and between which layers they are shown (`pairs`). Add it to a
+#' plot made with [mira()].
 #'
 #' @param show `TRUE` or `FALSE`: draw interlayer links.
 #' @inheritParams mira_intralayer
@@ -158,12 +223,25 @@ mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_value
 #'   may be given as a vector, `c("L1", "L2")`. The order within a pair does
 #'   not matter. Also turns interlayer links on, unless the same piece gives
 #'   `show = FALSE`.
-#' @return A `mira_piece`, to add to a plot with `+`.
-#' @seealso [mira()]
+#' @return A component, to add to a plot with `+`.
+#' @seealso [mira_intralayer()] for the links within layers;
+#'   [mira_scales] for `color_values` and `color_scale`.
+#' @family components
 #' @export
-#' @examples
-#' mira_interlayer(show = TRUE, color = "red")
-#' mira_interlayer(pairs = list(c("L1", "L2")), curvature = 0.6)
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' library(emln)
+#' net <- load_emln(17) # interlayer links between layers 1-2 and 3-4
+#'
+#' # Show interlayer links, in one color, curved
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_interlayer(show = TRUE, color = "grey40", curvature = 0.8)
+#' mira_spec(p)
+#' if (interactive()) p # opens in the browser
+#'
+#' # Only the links between some layers (this also turns them on)
+#' p2 <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_interlayer(pairs = list(c("layer_1", "layer_2")), min_weight = 0.5)
+#' mira_spec(p2)$interlayer
 mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs, color_values,
                             color_scale) {
   .build_piece("interlayer", "mira_interlayer", environment(), list(
@@ -178,19 +256,23 @@ mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs,
   ))
 }
 
-#' Layer style of a mira plot
+#' Layers: color, names and arrangement
 #'
-#' @param color_by Layer column to color layers by, or `"layer_name"` for
-#'   one color per layer (`".individual"` works too). `NULL` or `NA` =
-#'   default.
+#' Styles the layers: their color (by a layer column, one per layer, or one
+#' constant), their names and the node set names, and how they are stacked
+#' and spaced. Add it to a plot made with [mira()].
+#'
+#' @param color_by Layer column to color layers by (a column of
+#'   `net$layers`), or `"layer_name"` for one color per layer
+#'   (`".individual"` works too). `NULL` or `NA` = default.
 #' @param color A constant layer color: a color name or `"#rrggbb"`. Give
 #'   `color_by` or `color`, not both.
 #' @param color_values Colors for values of the `color_by` column, named by
 #'   value. With `color_by = "layer_name"`, named by layer:
 #'   `c(L1 = "red", L3 = "#1f77b4")`; layers not listed keep MiRA's color.
-#'   See **Color scales** in [mira()].
+#'   See [mira_scales].
 #' @param color_scale `"categorical"` or `"continuous"`. Not with
-#'   `color_by = "layer_name"`.
+#'   `color_by = "layer_name"`. See [mira_scales].
 #' @param labels `TRUE` or `FALSE`: show layer names.
 #' @param label_size Layer name size, a whole number between 8 and 32.
 #' @param set_labels `TRUE` or `FALSE`: show node set names (bipartite
@@ -198,12 +280,27 @@ mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs,
 #' @param stack `"horizontal"` or `"vertical"`: how layers are stacked.
 #' @param spacing Space between layers, a whole number between 100 and 600
 #'   (300 = MiRA's default).
-#' @return A `mira_piece`, to add to a plot with `+`.
-#' @seealso [mira()]
+#' @return A component, to add to a plot with `+`.
+#' @seealso [mira_scales] for `color_values` and `color_scale`.
+#' @family components
 #' @export
-#' @examples
-#' mira_layer(color_by = "layer_name", color_values = c(L1 = "red"))
-#' mira_layer(labels = TRUE, stack = "vertical", spacing = 200)
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' library(emln)
+#' net <- load_emln(17) # layer columns interaction_type and location
+#'
+#' # Layer names, stacked top to bottom, colored by a layer column
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_layer(color_by = "interaction_type", labels = TRUE, label_size = 18,
+#'              stack = "vertical", spacing = 250)
+#' mira_spec(p)
+#' if (interactive()) p # opens in the browser
+#'
+#' # One color per layer, two of them set by hand; node set names
+#' p2 <- mira(net, bipartite = TRUE, setA_type = "bird") +
+#'   mira_layer(color_by = "layer_name",
+#'              color_values = c(layer_1 = "orange", layer_3 = "#9467bd"),
+#'              set_labels = TRUE)
+#' mira_spec(p2)$layer
 mira_layer <- function(color_by, color, color_values, color_scale, labels, label_size, set_labels,
                        stack, spacing) {
   .build_piece("layer", "mira_layer", environment(), list(
@@ -420,12 +517,12 @@ mira_layer <- function(color_by, color, color_values, color_scale, labels, label
 
 # ---- Printing a piece -----------------------------------------------------------
 
-#' Show a piece as the call that would make it
+#' Show a component as the call that would make it
 #'
 #' Colors are shown as the `"#rrggbb"` sent to MiRA, `NULL` mappings
 #' (MiRA's default) as `NA`, and one color per layer as
 #' `color_by = "layer_name"`.
-#' @param x A `mira_piece`.
+#' @param x A component (class `mira_piece`).
 #' @param ... Not used.
 #' @return `format()`: one string. `print()`: `x`, invisibly.
 #' @keywords internal

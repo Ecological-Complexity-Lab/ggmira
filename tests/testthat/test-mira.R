@@ -84,8 +84,8 @@ test_that("an empty piece or NULL leaves the plot unchanged", {
   expect_identical(p + NULL, p)
 })
 
-test_that("only pieces can be added, and only to a plot", {
-  expect_error(toy_plot() + 1, "Only mira_\\*\\(\\) pieces")
+test_that("only components can be added, and only to a plot", {
+  expect_error(toy_plot() + 1, "Only mira_\\*\\(\\) components")
   expect_error(mira_node(size = 5) + toy_plot(), "starts with mira\\(net\\)")
 })
 

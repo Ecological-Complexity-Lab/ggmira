@@ -63,3 +63,11 @@ test_that("mira_path must contain index.html", {
   dir <- make_mira_dir()
   expect_equal(.resolve_mira_path(dir), dir)
 })
+
+test_that("the app serves the plot as it was when the server started", {
+  # print() passes the spec lazily; the handler must not see later changes
+  spec <- '{"version": 1}'
+  app <- .mira_app('{"nodes": []}', spec, make_mira_dir())
+  spec <- '{"version": 2}'
+  expect_equal(request(app, "/api/view.json")$body, '{"version": 1}')
+})
