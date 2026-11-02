@@ -6,27 +6,26 @@
 
 ## Overview
 
-ggmira plots multilayer networks in [MiRA](https://mira.ecomplab.com/), the
-browser-based multilayer network visualizer, and describes how they should
-look with code, the way ggplot2 does. Start from a network with `mira()`
-and add components with `+`: the layout, nodes, links, layers, scales,
-camera, filters and views. Printing the plot opens it in MiRA with those
-settings applied, and everything can still be changed there.
+ggmira is an R interface to [MiRA](https://mira.ecomplab.com/), the
+browser-based multilayer network visualizer. Its syntax follows ggplot2:
+start from a base plot with `mira()` and add components with `+` to control
+the nodes, links, layers and more. Using MiRA as the engine makes the plot
+both reproducible, because it is described in code, and interactive, because it opens in MiRA, where you can keep exploring and adjusting it.  It also enables using the seven visualization models of MIRA as well as a suite of other features such as node highlighting.
 
 ggmira works with the multilayer objects of the
 [emln](https://emln.ecomplab.com/) package, and includes its own copy of
-MiRA, so plots open without internet access.
+MiRA, so plots open without an internet connection.
+
 
 ## Installation
+
+ggmira is not on CRAN yet. Install the development version from GitHub:
 
 ```r
 install.packages("emln")
 # install.packages("remotes")
 remotes::install_github("Ecological-Complexity-Lab/ggmira")
 ```
-
-The repository is private: `install_github()` needs a GitHub token with
-access to it (see [Beta testing](https://github.com/Ecological-Complexity-Lab/ggmira/blob/main/vignettes/articles/beta-testing.Rmd)).
 
 ## Usage
 

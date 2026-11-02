@@ -71,15 +71,14 @@ In every element component, `color_by` and `size_by` map an attribute of
 the data: a column of the network's tables, or one MiRA computes, such as
 `intra_degree_sum`. `color`, `size` and `shape` set constants. Here nodes
 are colored by their taxonomic verification level, with two levels given
-colors by hand (`color_values`; the third keeps MiRA's palette), sized by
-degree, and labeled.
+colors by hand (`color_values`; the third keeps MiRA's palette), and sized
+by degree.
 
 ```{r}
 p <- p + mira_node(
   color_by = "verification_level",
   color_values = c(genus = "red", species = "#1f77b4"),
-  size_by = "intra_degree_sum", size = 8,
-  labels = TRUE, label_size = 10
+  size_by = "intra_degree_sum", size = 8
 )
 p
 ```
@@ -190,11 +189,11 @@ knitr::include_graphics("figures/step-8-grid.png")
 ```
 
 `mira_mode_meta()` opens the meta-network, each node once with its links
-from all layers combined; here, link weights summed over layers, nodes
-colored by the number of layers they are in, and their names shown:
+from all layers combined; here, link weights summed over layers and nodes
+colored by the number of layers they are in:
 
 ```{r}
-p + mira_mode_meta(aggregation = "weights", color_by = "participation", labels = TRUE)
+p + mira_mode_meta(aggregation = "weights", color_by = "participation")
 ```
 
 ```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
@@ -238,8 +237,7 @@ mira(net, bipartite = TRUE, setA_type = "bird") +
   mira_layout("kamada_kawai", seed = 42) +
   mira_node(color_by = "verification_level",
             color_values = c(genus = "red", species = "#1f77b4"),
-            size_by = "intra_degree_sum", size = 8,
-            labels = TRUE, label_size = 10) +
+            size_by = "intra_degree_sum", size = 8) +
   mira_intralayer(color_by = "type", min_weight = 0.01) +
   mira_interlayer(color = "grey40", curvature = 0.8, min_weight = 0.5,
                   pairs = list(c("layer_1", "layer_2"), c("layer_3", "layer_4"))) +

@@ -12,7 +12,6 @@ Description: Opens multilayer networks in MiRA, the browser-based multilayer
     network visualizer (<https://mira.ecomplab.com/>), and describes how they
     should look with composable functions for the layout, nodes, links and
     layers. Works with multilayer objects from the 'emln' package.
-    Internal development version.
 License: file LICENSE
 URL: https://github.com/Ecological-Complexity-Lab/ggmira
 Encoding: UTF-8
