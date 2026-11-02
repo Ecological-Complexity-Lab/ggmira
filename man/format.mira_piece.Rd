@@ -18,8 +18,9 @@
 \code{format()}: one string. \code{print()}: \code{x}, invisibly.
 }
 \description{
-Colors are shown as the \code{"#rrggbb"} sent to MiRA, and \code{NULL} mappings
-(MiRA's default) as \code{NA}.
+Colors are shown as the \code{"#rrggbb"} sent to MiRA, \code{NULL} mappings
+(MiRA's default) as \code{NA}, and one color per layer as
+\code{color_by = "layer_name"}.
 }
 \examples{
 mira_node(color_by = c(pollinator = "module", plant = NA), size = 8)

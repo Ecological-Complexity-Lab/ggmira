@@ -74,10 +74,14 @@ it cannot be combined with \code{color_scale = "continuous"}.
 }
 
 MiRA keeps one color scale per attribute name, used wherever that
-attribute colors nodes, links or layers. So when two pieces color by the
-same attribute, their settings are merged; if they disagree (a value
-given two colors, or two scale types), the later piece wins, with a
-warning. A new \code{color_by} or \code{color} in a section drops that section's
+attribute colors nodes, links or layers (as in MiRA's legends, where
+changing a color changes it for every element). So when two pieces color
+by the same attribute name, their settings are merged: a value that
+appears in both tables (node \code{module} 1 and link \code{module} 1) has one
+color. If the pieces disagree (a value given two colors, or two scale
+types), the later piece wins, with a warning; a continuous scale cannot
+be combined with \code{color_values} for the same attribute (an error). A
+\code{color}, or a \code{color_by} of a different column, drops that section's
 earlier \code{color_values} and \code{color_scale}.
 }
 

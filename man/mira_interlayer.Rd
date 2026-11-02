@@ -31,9 +31,10 @@ in the units of the data's \code{weight} column).}
 1 (0.35 = MiRA's default).}
 
 \item{pairs}{Show only the interlayer links between these pairs of
-layers: \code{list(c("L1", "L2"), c("L2", "L3"))}, by \code{layer_name}. The order
-within a pair does not matter. Also turns interlayer links on, unless
-\code{show = FALSE} is given.}
+layers: \code{list(c("L1", "L2"), c("L2", "L3"))}, by \code{layer_name}; one pair
+may be given as a vector, \code{c("L1", "L2")}. The order within a pair does
+not matter. Also turns interlayer links on, unless the same piece gives
+\code{show = FALSE}.}
 
 \item{color_values}{Colors for values of the \code{color_by} column, named by
 value. See \code{\link[=mira_node]{mira_node()}} and \strong{Color scales} in \code{\link[=mira]{mira()}}.}

@@ -28,13 +28,13 @@ Give \code{color_by} or \code{color}, not both.}
 
 \item{size_by}{Numeric column to size nodes by. \code{NULL} or \code{NA} = default.}
 
-\item{size}{Base node size, between 3 and 25.}
+\item{size}{Base node size, a whole number between 3 and 25.}
 
 \item{shape}{\code{"circle"} or \code{"square"}.}
 
 \item{labels}{\code{TRUE} or \code{FALSE}: show node names.}
 
-\item{label_size}{Node name size, between 8 and 24.}
+\item{label_size}{Node name size, a whole number between 8 and 24.}
 
 \item{perspective}{\code{TRUE} or \code{FALSE}: draw nodes in the layers' 3D
 perspective (MiRA's default) or flat.}
@@ -46,7 +46,7 @@ palette. Gives a categorical scale. Per set:
 
 \item{color_scale}{\code{"categorical"} (one color per value) or
 \code{"continuous"} (a gradient; numeric columns only). Without it, MiRA
-decides from the data.}
+decides from the data. Per set: \code{c(pollinator = "continuous")}.}
 }
 \value{
 A \code{mira_piece}, to add to a plot with \code{+}.
@@ -57,11 +57,12 @@ Add it to a plot made with \code{\link[=mira]{mira()}}.
 }
 \details{
 \strong{Per set.} On a bipartite network (\code{mira(..., bipartite = TRUE)}),
-\code{color_by}, \code{size_by} and \code{shape} also take a vector named by the
-\code{node_type} values, giving each set its own setting, e.g.
-\code{color_by = c(pollinator = "module", plant = NA)}. When color or size is
-per set and \code{shape} is not given, MiRA draws one set as circles and the
-other as squares.
+\code{color_by}, \code{size_by}, \code{shape} and \code{color_scale} also take a vector named
+by the \code{node_type} values, giving each set its own setting, e.g.
+\code{color_by = c(pollinator = "module", plant = NA)}; \code{color_values} takes a
+list named the same way, \code{list(pollinator = c("1" = "red"))}. When color
+or size is per set and \code{shape} is not given, MiRA draws one set as
+circles and the other as squares.
 }
 \examples{
 mira_node(color_by = "module", size = 10)

@@ -81,7 +81,7 @@ test_that("color_by and color together are an error", {
 
 test_that("numbers are checked against MiRA's ranges", {
   expect_equal(mira_node(size = 3)$fields$size, 3)
-  expect_error(mira_node(size = 2), "`size` must be a number between 3 and 25")
+  expect_error(mira_node(size = 2), "`size` must be a whole number between 3 and 25")
   expect_error(mira_node(size = 26), "between 3 and 25")
   expect_error(mira_node(size = "10"), "between 3 and 25")
   expect_equal(mira_intralayer(min_weight = 1)$fields$min_weight, 1)
@@ -137,6 +137,25 @@ test_that("pairs are a list of layer-name pairs; one pair may be a vector", {
   expect_error(mira_interlayer(pairs = list(c("L1", "L2", "L3"))), "list of layer-name pairs")
   expect_error(mira_interlayer(pairs = "L1"), "list of layer-name pairs")
   expect_error(mira_interlayer(pairs = list(c("L1", NA))), "list of layer-name pairs")
+  expect_error(mira_interlayer(pairs = c("L1", "L1")), "a pair must be two different layers")
+  expect_equal(mira_interlayer(pairs = list(c("L1", "L2"), c("L2", "L1"), c("L1", "L2")))$fields$pairs,
+               list(list("L1", "L2")))
+})
+
+test_that("sizes and spacing are whole numbers (MiRA's sliders step by 1)", {
+  expect_error(mira_node(size = 8.5), "`size` must be a whole number between 3 and 25")
+  expect_error(mira_node(label_size = 12.5), "whole number between 8 and 24")
+  expect_error(mira_layer(label_size = 12.5), "whole number between 8 and 32")
+  expect_error(mira_layer(spacing = 250.5), "whole number between 100 and 600")
+  expect_equal(mira_layer(spacing = 250)$fields$spacing, 250)
+  expect_equal(mira_intralayer(arrow_size = 0.5)$fields$arrow_size, 0.5)
+})
+
+test_that("a list of color_values where a vector is expected gives a clear error", {
+  expect_error(mira_node(color_by = "module", color_values = list("1" = "red", "2" = "blue")),
+               "as a list gives one vector per node set")
+  expect_error(mira_intralayer(color_values = list(x = "red")),
+               "must be a character vector of colors named by value")
 })
 
 test_that("color_values are colors named by value", {
@@ -172,4 +191,6 @@ test_that("new arguments print as the call", {
                'mira_interlayer(pairs = list(c("L1", "L2"), c("L2", "L3")))')
   expect_equal(format(mira_node(color_by = c(parasite = "module"), color_values = list(parasite = c(a = "red")))),
                'mira_node(color_by = c(parasite = "module"), color_values = list(parasite = c(a = "#ff0000")))')
+  expect_equal(format(mira_layer(color_by = "layer_name", color_values = c(L1 = "red"))),
+               'mira_layer(color_by = "layer_name", color_values = c(L1 = "#ff0000"))')
 })

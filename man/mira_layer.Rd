@@ -34,15 +34,15 @@ See \strong{Color scales} in \code{\link[=mira]{mira()}}.}
 
 \item{labels}{\code{TRUE} or \code{FALSE}: show layer names.}
 
-\item{label_size}{Layer name size, between 8 and 32.}
+\item{label_size}{Layer name size, a whole number between 8 and 32.}
 
 \item{set_labels}{\code{TRUE} or \code{FALSE}: show node set names (bipartite
 layout only; needs \code{mira(..., bipartite = TRUE)}).}
 
 \item{stack}{\code{"horizontal"} or \code{"vertical"}: how layers are stacked.}
 
-\item{spacing}{Space between layers, between 100 and 600 (300 = MiRA's
-default).}
+\item{spacing}{Space between layers, a whole number between 100 and 600
+(300 = MiRA's default).}
 }
 \value{
 A \code{mira_piece}, to add to a plot with \code{+}.

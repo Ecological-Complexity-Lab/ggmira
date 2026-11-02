@@ -268,7 +268,10 @@ test_that("pairs turn interlayer links on unless show is given", {
 test_that("pairs must be layer names; a pair without interlayer links is a warning", {
   expect_error(toy_plot() + mira_interlayer(pairs = c("L1", "L9")),
                "`pairs` must use layer_name values \\(L1, L2\\); not: L9")
-  expect_warning(toy_plot() + mira_interlayer(pairs = c("L2", "L2")), 'no interlayer links between "L2" and "L2"')
+  net <- toy_net()
+  net$layers <- rbind(net$layers, data.frame(layer_id = 3, layer_name = "L3", habitat = "wet"))
+  p <- suppressMessages(mira(net, bipartite = TRUE, setA_type = "parasite"))
+  expect_warning(p + mira_interlayer(pairs = c("L2", "L3")), 'no interlayer links between "L2" and "L3"')
   expect_silent(toy_plot() + mira_interlayer(pairs = c("L2", "L1")))
 })
 
