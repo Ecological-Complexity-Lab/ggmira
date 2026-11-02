@@ -95,6 +95,10 @@ print(p1d)
 # One color per node set (color replaces color_by)
 print(p1 + mira_mode_meta(color = c(bird = "orange", plant = "darkgreen")))
 
+# Node shapes follow mira_node(shape = ) (p1: birds squares, plants circles),
+# with a shape legend
+print(p1 + mira_mode_meta(layout = "circular"))
+
 # Dim the nodes and links of layers: select the others, by name or by a
 # condition on net$layers
 print(p1 + mira_mode_meta(layers = c("layer_3", "layer_4")))

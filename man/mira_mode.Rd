@@ -29,7 +29,8 @@ view with MiRA's defaults, use \code{\link[=plot_mira]{plot_mira()}} with \code{
 views where MiRA uses them:\tabular{lllllll}{
    Component \tab network \tab grid \tab map \tab layer \tab meta \tab dashboard, data \cr
    \code{\link[=mira_layout]{mira_layout()}} \tab yes \tab yes \tab yes \tab inside the bubbles \tab  \tab  \cr
-   \code{\link[=mira_node]{mira_node()}}, \code{\link[=mira_intralayer]{mira_intralayer()}} \tab yes \tab yes \tab yes \tab  \tab  \tab  \cr
+   \code{\link[=mira_node]{mira_node()}} \tab yes \tab yes \tab yes \tab  \tab shapes \tab  \cr
+   \code{\link[=mira_intralayer]{mira_intralayer()}} \tab yes \tab yes \tab yes \tab  \tab  \tab  \cr
    \code{\link[=mira_interlayer]{mira_interlayer()}} \tab yes \tab  \tab yes \tab  \tab  \tab  \cr
    \code{\link[=mira_layer]{mira_layer()}} colors \tab yes \tab yes \tab yes \tab yes \tab  \tab  \cr
    \code{mira_node(highlight = )} \tab yes \tab yes \tab yes \tab  \tab yes \tab  \cr

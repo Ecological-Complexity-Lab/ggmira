@@ -76,7 +76,8 @@ values MiRA uses when its meta-network button is clicked.
 A plot opens in one view: see \link{mira_mode} for the rules (a later
 \verb{mira_mode_*()} of another view replaces this one, with a warning).
 \code{color_by} and \code{size_by} here are meta-network measures, not columns of
-the data. The \code{"force"} layout is random: it differs each time the plot
+the data. Node shapes follow \code{mira_node(shape = )}, with a shape legend
+when the node sets have different shapes. The \code{"force"} layout is random: it differs each time the plot
 opens.
 
 \if{html}{\figure{mira_mode_meta.jpg}{options: width="100\%" alt="Network 17 as a meta-network: birds in one row, plants in the other, sized by degree"}}
@@ -100,6 +101,10 @@ p + mira_mode_meta(layout = "circular", min_weight = 2)
 
 # Two rows not sorted by degree, with a color per node set
 p + mira_mode_meta(nested = FALSE, color = c(bird = "orange", plant = "darkgreen"))
+
+# Shapes from mira_node(): birds as squares, in a circle
+p + mira_node(shape = c(bird = "square", plant = "circle")) +
+  mira_mode_meta(layout = "circular")
 
 # Dim the nodes and links of layer_1: select the other layers
 p + mira_mode_meta(layers = layer_name != "layer_1")

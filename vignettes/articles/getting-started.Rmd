@@ -201,6 +201,9 @@ p + mira_mode_meta(aggregation = "weights", color_by = "participation", labels =
 knitr::include_graphics("figures/step-8-meta.png")
 ```
 
+Node shapes set with `mira_node(shape = )` carry over to the meta-network,
+with a shape legend when birds and plants have different shapes.
+
 `layers` selects layers in the meta-network's *Filter Layers* panel: the
 nodes and links of the other layers are dimmed. It takes layer names or a
 condition on the columns of `net$layers`, like `mira_filter()`; here, the

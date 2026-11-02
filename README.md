@@ -135,7 +135,8 @@ The components, grouped as in `?ggmira` and the reference index:
   `mira_mode_meta()` (the meta-network: `aggregation`, `layout`,
   `color_by`, `size_by`, `min_weight`, `labels`..., and `layers`, which
   dims the nodes and links of the other layers, by name or by a condition
-  such as `layer_name != "layer_1"`), and
+  such as `layer_name != "layer_1"`; node shapes follow `mira_node(shape = )`),
+  and
   `mira_mode_map()`, `mira_mode_layer()`, `mira_mode_dashboard()`,
   `mira_mode_data()` with MiRA's defaults. A plot opens in one view: a
   later `mira_mode_*()` of another view replaces the earlier one, with a

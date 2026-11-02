@@ -41,7 +41,8 @@ LATITUDE_COLUMNS <- c("latitude", "Latitude") # as MiRA reads them
 #' | Component | network | grid | map | layer | meta | dashboard, data |
 #' |---|---|---|---|---|---|---|
 #' | [mira_layout()] | yes | yes | yes | inside the bubbles | | |
-#' | [mira_node()], [mira_intralayer()] | yes | yes | yes | | | |
+#' | [mira_node()] | yes | yes | yes | | shapes | |
+#' | [mira_intralayer()] | yes | yes | yes | | | |
 #' | [mira_interlayer()] | yes | | yes | | | |
 #' | [mira_layer()] colors | yes | yes | yes | yes | | |
 #' | `mira_node(highlight = )` | yes | yes | yes | | yes | |
@@ -212,7 +213,8 @@ mira_mode_data <- function() .mode_piece("data", "mira_mode_data", environment()
 #' A plot opens in one view: see [mira_mode] for the rules (a later
 #' `mira_mode_*()` of another view replaces this one, with a warning).
 #' `color_by` and `size_by` here are meta-network measures, not columns of
-#' the data. The `"force"` layout is random: it differs each time the plot
+#' the data. Node shapes follow `mira_node(shape = )`, with a shape legend
+#' when the node sets have different shapes. The `"force"` layout is random: it differs each time the plot
 #' opens.
 #'
 #' \if{html}{\figure{mira_mode_meta.jpg}{options: width="100\%" alt="Network 17 as a meta-network: birds in one row, plants in the other, sized by degree"}}
@@ -273,6 +275,10 @@ mira_mode_data <- function() .mode_piece("data", "mira_mode_data", environment()
 #'
 #' # Two rows not sorted by degree, with a color per node set
 #' p + mira_mode_meta(nested = FALSE, color = c(bird = "orange", plant = "darkgreen"))
+#'
+#' # Shapes from mira_node(): birds as squares, in a circle
+#' p + mira_node(shape = c(bird = "square", plant = "circle")) +
+#'   mira_mode_meta(layout = "circular")
 #'
 #' # Dim the nodes and links of layer_1: select the other layers
 #' p + mira_mode_meta(layers = layer_name != "layer_1")
