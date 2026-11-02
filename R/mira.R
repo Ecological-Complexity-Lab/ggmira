@@ -112,6 +112,7 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
   if (!inherits(e2, "mira_piece")) {
     stop("Only mira_*() components (e.g. mira_node()) can be added to a mira plot.", call. = FALSE)
   }
+  e2 <- .resolve_filter(e2, e1) # conditions -> names, against this network
   .validate_piece(e2, e1)
   e1$spec <- .merge_piece(e1$spec, e2)
   .update_scales(e1, e2)

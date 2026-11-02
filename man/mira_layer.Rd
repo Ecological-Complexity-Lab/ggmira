@@ -81,6 +81,7 @@ p + mira_layer(stack = "vertical", spacing = 250)
 \link{mira_scales} for \code{color_values} and \code{color_scale}.
 
 Other components: 
+\code{\link{mira_filter}()},
 \code{\link{mira_interlayer}()},
 \code{\link{mira_intralayer}()},
 \code{\link{mira_layout}()},

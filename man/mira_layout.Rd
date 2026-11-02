@@ -46,6 +46,7 @@ p + mira_layout("bipartite", nested = TRUE)
 \code{\link[=mira_interlayer]{mira_interlayer()}} and \code{\link[=mira_layer]{mira_layer()}} for the elements it draws.
 
 Other components: 
+\code{\link{mira_filter}()},
 \code{\link{mira_interlayer}()},
 \code{\link{mira_intralayer}()},
 \code{\link{mira_layer}()},

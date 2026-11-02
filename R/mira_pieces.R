@@ -554,6 +554,7 @@ print.mira_piece <- function(x, ...) {
 
 .format_field <- function(value) {
   if (is.null(value)) return("NA")
+  if (inherits(value, "mira_condition")) return(paste(deparse(value$expr), collapse = " "))
   if (!is.list(value) && length(value) == 1 && is.null(names(value))) return(.format_scalar(value))
   items <- vapply(seq_along(value), function(i) .format_field(value[[i]]), character(1))
   if (!is.null(names(value))) items <- paste(vapply(names(value), .format_name, character(1)), "=", items)

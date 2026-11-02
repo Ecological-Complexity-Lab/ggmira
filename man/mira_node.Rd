@@ -99,6 +99,7 @@ p + mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
 \code{\link[=mira]{mira()}} for how components combine.
 
 Other components: 
+\code{\link{mira_filter}()},
 \code{\link{mira_interlayer}()},
 \code{\link{mira_intralayer}()},
 \code{\link{mira_layer}()},

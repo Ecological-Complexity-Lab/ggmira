@@ -66,6 +66,7 @@ mira(net, bipartite = TRUE, setA_type = "bird", directed = TRUE) +
 \link{mira_scales} for \code{color_values} and \code{color_scale}.
 
 Other components: 
+\code{\link{mira_filter}()},
 \code{\link{mira_interlayer}()},
 \code{\link{mira_layer}()},
 \code{\link{mira_layout}()},
