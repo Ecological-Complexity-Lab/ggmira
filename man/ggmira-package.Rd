@@ -72,13 +72,16 @@ modes).
 
 \section{Views (modes)}{
 
-One view per plot; the other components still apply.
+One view per plot; the other components still apply where MiRA uses
+them (\link{mira_mode}: the rules, and what applies in each view).
 \itemize{
 \item \code{\link[=mira_mode_grid]{mira_mode_grid()}}: the layers side by side.
+\item \code{\link[=mira_mode_map]{mira_mode_map()}}: the layers on a geographic map.
+\item \code{\link[=mira_mode_layer]{mira_mode_layer()}}: one bubble per layer.
 \item \code{\link[=mira_mode_meta]{mira_mode_meta()}}: the network aggregated over layers; \code{layers} dims
 the nodes and links of the other layers.
-\item \code{\link[=mira_mode_map]{mira_mode_map()}}, \code{\link[=mira_mode_layer]{mira_mode_layer()}}, \code{\link[=mira_mode_dashboard]{mira_mode_dashboard()}},
-\code{\link[=mira_mode_data]{mira_mode_data()}}: the other views, with MiRA's defaults.
+\item \code{\link[=mira_mode_dashboard]{mira_mode_dashboard()}}: summary charts.
+\item \code{\link[=mira_mode_data]{mira_mode_data()}}: the data tables.
 }
 }
 

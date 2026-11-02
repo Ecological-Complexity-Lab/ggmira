@@ -17,77 +17,190 @@ LATITUDE_COLUMNS <- c("latitude", "Latitude") # as MiRA reads them
 
 #' Views: open the plot in another MiRA mode
 #'
-#' MiRA shows a network in several views, its *modes*: the stack of layers
-#' (network mode, the default), the layers side by side (grid), the layers
-#' on a geographic map (map), one bubble per layer (layer), the network
-#' aggregated over layers (meta-network), summary charts (dashboard) and
-#' the data tables (data). A `mira_mode_*()` component opens the plot in
-#' that view. Everything can still be changed in MiRA, including the view.
+#' MiRA shows a network in several views, its *modes*, each opened by a
+#' button in MiRA's toolbar. A `mira_mode_*()` component opens the plot in
+#' that view; without one, MiRA opens in network mode, the stack of layers.
+#' Everything can still be changed in MiRA, including the view.
+#' - [mira_mode_grid()]: the layers side by side.
+#' - [mira_mode_map()]: the layers on a geographic map.
+#' - [mira_mode_layer()]: one bubble per layer, linked by shared nodes and
+#'   interlayer links.
+#' - [mira_mode_meta()]: the network aggregated over layers.
+#' - [mira_mode_dashboard()]: summary charts.
+#' - [mira_mode_data()]: the data tables.
 #'
 #' **One view per plot.** A plot opens in one view. A later
 #' `mira_mode_*()` of another view replaces the earlier one, with a warning;
 #' a later one of the same view changes only the arguments it gives. To
-#' show a network in two views, make two plots.
+#' show a network in two views, make two plots. To open a network in any
+#' view with MiRA's defaults, use [plot_mira()] with `mode`.
 #'
-#' **What applies where.** The other components still apply where MiRA
-#' uses them: colors, sizes and shapes of nodes, links and layers show in
-#' network, grid and map modes; `highlight` also carries over to the
-#' meta-network. Two components work in fewer views, and R warns when they
-#' are combined with another one:
-#' - [mira_filter()]: network, grid and map modes only (MiRA's data
-#'   filter); the other views show the whole network. The meta-network has
-#'   its own layer filter, which dims the other layers:
-#'   `mira_mode_meta(layers = )`.
-#' - [mira_camera()]: network mode only.
+#' **What applies where.** The other components of the plot apply in the
+#' views where MiRA uses them:
 #'
-#' The map needs the layers' coordinates (`latitude` and `longitude` in
-#' `net$layers`). The layer, map, dashboard and data views open with
-#' MiRA's defaults; their settings are not available from R yet.
+#' | Component | network | grid | map | layer | meta | dashboard, data |
+#' |---|---|---|---|---|---|---|
+#' | [mira_layout()] | yes | yes | yes | inside the bubbles | | |
+#' | [mira_node()], [mira_intralayer()] | yes | yes | yes | | | |
+#' | [mira_interlayer()] | yes | | yes | | | |
+#' | [mira_layer()] colors | yes | yes | yes | yes | | |
+#' | `mira_node(highlight = )` | yes | yes | yes | | yes | |
+#' | [mira_filter()] | yes | yes | yes | | | |
+#' | [mira_camera()] | yes | | | | | |
+#'
+#' R warns when [mira_filter()] or [mira_camera()] is combined with a view
+#' that does not use it. The meta-network has its own layer filter, which
+#' dims the other layers instead: `mira_mode_meta(layers = )`.
+#'
+#' @seealso [plot_mira()] to open a network in a view with MiRA's defaults.
+#' @family components
+#' @name mira_mode
+NULL
+
+#' Grid: open the plot with the layers side by side
+#'
+#' Opens the plot in MiRA's grid mode: one panel per layer, each with its
+#' own nodes and links, as drawn in network mode (positions, colors, sizes,
+#' shapes, layer colors, node names, the highlighted node). Interlayer
+#' links are not drawn. [mira_filter()] applies: layers and nodes it drops
+#' are not drawn, and the remaining layers fill the grid. In MiRA, the grid
+#' button (four squares) opens this view.
+#'
+#' A plot opens in one view: see [mira_mode] for the rules and for what
+#' applies in each view.
+#'
+#' \if{html}{\figure{mira_mode_grid.jpg}{options: width="100\%" alt="Network 17 in grid mode: four layer panels, birds as squares and plants as circles"}}
 #'
 #' @param columns Number of columns of layers, a whole number between 1 and
 #'   8. MiRA's default is the square root of the number of layers, rounded
 #'   up.
 #' @return A component, to add to a plot with `+`.
-#' @seealso [mira_mode_meta()] for the meta-network; [plot_mira()] to open
-#'   a network in a view with MiRA's defaults.
+#' @seealso [mira_mode] for the other views.
 #' @family components
-#' @name mira_mode
+#' @export
 #' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #' p <- mira(net, bipartite = TRUE, setA_type = "bird") +
 #'   mira_node(color_by = "verification_level")
 #'
-#' # The layers side by side, in two columns
-#' p + mira_mode_grid(columns = 2)
+#' # MiRA's default columns (here 2), then all layers in one row
+#' p + mira_mode_grid()
+#' p + mira_mode_grid(columns = 4)
 #'
-#' # The other views, with MiRA's defaults
-#' p + mira_mode_map()       # needs latitude and longitude in net$layers
-#' p + mira_mode_layer()
-#' p + mira_mode_dashboard()
-#' p + mira_mode_data()
-NULL
-
-#' @rdname mira_mode
-#' @export
+#' # The filter applies in the grid
+#' p + mira_filter(nodes = type == "plant" | node_name == "Geospiza_fortis") +
+#'   mira_mode_grid()
 mira_mode_grid <- function(columns) {
   .mode_piece("grid", "mira_mode_grid", environment(), list(columns = .whole_number_in(1, GRID_COLUMNS_MAX)))
 }
 
-#' @rdname mira_mode
+#' Map: open the plot with the layers on a geographic map
+#'
+#' Opens the plot in MiRA's map mode: each layer at its coordinates on a
+#' satellite map, fitted to the layers. Clicking a location (or its name in
+#' the *Select Layers* panel) draws that layer's network over the map, as
+#' drawn in network mode. [mira_filter()] applies. In MiRA, the map button
+#' opens this view.
+#'
+#' The map needs the layers' coordinates: `latitude` and `longitude`
+#' columns in `net$layers`. Without them R stops with an error. The map's
+#' settings (opacity, street map, which layers are drawn) are not
+#' available from R yet; the map opens with MiRA's defaults.
+#'
+#' A plot opens in one view: see [mira_mode] for the rules and for what
+#' applies in each view.
+#'
+#' \if{html}{\figure{mira_mode_map.jpg}{options: width="100\%" alt="Network 17 in map mode: the Galapagos, with the layers' two islands marked"}}
+#'
+#' @return A component, to add to a plot with `+`.
+#' @seealso [mira_mode] for the other views; [mira_mode_layer()], which
+#'   also places the layers on the map.
+#' @family components
 #' @export
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' library(emln)
+#' net <- load_emln(17) # 4 layers on two islands of the Galapagos
+#' net$layers[, c("layer_name", "latitude", "longitude")]
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird")
+#' p + mira_mode_map()
 mira_mode_map <- function() .mode_piece("map", "mira_mode_map", environment(), list())
 
-#' @rdname mira_mode
+#' Layer view: open the plot with one bubble per layer
+#'
+#' Opens the plot in MiRA's layer view: each layer is a bubble, with its
+#' network drawn inside (positions from [mira_layout()]) and the layer's
+#' color from [mira_layer()]; bubbles are linked by the nodes the layers
+#' share and by interlayer links. When the layers have coordinates (`latitude` and `longitude` in
+#' `net$layers`) the bubbles are placed on a map, fitted so that none is
+#' under MiRA's panels; otherwise they are placed by a force layout. In
+#' MiRA, the layer view button opens this view.
+#'
+#' The layer view's settings (bubble size and color, links between
+#' bubbles, labels) are not available from R yet; it opens with MiRA's
+#' defaults.
+#'
+#' A plot opens in one view: see [mira_mode] for the rules and for what
+#' applies in each view.
+#'
+#' \if{html}{\figure{mira_mode_layer.jpg}{options: width="100\%" alt="Network 17 in the layer view: four bubbles on the map of the Galapagos, linked"}}
+#'
+#' @return A component, to add to a plot with `+`.
+#' @seealso [mira_mode] for the other views.
+#' @family components
 #' @export
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' library(emln)
+#' net <- load_emln(17) # 4 layers on two islands: bubbles on the map
+#' p <- mira(net, bipartite = TRUE, setA_type = "bird")
+#' p + mira_mode_layer()
+#'
+#' # Bubbles in the layers' colors
+#' p + mira_layer(color_by = "layer_name",
+#'                color_values = c(layer_1 = "orange", layer_3 = "purple")) +
+#'   mira_mode_layer()
 mira_mode_layer <- function() .mode_piece("layer", "mira_mode_layer", environment(), list())
 
-#' @rdname mira_mode
+#' Dashboard: open the plot as summary charts
+#'
+#' Opens the plot in MiRA's dashboard: a summary of the network (nodes,
+#' layers, links, density), charts per layer (nodes, links, density) and
+#' the distributions of link weights. It shows the whole network; the
+#' other components of the plot do not apply (see [mira_mode]). In MiRA,
+#' the dashboard button (a bar chart) opens this view.
+#'
+#' \if{html}{\figure{mira_mode_dashboard.jpg}{options: width="100\%" alt="Network 17 in the dashboard: summary numbers, per-layer charts and link weight distributions"}}
+#'
+#' @return A component, to add to a plot with `+`.
+#' @seealso [mira_mode] for the other views.
+#' @family components
 #' @export
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' library(emln)
+#' net <- load_emln(17)
+#' mira(net, bipartite = TRUE, setA_type = "bird") + mira_mode_dashboard()
 mira_mode_dashboard <- function() .mode_piece("dashboard", "mira_mode_dashboard", environment(), list())
 
-#' @rdname mira_mode
+#' Data: open the plot as the data tables
+#'
+#' Opens the plot in MiRA's data mode: the network's tables (nodes, state
+#' nodes, links, layers), with every attribute, sortable and filterable,
+#' and *Export CSV*. A filter set there applies to network, grid and map
+#' modes, like [mira_filter()] from R. It opens on the nodes table with
+#' every row; the other components of the plot do not apply (see
+#' [mira_mode]). In MiRA, the data button (a table) opens this view.
+#'
+#' \if{html}{\figure{mira_mode_data.jpg}{options: width="100\%" alt="Network 17 in data mode: the nodes table with its attributes"}}
+#'
+#' @return A component, to add to a plot with `+`.
+#' @seealso [mira_filter()] to filter from R; [mira_mode] for the other
+#'   views.
+#' @family components
 #' @export
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
+#' library(emln)
+#' net <- load_emln(17)
+#' mira(net, bipartite = TRUE, setA_type = "bird") + mira_mode_data()
 mira_mode_data <- function() .mode_piece("data", "mira_mode_data", environment(), list())
 
 #' Meta-network: open the plot as the network aggregated over layers
@@ -101,6 +214,8 @@ mira_mode_data <- function() .mode_piece("data", "mira_mode_data", environment()
 #' `color_by` and `size_by` here are meta-network measures, not columns of
 #' the data. The `"force"` layout is random: it differs each time the plot
 #' opens.
+#'
+#' \if{html}{\figure{mira_mode_meta.jpg}{options: width="100\%" alt="Network 17 as a meta-network: birds in one row, plants in the other, sized by degree"}}
 #'
 #' @param aggregation How links of different layers combine into one:
 #'   `"occurrence"` (MiRA's default: the number of layers with the link),

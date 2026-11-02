@@ -49,7 +49,12 @@ reference:
     components still apply.
   contents:
   - mira_mode
+  - mira_mode_grid
+  - mira_mode_map
+  - mira_mode_layer
   - mira_mode_meta
+  - mira_mode_dashboard
+  - mira_mode_data
 - title: Opening a network with MiRA's defaults
   contents:
   - plot_mira

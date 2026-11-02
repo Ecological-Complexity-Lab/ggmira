@@ -37,12 +37,15 @@
 #'   modes).
 #'
 #' @section Views (modes):
-#' One view per plot; the other components still apply.
+#' One view per plot; the other components still apply where MiRA uses
+#' them ([mira_mode]: the rules, and what applies in each view).
 #' - [mira_mode_grid()]: the layers side by side.
+#' - [mira_mode_map()]: the layers on a geographic map.
+#' - [mira_mode_layer()]: one bubble per layer.
 #' - [mira_mode_meta()]: the network aggregated over layers; `layers` dims
 #'   the nodes and links of the other layers.
-#' - [mira_mode_map()], [mira_mode_layer()], [mira_mode_dashboard()],
-#'   [mira_mode_data()]: the other views, with MiRA's defaults.
+#' - [mira_mode_dashboard()]: summary charts.
+#' - [mira_mode_data()]: the data tables.
 #'
 #' @section Opening a network with MiRA's defaults:
 #' - [plot_mira()]: open a network with no components, in any view

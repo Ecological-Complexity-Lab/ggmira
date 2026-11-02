@@ -78,6 +78,8 @@ A plot opens in one view: see \link{mira_mode} for the rules (a later
 \code{color_by} and \code{size_by} here are meta-network measures, not columns of
 the data. The \code{"force"} layout is random: it differs each time the plot
 opens.
+
+\if{html}{\figure{mira_mode_meta.jpg}{options: width="100\%" alt="Network 17 as a meta-network: birds in one row, plants in the other, sized by degree"}}
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
@@ -116,6 +118,11 @@ Other components:
 \code{\link{mira_layout}()},
 \code{\link{mira_legends}()},
 \code{\link{mira_mode}},
+\code{\link{mira_mode_dashboard}()},
+\code{\link{mira_mode_data}()},
+\code{\link{mira_mode_grid}()},
+\code{\link{mira_mode_layer}()},
+\code{\link{mira_mode_map}()},
 \code{\link{mira_node}()}
 }
 \concept{components}

@@ -115,6 +115,11 @@ Other components:
 \code{\link{mira_layout}()},
 \code{\link{mira_legends}()},
 \code{\link{mira_mode}},
+\code{\link{mira_mode_dashboard}()},
+\code{\link{mira_mode_data}()},
+\code{\link{mira_mode_grid}()},
+\code{\link{mira_mode_layer}()},
+\code{\link{mira_mode_map}()},
 \code{\link{mira_mode_meta}()}
 }
 \concept{components}
