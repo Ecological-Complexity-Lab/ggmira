@@ -154,9 +154,15 @@ knitr::include_graphics("figures/step-6-filter.png")
 Legends start minimized; `mira_legends()` opens them, all or some, and
 `position` moves them. `mira_camera()` turns, tilts, zooms and pans the
 view; to find the values, move the view with the mouse in MiRA and click
-*Copy for R* under the zoom buttons. `mira_node(highlight = )` makes a node and its neighbors stand out,
-as when it is picked in MiRA's Search Node. In MiRA, all of this can
-still be changed with the mouse.
+*Copy for R* under the zoom buttons. `mira_node(highlight = )` makes a
+node and its neighbors stand out, as when it is picked in MiRA's Search
+Node. In MiRA, all of this can still be changed with the mouse.
+
+The camera is relative to the browser window: the same call gives the
+same framing in a larger or smaller window (another screen or computer),
+but not identical pixels, so use the same window size when figures must
+match. Layers dragged one by one (Cmd/Ctrl+drag) are not part of the
+camera.
 
 ```{r}
 p + mira_legends(show = c("node_color", "layer_color"), position = "top-right") +

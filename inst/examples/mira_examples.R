@@ -65,6 +65,10 @@ p1b <- p1 +
 print(p1b)
 
 # ---- 1c. Camera, legends, highlight -------------------------------------------
+# Camera values: set the view with the mouse in MiRA, then "Copy for R" (under
+# the zoom buttons). Zoom and pan are relative to the window: the view matches
+# exactly only in a window of the same size. Layers dragged one by one are not
+# included.
 
 p1c <- p1 +
   mira_camera(rotate = 60, tilt = 25, zoom = 1.2, pan = c(0, 0.05)) +

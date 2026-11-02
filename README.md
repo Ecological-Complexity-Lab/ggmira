@@ -116,7 +116,10 @@ The components, grouped as in `?ggmira` and the reference index:
   reproducible.
 - **Camera.** `mira_camera()`: `rotate`, `tilt` (degrees), `zoom`, `pan`.
   MiRA shows the current values under its zoom buttons; set the view with
-  the mouse and click *Copy for R* to get the call.
+  the mouse and click *Copy for R* to get the call. Zoom and pan are
+  relative to the window, so the view matches exactly only in a window of
+  the same size (not across screens or computers), and layers moved one by
+  one (Cmd/Ctrl+drag) are not included (see `?mira_camera`).
 - **Legends.** `mira_legends()`: legends start minimized; this opens all
   of them or those in `show`, at a `position`; `show = FALSE` hides them.
 - **Highlight.** `mira_node(highlight = "Apis_mellifera")`: a node and its
