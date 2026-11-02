@@ -24,6 +24,52 @@ The repository is private: `install_github()` needs a GitHub token with
 access to it (create one with `usethis::create_github_token()`, store it
 with `gitcreds::gitcreds_set()`).
 
+## Beta testing
+
+Thank you for testing ggmira. Please try it on the examples and, above
+all, on a network of your own, and report anything that is wrong,
+confusing or missing.
+
+**1. Install** (R 4.1 or later). The repository is private, so
+`install_github()` needs a GitHub token (once only):
+
+```r
+install.packages(c("usethis", "gitcreds", "remotes", "emln", "pkgdown", "rmarkdown"))
+usethis::create_github_token()   # create the token on GitHub and copy it
+gitcreds::gitcreds_set()         # paste it
+remotes::install_github("Ecological-Complexity-Lab/ggmira")
+```
+
+To get fixes and new features later, run `install_github()` again and
+restart R.
+
+**2. Build the manual.** It is not published yet; build it from a clone of
+the repository:
+
+```bash
+git clone https://github.com/Ecological-Complexity-Lab/ggmira.git
+```
+
+```r
+pkgdown::build_site("path/to/ggmira", examples = FALSE)
+pkgdown::preview_site("path/to/ggmira")
+```
+
+**3. What to try.**
+
+- *Articles › Getting started*: run it step by step.
+- *Reference*: run a few examples from each page (`?mira_node`,
+  `?mira_scales`, ...). `?ggmira` lists the functions.
+- Your own network: build it with `emln::create_multilayer_network()`,
+  then make the plot you would want for a paper or a talk.
+- Each plot opens in the browser; stop them all with
+  `httpuv::stopAllServers()`.
+
+**4. Report** each problem as an issue at
+<https://github.com/Ecological-Complexity-Lab/ggmira/issues>, with the code
+you ran, what you expected and what happened, and a screenshot of MiRA.
+Report also what you could not figure out how to do, even if nothing broke.
+
 ## Opening a network
 
 `plot_multilayer()` opens a network in MiRA with MiRA's default view:
