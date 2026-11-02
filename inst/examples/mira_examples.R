@@ -5,9 +5,11 @@
 # Run the examples one at a time; each opens in the browser.
 # When done: httpuv::stopAllServers()
 
-# remotes::install_github("Ecological-Complexity-Lab/ggmira")
-# pkgdown::build_site()
-# pkgdown::preview_site()
+# Install:   remotes::install_github("Ecological-Complexity-Lab/ggmira")
+# Help:      ?ggmira (the functions by group), ?mira_node, ?mira_scales, ...
+# Site:      from a checkout of the repository (it is not published yet)
+#            pkgdown::build_site("~/GitHub/ecomplab/ggmira")
+#            pkgdown::preview_site("~/GitHub/ecomplab/ggmira")
 
 
 
