@@ -75,3 +75,26 @@ test_that("a filter that keeps nothing is a warning", {
   expect_match(mira_spec(p, json = TRUE), '"nodes": \\[\\s*\\]') # an empty array
   expect_warning(filter_plot() + mira_filter(links = weight > 5), "keeps no links")
 })
+
+test_that("numeric node names are written out as MiRA has them", {
+  net <- filter_net()
+  net$nodes$node_name <- c(100000, 100001, 3, 4)
+  net$state_nodes$node_name <- net$nodes$node_name[net$state_nodes$node_id]
+  net$extended$node_from <- c(100000, 100001, 100000, 100000)
+  net$extended$node_to <- c(3, 4, 4, 100000)
+  p <- suppressMessages(mira(net, bipartite = TRUE, setA_type = "parasite"))
+  expect_equal(mira_spec(p + mira_filter(nodes = node_name == 100000))$filter$nodes, list("100000"))
+  expect_equal(mira_spec(p + mira_filter(nodes = c(100000, 3)))$filter$nodes, list("100000", "3"))
+  expect_equal(mira_spec(p + mira_filter(nodes = "100001"))$filter$nodes, list("100001"))
+  expect_equal(mira_spec(p + mira_filter(links = node_to == 4))$filter$links,
+               list(list("L1", "100001", "L1", "4"), list("L2", "100000", "L2", "4")))
+  expect_equal(mira_spec(p + mira_node(highlight = "100000"))$node$highlight, "100000")
+  expect_error(p + mira_filter(nodes = 5), '"5" is not a node name \\(node_name values include 100000, 100001, 3, 4\\)')
+  expect_match(suppressMessages(ggmira:::.network_json(net, bipartite = TRUE, setA_type = "parasite")), "\"node_name\": 100000", fixed = TRUE)
+})
+
+test_that("NA is not a node name; long conditions print on one line", {
+  expect_error(filter_plot() + mira_filter(nodes = c("p1", NA)), "`nodes` names must not be NA")
+  piece <- mira_filter(nodes = node_type == "host" & mass > 1 & node_name %in% c("h1", "h2") & node_id > 0 & TRUE)
+  expect_false(grepl("  ", format(piece), fixed = TRUE))
+})

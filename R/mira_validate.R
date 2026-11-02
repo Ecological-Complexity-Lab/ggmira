@@ -49,9 +49,35 @@ PER_SET_FIELDS <- c("color_by", "size_by", "shape", "color_values", "color_scale
   .warn_not_computed(fields$color_by, plot, "color_by", piece$fn)
   .warn_not_computed(fields$size_by, plot, "size_by", piece$fn)
   .warn_non_numeric(.mapping_names(fields$size_by), plot$net, piece$fn)
-  if (!is.null(fields$highlight) && !fields$highlight %in% as.character(plot$net$nodes$node_name)) {
-    .abort_arg(piece$fn, "highlight", sprintf('"%s" is not a node name', fields$highlight))
+  if (!is.null(fields$highlight)) {
+    names <- .node_names(plot$net)
+    if (!fields$highlight %in% names) .abort_arg(piece$fn, "highlight", .not_node_names(fields$highlight, names))
   }
+}
+
+# Node names as MiRA has them: a numeric name is written out ("100000",
+# not "1e+05"), as in the network JSON
+.node_names <- function(net) .format_names(net$nodes$node_name)
+
+.format_names <- function(x) {
+  if (is.numeric(x)) vapply(x, format, character(1), scientific = FALSE, digits = 15) else as.character(x)
+}
+
+# The message for names that are not in the network, for `nodes` and `highlight`
+.not_node_names <- function(unknown, names) {
+  sprintf('"%s" %s not a node name (node_name values include %s)',
+          paste(unknown, collapse = '", "'), if (length(unknown) == 1) "is" else "are",
+          paste(utils::head(names, NAMES_SHOWN), collapse = ", "))
+}
+
+# A highlighted node that the node filter hides: MiRA dims everything and
+# highlights nothing. Checked after each component is merged.
+.warn_hidden_highlight <- function(spec, fn) {
+  highlight <- spec$node$highlight
+  kept <- spec$filter$nodes
+  if (is.null(highlight) || is.null(kept) || highlight %in% unlist(kept)) return(invisible(NULL))
+  warning(sprintf('%s(): the highlighted node "%s" is hidden by `mira_filter(nodes)`, so MiRA highlights nothing',
+                  fn, highlight), call. = FALSE)
 }
 
 .validate_links <- function(piece, plot) {

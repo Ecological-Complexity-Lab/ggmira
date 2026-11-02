@@ -7,12 +7,12 @@
 mira_legends(show = LEGEND_ALL, position)
 }
 \arguments{
-\item{show}{\code{"all"} (default), the legends to open (the others stay
-minimized): \code{"node_color"}, \code{"node_size"}, \code{"node_shape"},
-\code{"intralayer_color"}, \code{"interlayer_color"}, \code{"layer_color"}; or \code{FALSE}
-to hide the legend panel (MiRA's legend button shows it again). With
-per-set colors or sizes, \code{"node_color"} and \code{"node_size"} open both
-sets' legends.}
+\item{show}{\code{"all"} (default; \code{TRUE} is the same), the legends to open
+(the others stay minimized): \code{"node_color"}, \code{"node_size"},
+\code{"node_shape"}, \code{"intralayer_color"}, \code{"interlayer_color"},
+\code{"layer_color"}; or \code{FALSE} to hide the legend panel (MiRA's legend
+button shows it again). With per-set colors or sizes, \code{"node_color"}
+and \code{"node_size"} open both sets' legends.}
 
 \item{position}{Where the legends are: \code{"bottom-right"} (MiRA's
 default), \code{"top-right"} or \code{"bottom-left"}.}
@@ -26,6 +26,11 @@ A plot opens with every legend minimized (a button "Expand ... Legend").
 A legend appears only when its attribute is mapped (e.g. \code{node_size}
 needs \code{mira_node(size_by = )}). In MiRA, legends can still be expanded,
 minimized and dragged.
+}
+\details{
+A later \code{mira_legends()} changes only the arguments it gives:
+\code{mira_legends(position = "top-right")} moves the legends and leaves an
+earlier \code{show} as it was.
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

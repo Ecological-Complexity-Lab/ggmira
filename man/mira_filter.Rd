@@ -31,6 +31,13 @@ two conditions on nodes in one: \code{nodes = A & B}.
 
 Rows where a condition is \code{NA} are dropped. MiRA shows "Data filter
 active" with a button that removes the filter.
+
+A condition is evaluated where \code{mira_filter()} is called, like
+\code{\link[=subset]{subset()}}: inside a function, it sees that function's variables. A
+function that passes its arguments on through \code{...} does not see its
+caller's variables; pass values, not names, through such a wrapper.
+A node that \code{mira_node(highlight = )} highlights must pass the filter,
+or MiRA highlights nothing (a warning).
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
