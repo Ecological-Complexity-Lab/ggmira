@@ -37,7 +37,10 @@ A condition is evaluated where \code{mira_filter()} is called, like
 function that passes its arguments on through \code{...} does not see its
 caller's variables; pass values, not names, through such a wrapper.
 A node that \code{mira_node(highlight = )} highlights must pass the filter,
-or MiRA highlights nothing (a warning).
+or MiRA highlights nothing (a warning). MiRA filters in network, grid
+and map modes only: in the other views (\link{mira_mode}) the whole network
+is shown, with a warning. The meta-network has its own layer filter,
+which dims layers instead: \code{mira_mode_meta(layers = )}.
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
@@ -71,6 +74,13 @@ Other components:
 \code{\link{mira_layer}()},
 \code{\link{mira_layout}()},
 \code{\link{mira_legends}()},
+\code{\link{mira_mode}},
+\code{\link{mira_mode_dashboard}()},
+\code{\link{mira_mode_data}()},
+\code{\link{mira_mode_grid}()},
+\code{\link{mira_mode_layer}()},
+\code{\link{mira_mode_map}()},
+\code{\link{mira_mode_meta}()},
 \code{\link{mira_node}()}
 }
 \concept{components}

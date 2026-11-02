@@ -14,7 +14,8 @@ mira(
 }
 \arguments{
 \item{net}{A multilayer object (created by \code{emln::create_multilayer_network()}
-or \code{emln::load_emln()}).}
+or \code{emln::load_emln()}). MiRA does not draw links with weight 0 (weight
+0 means "no link" in MiRA); R warns how many there are.}
 
 \item{bipartite}{Logical. Whether the network is bipartite. Defaults to
 \code{FALSE}. Bipartite is not auto-detected. When \code{TRUE}, the nodes
@@ -30,7 +31,7 @@ this is the higher trophic level (e.g. \code{"pollinator"},
 \item{directed}{Logical or NULL. Whether intralayer links are directed.
 If NULL (default): undirected when \code{bipartite = TRUE} (bipartite edge
 lists usually store each link once, which would look directed);
-otherwise auto-detected from edge symmetry, as in \code{\link[=plot_multilayer]{plot_multilayer()}}.}
+otherwise auto-detected from edge symmetry, as in \code{\link[=plot_mira]{plot_mira()}}.}
 
 \item{directed_interlayer}{Logical or NULL. Whether interlayer links are
 directed. If NULL (default), inherits from \code{directed}.}
@@ -103,6 +104,6 @@ httpuv::stopAllServers()
 \seealso{
 \code{\link[=mira_spec]{mira_spec()}} to see what a plot sends to MiRA;
 \code{\link[=print.mira_plot]{print.mira_plot()}} for the browser and port options;
-\code{\link[=plot_multilayer]{plot_multilayer()}} to open a network with MiRA's defaults and no
+\code{\link[=plot_mira]{plot_mira()}} to open a network with MiRA's defaults and no
 components.
 }

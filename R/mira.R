@@ -40,17 +40,18 @@ VIEW_SPEC_VERSION <- 1
 #' that is not in the network is a warning, and MiRA keeps its default for
 #' that setting. [mira_spec()] shows what a plot sends to MiRA.
 #'
-#' @inheritParams plot_multilayer
+#' @inheritParams plot_mira
 #' @param net A multilayer object (created by `emln::create_multilayer_network()`
-#'   or `emln::load_emln()`).
+#'   or `emln::load_emln()`). MiRA does not draw links with weight 0 (weight
+#'   0 means "no link" in MiRA); R warns how many there are.
 #' @param directed Logical or NULL. Whether intralayer links are directed.
 #'   If NULL (default): undirected when `bipartite = TRUE` (bipartite edge
 #'   lists usually store each link once, which would look directed);
-#'   otherwise auto-detected from edge symmetry, as in [plot_multilayer()].
+#'   otherwise auto-detected from edge symmetry, as in [plot_mira()].
 #' @return A `mira_plot` object.
 #' @seealso [mira_spec()] to see what a plot sends to MiRA;
 #'   [print.mira_plot()] for the browser and port options;
-#'   [plot_multilayer()] to open a network with MiRA's defaults and no
+#'   [plot_mira()] to open a network with MiRA's defaults and no
 #'   components.
 #' @export
 #' @examplesIf requireNamespace("emln", quietly = TRUE)
@@ -82,6 +83,7 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
     directed <- FALSE
     message("Bipartite network: drawn as undirected. Use directed = TRUE for a directed one.")
   }
+  .warn_zero_weight(net, "mira")
   network_json <- .network_json(
     net,
     bipartite           = bipartite,
@@ -116,9 +118,12 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
     stop("Only mira_*() components (e.g. mira_node()) can be added to a mira plot.", call. = FALSE)
   }
   e2 <- .resolve_filter(e2, e1) # conditions -> names, against this network
+  e2 <- .resolve_meta_layers(e2, e1) # the same, for mira_mode_meta(layers = )
   .validate_piece(e2, e1)
+  e1$spec <- .replace_mode(e1$spec, e2) # one view per plot
   e1$spec <- .merge_piece(e1$spec, e2)
-  .warn_hidden_highlight(e1$spec, e2$fn)
+  .warn_hidden_highlight(e1$spec, e2)
+  .warn_view_only(e1$spec, e2)
   .update_scales(e1, e2)
 }
 
@@ -130,7 +135,7 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
 #' port when `port` is taken).
 #'
 #' @param x A `mira_plot`.
-#' @inheritParams plot_multilayer
+#' @inheritParams plot_mira
 #' @param ... Not used.
 #' @return Invisibly, the server handle. Stop it with
 #'   `httpuv::stopServer(handle)`, or stop all servers with

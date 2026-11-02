@@ -246,3 +246,17 @@
   # Fallback: convert to string
   return(.to_json(as.character(x), indent))
 }
+
+#' Warn about links MiRA will not draw: weight 0 means "no link" in MiRA
+#' (dataParser.js drops them, with a "Data warnings" alert)
+#' @keywords internal
+#' @noRd
+.warn_zero_weight <- function(multilayer, fn) {
+  weight <- multilayer$extended$weight
+  if (is.null(weight)) return(invisible(NULL))
+  zero <- sum(suppressWarnings(as.numeric(weight)) == 0, na.rm = TRUE)
+  if (zero == 0) return(invisible(NULL))
+  warning(sprintf(paste0('%s(): MiRA treats weight 0 as "no link": %d of %d links have weight 0 and are not drawn.\n',
+                         "To draw them, give them a weight above 0 in net$extended."),
+                  fn, zero, length(weight)), call. = FALSE)
+}

@@ -65,14 +65,31 @@ does this too).
 \section{Data (what is drawn)}{
 
 \itemize{
-\item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes or links.
+\item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes or links (network, grid and map
+modes).
+}
+}
+
+\section{Views (modes)}{
+
+One view per plot; the other components still apply where MiRA uses
+them (\link{mira_mode}: the rules, and what applies in each view).
+\itemize{
+\item \code{\link[=mira_mode_grid]{mira_mode_grid()}}: the layers side by side.
+\item \code{\link[=mira_mode_map]{mira_mode_map()}}: the layers on a geographic map.
+\item \code{\link[=mira_mode_layer]{mira_mode_layer()}}: one bubble per layer.
+\item \code{\link[=mira_mode_meta]{mira_mode_meta()}}: the network aggregated over layers; \code{layers} dims
+the nodes and links of the other layers.
+\item \code{\link[=mira_mode_dashboard]{mira_mode_dashboard()}}: summary charts.
+\item \code{\link[=mira_mode_data]{mira_mode_data()}}: the data tables.
 }
 }
 
 \section{Opening a network with MiRA's defaults}{
 
 \itemize{
-\item \code{\link[=plot_multilayer]{plot_multilayer()}}: open a network with no components.
+\item \code{\link[=plot_mira]{plot_mira()}}: open a network with no components, in any view
+(\code{plot_multilayer()} is the same, in network mode).
 }
 }
 

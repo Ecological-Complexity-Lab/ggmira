@@ -174,6 +174,63 @@ p + mira_legends(show = c("node_color", "layer_color"), position = "top-right") 
 knitr::include_graphics("figures/step-7-view.png")
 ```
 
+## 8. Views: MiRA's modes
+
+MiRA shows a network in several views, its *modes*. A `mira_mode_*()`
+component opens the plot in one of them; the other components still apply
+where MiRA uses them. `mira_mode_grid()` puts the layers side by side, with
+the node, link and layer settings of the plot:
+
+```{r}
+p + mira_mode_grid(columns = 2)
+```
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
+knitr::include_graphics("figures/step-8-grid.png")
+```
+
+`mira_mode_meta()` opens the meta-network, each node once with its links
+from all layers combined; here, link weights summed over layers, nodes
+colored by the number of layers they are in, and their names shown:
+
+```{r}
+p + mira_mode_meta(aggregation = "weights", color_by = "participation", labels = TRUE)
+```
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
+knitr::include_graphics("figures/step-8-meta.png")
+```
+
+Node shapes set with `mira_node(shape = )` carry over to the meta-network,
+with a shape legend when birds and plants have different shapes.
+
+`layers` selects layers in the meta-network's *Filter Layers* panel: the
+nodes and links of the other layers are dimmed. It takes layer names or a
+condition on the columns of `net$layers`, like `mira_filter()`; here, the
+two layers north of latitude -0.6:
+
+```{r}
+p + mira_mode_meta(layers = latitude > -0.6)
+```
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
+knitr::include_graphics("figures/step-8-meta-layers.png")
+```
+
+`mira_mode_map()`, `mira_mode_layer()`, `mira_mode_dashboard()` and
+`mira_mode_data()` open the other views with MiRA's defaults. A few rules:
+
+- A plot opens in **one view**. Adding a second `mira_mode_*()` of another
+  view replaces the first, with a warning; to see two views, make two
+  plots.
+- `mira_camera()` works in **network mode only**, and `mira_filter()` in
+  **network, grid and map modes only**; R warns when either is combined
+  with another view. The meta-network shows the whole network; to dim
+  layers in it, use `mira_mode_meta(layers = )`.
+- The map needs `latitude` and `longitude` in `net$layers`.
+- `plot_mira(net, mode = "meta")` opens a network in any view with no
+  components, with MiRA's defaults.
+
 The same plot in one expression, as in ggplot2:
 
 ```{r}
@@ -292,6 +349,7 @@ setting.
 
 - The [reference](../reference/index.html) lists every component with
   examples that build a plot step by step: `?mira_node`, `?mira_layer`, …
-- `?mira_scales` explains colors and sizes in full.
+- `?mira_scales` explains colors and sizes in full; `?mira_mode` the
+  views.
 - An example file uses every argument of every component:
   `file.edit(system.file("examples", "mira_examples.R", package = "ggmira"))`.

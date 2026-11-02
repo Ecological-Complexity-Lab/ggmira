@@ -21,7 +21,8 @@ PER_SET_FIELDS <- c("color_by", "size_by", "shape", "color_values", "color_scale
     node       = .validate_node(piece, plot),
     intralayer = .validate_links(piece, plot),
     interlayer = .validate_links(piece, plot),
-    layer      = .validate_layer(piece, plot)
+    layer      = .validate_layer(piece, plot),
+    mode       = .validate_mode(piece, plot)
   )
   invisible(NULL)
 }
@@ -71,8 +72,10 @@ PER_SET_FIELDS <- c("color_by", "size_by", "shape", "color_values", "color_scale
 }
 
 # A highlighted node that the node filter hides: MiRA dims everything and
-# highlights nothing. Checked after each component is merged.
-.warn_hidden_highlight <- function(spec, fn) {
+# highlights nothing. Checked after a node or filter component is merged.
+.warn_hidden_highlight <- function(spec, piece) {
+  if (!piece$section %in% c("node", "filter")) return(invisible(NULL)) # warn once, when it happens
+  fn <- piece$fn
   highlight <- spec$node$highlight
   kept <- spec$filter$nodes
   if (is.null(highlight) || is.null(kept) || highlight %in% unlist(kept)) return(invisible(NULL))

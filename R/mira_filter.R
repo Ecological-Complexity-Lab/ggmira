@@ -27,7 +27,10 @@ NAMES_SHOWN <- 5 # node names listed in an error message
 #' function that passes its arguments on through `...` does not see its
 #' caller's variables; pass values, not names, through such a wrapper.
 #' A node that `mira_node(highlight = )` highlights must pass the filter,
-#' or MiRA highlights nothing (a warning).
+#' or MiRA highlights nothing (a warning). MiRA filters in network, grid
+#' and map modes only: in the other views ([mira_mode]) the whole network
+#' is shown, with a warning. The meta-network has its own layer filter,
+#' which dims layers instead: `mira_mode_meta(layers = )`.
 #'
 #' @param nodes A condition on the columns of `net$nodes` (e.g.
 #'   `type == "bird"`), or node names. `NULL` or `NA` = no node filter.
@@ -126,9 +129,9 @@ mira_filter <- function(nodes, links) {
 
 # The condition's columns come from the table; other names from where
 # mira_filter() was called
-.eval_condition <- function(condition, table, arg, what) {
+.eval_condition <- function(condition, table, arg, what, fn = "mira_filter") {
   tryCatch(eval(condition$expr, table, condition$env), error = function(e) {
-    .abort_arg("mira_filter", arg, sprintf("could not be evaluated on the columns of %s: %s",
-                                           what, conditionMessage(e)))
+    .abort_arg(fn, arg, sprintf("could not be evaluated on the columns of %s: %s",
+                                what, conditionMessage(e)))
   })
 }

@@ -53,3 +53,15 @@ test_that("input checks match emln", {
   net <- structure(list(nodes = data.frame(node_name = "a")), class = "multilayer")
   expect_error(.network_json(net, bipartite = TRUE), "no `node_type`")
 })
+
+test_that("links with weight 0, which MiRA does not draw, give a warning", {
+  net <- function(weight) structure(list(extended = data.frame(layer_from = "L1", weight = weight)),
+                                    class = "multilayer")
+  expect_warning(.warn_zero_weight(net(c(1, 0, 0.5, 0)), "mira"),
+                 'mira\\(\\): MiRA treats weight 0 as "no link": 2 of 4 links have weight 0')
+  expect_warning(.warn_zero_weight(net(c("0", "1")), "plot_mira"), "plot_mira\\(\\): .*1 of 2 links") # as in MiRA
+  expect_warning(.warn_zero_weight(net(c(NA, 0, 1)), "mira"), "1 of 3 links")
+  expect_no_warning(.warn_zero_weight(net(c(1, 0.5)), "mira"))
+  no_weight <- structure(list(extended = data.frame(layer_from = "L1")), class = "multilayer")
+  expect_no_warning(.warn_zero_weight(no_weight, "mira"))
+})

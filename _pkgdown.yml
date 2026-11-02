@@ -43,9 +43,21 @@ reference:
   desc: Draw only part of the network.
   contents:
   - mira_filter
+- title: "Views: MiRA's modes"
+  desc: >
+    Open the plot in another view. A plot opens in one view; the other
+    components still apply.
+  contents:
+  - mira_mode
+  - mira_mode_grid
+  - mira_mode_map
+  - mira_mode_layer
+  - mira_mode_meta
+  - mira_mode_dashboard
+  - mira_mode_data
 - title: Opening a network with MiRA's defaults
   contents:
-  - plot_multilayer
+  - plot_mira
 
 articles:
 - title: Get started

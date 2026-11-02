@@ -35,6 +35,12 @@ const SPEC_SELECT_IDS = [
 const INTER_ARROWHEAD_SLIDER_ID = 'interArrowheadSizeSlider';
 const LEGEND_PANEL_ID = 'legendPanel';
 const LEGEND_TOGGLE_ID = 'toggleLegendBtn';
+// Views (app.js appMode values) that need the bridge after restore
+const DATA_VIEW = 'data';
+const MAP_VIEW = 'map';
+const META_VIEW = 'metanetwork';
+const META_LAYER_LIST_ID = 'mnLayerList'; // the meta-network's "Filter Layers" panel
+const DATA_MODE_BUTTON_ID = 'dataModeBtn';
 // Legend panel corners (index.html: bottom 50px, right 20px by default)
 const LEGEND_CORNERS = {
     'bottom-right': { top: '', bottom: '50px', left: '', right: '20px', alignItems: 'flex-end' },
@@ -92,6 +98,9 @@ function applySpecSafely(networkJson, spec, deps) {
 function applySpec(spec, deps) {
     const model = deps.renderer.model;
     const defaults = deps.getSessionState();
+    // Plots from R open the maps fitted to the layers, not where MiRA's maps were
+    defaults.map.mapZoom = null;
+    defaults.map.lvMapZoom = null;
     // Plots from R start with every legend minimized; mira_legends() opens them
     defaults.legend.expandedLegends = [];
     const result = applyViewSpec(defaults, spec, buildContext(model));
@@ -114,9 +123,34 @@ function applySpec(spec, deps) {
     const interArrowSlider = document.getElementById(INTER_ARROWHEAD_SLIDER_ID);
     if (interArrowSlider) interArrowSlider.value = rv.arrowheadSize;
     deps.renderer.render();
+    if (result.mode) enterView(result.mode.view, deps, result.warnings);
+    if (result.mode?.layers && deps.getAppMode?.() === META_VIEW) selectMetaLayers(result.mode.layers);
 
     if (result.warnings.length) console.warn('[MiRA] View spec warnings:\n' + result.warnings.join('\n'));
     return result.warnings;
+}
+
+/**
+ * restoreSessionState enters every view except Data mode: click its button.
+ * A view MiRA cannot open (the map without layer coordinates) leaves the plot
+ * in network mode, with a warning.
+ */
+function enterView(view, deps, warnings) {
+    if (view === DATA_VIEW && deps.getAppMode?.() !== DATA_VIEW) document.getElementById(DATA_MODE_BUTTON_ID)?.click();
+    const current = deps.getAppMode?.();
+    if (current !== undefined && current !== view) {
+        warnings.push(`mode.view: MiRA could not open this view${view === MAP_VIEW ? ' (the map needs latitude and longitude for the layers)' : ''}; showing ${current} mode`);
+    }
+}
+
+/**
+ * Select layers in the meta-network's "Filter Layers" panel, with its own
+ * items (the other layers are dimmed). The panel starts with none selected.
+ */
+function selectMetaLayers(layers) {
+    for (const item of document.querySelectorAll(`#${META_LAYER_LIST_ID} li`)) {
+        if (layers.includes(item.dataset.layerName) && !item.classList.contains('active')) item.click();
+    }
 }
 
 /** Zoom about the canvas center (as MiRA's zoom buttons), then pan by a fraction of the canvas. */
