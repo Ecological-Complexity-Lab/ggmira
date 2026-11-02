@@ -47,8 +47,10 @@ network, grid and map modes; \code{highlight} also carries over to the
 meta-network. Two components work in fewer views, and R warns when they
 are combined with another one:
 \itemize{
-\item \code{\link[=mira_filter]{mira_filter()}}: network and map modes only (MiRA's data filter); the
-other views show the whole network.
+\item \code{\link[=mira_filter]{mira_filter()}}: network, grid and map modes only (MiRA's data
+filter); the other views show the whole network. The meta-network has
+its own layer filter, which dims the other layers:
+\code{mira_mode_meta(layers = )}.
 \item \code{\link[=mira_camera]{mira_camera()}}: network mode only.
 }
 

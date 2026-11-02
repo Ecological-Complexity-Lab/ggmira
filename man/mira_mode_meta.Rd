@@ -14,7 +14,8 @@ mira_mode_meta(
   nested,
   labels,
   label_size,
-  color
+  color,
+  layers
 )
 }
 \arguments{
@@ -53,6 +54,15 @@ per node set, named by \code{node_type} (e.g.
 \code{c(bird = "orange", plant = "darkgreen")}). Give \code{color_by} or \code{color},
 not both: a later \code{color} replaces an earlier \code{color_by}, and the
 other way round.}
+
+\item{layers}{Layers to select in the meta-network's \emph{Filter Layers}
+panel: nodes and links not in them are dimmed (not removed, and the
+meta-network is not recomputed). Layer names, or a condition on the
+columns of \code{net$layers} evaluated like \code{\link[=subset]{subset()}} (e.g.
+\code{layer_name != "layer_1"}, \code{!layer_name \%in\% c("layer_1", "layer_2")},
+\code{latitude > 0}). \code{NULL} or \code{NA} (MiRA's default) = none selected,
+nothing dimmed. Unlike \code{\link[=mira_filter]{mira_filter()}}, which the meta-network does not
+use, nothing is hidden.}
 }
 \value{
 A component, to add to a plot with \code{+}.
@@ -88,6 +98,10 @@ p + mira_mode_meta(layout = "circular", min_weight = 2)
 
 # Two rows not sorted by degree, with a color per node set
 p + mira_mode_meta(nested = FALSE, color = c(bird = "orange", plant = "darkgreen"))
+
+# Dim the nodes and links of layer_1: select the other layers
+p + mira_mode_meta(layers = layer_name != "layer_1")
+p + mira_mode_meta(layers = c("layer_2", "layer_3"))
 \dontshow{\}) # examplesIf}
 }
 \seealso{

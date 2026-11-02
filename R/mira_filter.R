@@ -128,9 +128,9 @@ mira_filter <- function(nodes, links) {
 
 # The condition's columns come from the table; other names from where
 # mira_filter() was called
-.eval_condition <- function(condition, table, arg, what) {
+.eval_condition <- function(condition, table, arg, what, fn = "mira_filter") {
   tryCatch(eval(condition$expr, table, condition$env), error = function(e) {
-    .abort_arg("mira_filter", arg, sprintf("could not be evaluated on the columns of %s: %s",
-                                           what, conditionMessage(e)))
+    .abort_arg(fn, arg, sprintf("could not be evaluated on the columns of %s: %s",
+                                what, conditionMessage(e)))
   })
 }

@@ -121,3 +121,38 @@ test_that("plot_mira() checks the mode, and the map's coordinates, before openin
   expect_null(suppressMessages(plot_mira(mode_net(coordinates = TRUE), mode = "map")))
   expect_identical(formals(plot_multilayer)$mode, NULL)
 })
+
+test_that("mira_mode_meta(layers = ) takes layer names or a condition on net$layers", {
+  layers_of <- function(piece, plot = mode_plot()) mira_spec(plot + piece)$mode$layers
+  expect_equal(layers_of(mira_mode_meta(layers = c("L2", "L1", "L2"))), list("L2", "L1"))
+  expect_equal(layers_of(mira_mode_meta(layers = layer_name != "L1")), list("L2"))
+  expect_equal(layers_of(mira_mode_meta(layers = !layer_name %in% c("L1"))), list("L2"))
+  expect_equal(layers_of(mira_mode_meta(layers = latitude > 10), mode_plot(coordinates = TRUE)), list("L2"))
+  keep <- "L1"
+  expect_equal(layers_of(mira_mode_meta(layers = layer_name == keep)), list("L1"))
+  expect_equal(layers_of(mira_mode_meta(layers = NULL)), list())
+  expect_equal(layers_of(mira_mode_meta(layers = NA)), list())
+  json_layers <- function(layers) jsonlite::fromJSON(mira_spec(mode_plot() + mira_mode_meta(layers = layers),
+                                                               json = TRUE), simplifyVector = FALSE)$mode$layers
+  expect_identical(json_layers("L1"), list("L1")) # a JSON array, also for one name
+  expect_identical(json_layers(NULL), list())
+  # a later meta component keeps the layers; a later layers replaces them
+  p <- mode_plot() + mira_mode_meta(layers = "L1") + mira_mode_meta(size = 2)
+  expect_equal(mira_spec(p)$mode$layers, list("L1"))
+  expect_equal(mira_spec(p + mira_mode_meta(layers = "L2"))$mode$layers, list("L2"))
+})
+
+test_that("mira_mode_meta(layers = ) checks names and conditions against the network", {
+  expect_error(mode_plot() + mira_mode_meta(layers = c("L1", "L9")),
+               'mira_mode_meta\\(\\): `layers` "L9" is not a layer name \\(layer_name values: L1, L2\\)')
+  expect_error(mode_plot() + mira_mode_meta(layers = no_such_column > 1),
+               "mira_mode_meta\\(\\): `layers` could not be evaluated on the columns of net\\$layers")
+  expect_error(mode_plot() + mira_mode_meta(layers = 1), "must be layer names or a condition")
+  expect_error(mode_plot() + mira_mode_meta(layers = c("L1", NA)), "names must not be NA")
+  expect_warning(mode_plot() + mira_mode_meta(layers = layer_name == "none"),
+                 "mira_mode_meta\\(\\): `layers` keeps no layers; nothing is dimmed")
+})
+
+test_that("a mira_mode_meta() component with layers prints its condition", {
+  expect_output(print(mira_mode_meta(layers = layer_name != "L1")), 'mira_mode_meta\\(layers = layer_name != "L1"\\)')
+})

@@ -128,6 +128,14 @@ mira_mode_data <- function() .mode_piece("data", "mira_mode_data", environment()
 #'   `c(bird = "orange", plant = "darkgreen")`). Give `color_by` or `color`,
 #'   not both: a later `color` replaces an earlier `color_by`, and the
 #'   other way round.
+#' @param layers Layers to select in the meta-network's *Filter Layers*
+#'   panel: nodes and links not in them are dimmed (not removed, and the
+#'   meta-network is not recomputed). Layer names, or a condition on the
+#'   columns of `net$layers` evaluated like [subset()] (e.g.
+#'   `layer_name != "layer_1"`, `!layer_name %in% c("layer_1", "layer_2")`,
+#'   `latitude > 0`). `NULL` or `NA` (MiRA's default) = none selected,
+#'   nothing dimmed. Unlike [mira_filter()], which the meta-network does not
+#'   use, nothing is hidden.
 #' @return A component, to add to a plot with `+`.
 #' @seealso [mira_mode] for the other views.
 #' @family components
@@ -150,9 +158,13 @@ mira_mode_data <- function() .mode_piece("data", "mira_mode_data", environment()
 #'
 #' # Two rows not sorted by degree, with a color per node set
 #' p + mira_mode_meta(nested = FALSE, color = c(bird = "orange", plant = "darkgreen"))
+#'
+#' # Dim the nodes and links of layer_1: select the other layers
+#' p + mira_mode_meta(layers = layer_name != "layer_1")
+#' p + mira_mode_meta(layers = c("layer_2", "layer_3"))
 mira_mode_meta <- function(aggregation, layout, color_by, size_by, size, min_weight, nested,
-                           labels, label_size, color) {
-  .mode_piece("meta", "mira_mode_meta", environment(), list(
+                           labels, label_size, color, layers) {
+  piece <- .mode_piece("meta", "mira_mode_meta", environment(), list(
     aggregation = .choice(META_AGGREGATIONS),
     layout      = .choice(META_LAYOUTS),
     color_by    = .choice(META_MEASURES),
@@ -164,6 +176,46 @@ mira_mode_meta <- function(aggregation, layout, color_by, size_by, size, min_wei
     label_size  = .whole_number_in(META_LABEL_SIZE_MIN, META_LABEL_SIZE_MAX),
     color       = .shared_or_per_set(.check_color)
   ))
+  # A condition, captured here and evaluated against the network when added (as mira_filter())
+  if (!missing(layers)) piece$fields["layers"] <- list(.capture_condition(substitute(layers), parent.frame()))
+  piece
+}
+
+#' mira_mode_meta(layers = ): the condition or names -> the layer names MiRA
+#' selects (an empty list selects none)
+#' @keywords internal
+#' @noRd
+.resolve_meta_layers <- function(piece, plot) {
+  if (piece$section != "mode" || !"layers" %in% names(piece$fields)) return(piece)
+  condition <- piece$fields$layers
+  piece$fields["layers"] <- list(if (is.null(condition)) list() else .meta_layers(condition, plot$net, piece$fn))
+  piece
+}
+
+.meta_layers <- function(condition, net, fn) {
+  layers <- as.data.frame(net$layers)
+  value <- .eval_condition(condition, layers, "layers", "net$layers", fn)
+  if (is.null(value) || identical(value, NA)) return(list()) # e.g. a variable set to NULL: none selected
+  names <- .format_names(layers$layer_name)
+  numeric_names <- is.numeric(value) && is.numeric(layers$layer_name) # names given as numbers
+  if (is.character(value) || is.factor(value) || numeric_names) {
+    if (anyNA(value)) .abort_arg(fn, "layers", "names must not be NA")
+    value <- if (is.factor(value)) as.character(value) else .format_names(value)
+    unknown <- setdiff(value, names)
+    if (length(unknown) > 0) {
+      .abort_arg(fn, "layers", sprintf('"%s" %s not a layer name (layer_name values: %s)',
+                                       paste(unknown, collapse = '", "'), if (length(unknown) == 1) "is" else "are",
+                                       paste(utils::head(names, NAMES_SHOWN), collapse = ", ")))
+    }
+    kept <- unique(value)
+  } else if (is.logical(value) && length(value) == nrow(layers)) {
+    kept <- unique(names[value %in% TRUE])
+  } else {
+    .abort_arg(fn, "layers",
+               "must be layer names or a condition on the columns of net$layers (TRUE or FALSE for each layer)")
+  }
+  if (length(kept) == 0) warning(sprintf("%s(): `layers` keeps no layers; nothing is dimmed", fn), call. = FALSE)
+  as.list(kept)
 }
 
 # A mode component: its view goes first in the section, then the arguments

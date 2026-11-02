@@ -116,6 +116,7 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
     stop("Only mira_*() components (e.g. mira_node()) can be added to a mira plot.", call. = FALSE)
   }
   e2 <- .resolve_filter(e2, e1) # conditions -> names, against this network
+  e2 <- .resolve_meta_layers(e2, e1) # the same, for mira_mode_meta(layers = )
   .validate_piece(e2, e1)
   e1$spec <- .replace_mode(e1$spec, e2) # one view per plot
   e1$spec <- .merge_piece(e1$spec, e2)
