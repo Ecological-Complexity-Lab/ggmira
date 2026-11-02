@@ -90,7 +90,9 @@ knitr::include_graphics("figures/step-3-nodes.png")
 On a bipartite network, `color_by`, `size_by` and `shape` also take one
 value per node set, named by `node_type`: `color_by = c(bird =
 "intra_degree_sum", plant = NA)` colors birds by degree and leaves plants in
-MiRA's default (see `?mira_node`).
+MiRA's default (see `?mira_node`). Shapes are `"circle"`, `"square"`,
+`"triangle"` and `"diamond"`, all with the same area so sizes stay
+comparable: `shape = c(bird = "triangle", plant = "circle")`.
 
 ## 4. Links
 
