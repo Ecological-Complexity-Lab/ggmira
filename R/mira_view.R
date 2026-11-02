@@ -63,15 +63,25 @@ LEGEND_POSITIONS <- c("bottom-right", "top-right", "bottom-left")
 mira_camera <- function(rotate, tilt, zoom, pan) {
   .build_piece("camera", "mira_camera", environment(), list(
     rotate = .check_degrees,
-    tilt   = .number_in(-TILT_MAX, TILT_MAX),
+    tilt   = .degrees_in(-TILT_MAX, TILT_MAX),
     zoom   = .number_in(ZOOM_MIN, ZOOM_MAX),
     pan    = .check_pan
   ))
 }
 
 .check_degrees <- function(value, arg, fn) {
-  if (!is.numeric(value) || !.is_scalar(value) || !is.finite(value)) .abort_arg(fn, arg, "must be a number (degrees)")
+  if (!is.numeric(value) || !.is_scalar(value) || !is.finite(value)) .abort_arg(fn, arg, "must be a number of degrees")
   unname(value)
+}
+
+.degrees_in <- function(min, max) {
+  function(value, arg, fn) {
+    ok <- is.numeric(value) && .is_scalar(value) && is.finite(value)
+    if (!ok || value < min || value > max) {
+      .abort_arg(fn, arg, sprintf("must be a number of degrees between %s and %s", min, max))
+    }
+    unname(value)
+  }
 }
 
 .check_pan <- function(value, arg, fn) {
@@ -88,12 +98,16 @@ mira_camera <- function(rotate, tilt, zoom, pan) {
 #' needs `mira_node(size_by = )`). In MiRA, legends can still be expanded,
 #' minimized and dragged.
 #'
-#' @param show `"all"` (default), the legends to open (the others stay
-#'   minimized): `"node_color"`, `"node_size"`, `"node_shape"`,
-#'   `"intralayer_color"`, `"interlayer_color"`, `"layer_color"`; or `FALSE`
-#'   to hide the legend panel (MiRA's legend button shows it again). With
-#'   per-set colors or sizes, `"node_color"` and `"node_size"` open both
-#'   sets' legends.
+#' A later `mira_legends()` changes only the arguments it gives:
+#' `mira_legends(position = "top-right")` moves the legends and leaves an
+#' earlier `show` as it was.
+#'
+#' @param show `"all"` (default; `TRUE` is the same), the legends to open
+#'   (the others stay minimized): `"node_color"`, `"node_size"`,
+#'   `"node_shape"`, `"intralayer_color"`, `"interlayer_color"`,
+#'   `"layer_color"`; or `FALSE` to hide the legend panel (MiRA's legend
+#'   button shows it again). With per-set colors or sizes, `"node_color"`
+#'   and `"node_size"` open both sets' legends.
 #' @param position Where the legends are: `"bottom-right"` (MiRA's
 #'   default), `"top-right"` or `"bottom-left"`.
 #' @return A component, to add to a plot with `+`.
@@ -119,12 +133,15 @@ mira_legends <- function(show = LEGEND_ALL, position) {
     show     = .check_legend_show,
     position = .choice(LEGEND_POSITIONS)
   ))
-  if (is.null(piece$fields$show)) piece$fields$show <- LEGEND_ALL # the default opens all
+  # mira_legends() alone opens all; with arguments, only those are sent, so a
+  # later component keeps an earlier `show`
+  if (length(piece$fields) == 0) piece$fields$show <- LEGEND_ALL
   piece$fields <- piece$fields[intersect(c("show", "position"), names(piece$fields))]
   piece
 }
 
 .check_legend_show <- function(value, arg, fn) {
+  if (identical(value, TRUE)) return(LEGEND_ALL)
   if (identical(value, FALSE) || identical(value, LEGEND_ALL)) return(value)
   if (!is.character(value) || length(value) == 0 || anyNA(value) || !all(value %in% LEGEND_NAMES)) {
     .abort_arg(fn, arg, sprintf('must be "%s", FALSE, or legend names: %s', LEGEND_ALL,

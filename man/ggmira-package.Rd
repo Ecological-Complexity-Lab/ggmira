@@ -76,7 +76,7 @@ does this too).
 }
 }
 
-\section{Data}{
+\section{Networks}{
 
 ggmira works with the multilayer objects of the emln package
 (\code{emln::load_emln()}, \code{emln::create_multilayer_network()}). MiRA reads

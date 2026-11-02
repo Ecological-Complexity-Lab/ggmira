@@ -38,7 +38,7 @@
 #' @section Opening a network with MiRA's defaults:
 #' - [plot_multilayer()]: open a network with no components.
 #'
-#' @section Data:
+#' @section Networks:
 #' ggmira works with the multilayer objects of the emln package
 #' (`emln::load_emln()`, `emln::create_multilayer_network()`). MiRA reads
 #' their four tables; a column added to `net$nodes`, `net$state_nodes`,

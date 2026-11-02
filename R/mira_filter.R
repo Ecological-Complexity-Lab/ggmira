@@ -22,6 +22,13 @@ NAMES_SHOWN <- 5 # node names listed in an error message
 #' Rows where a condition is `NA` are dropped. MiRA shows "Data filter
 #' active" with a button that removes the filter.
 #'
+#' A condition is evaluated where `mira_filter()` is called, like
+#' [subset()]: inside a function, it sees that function's variables. A
+#' function that passes its arguments on through `...` does not see its
+#' caller's variables; pass values, not names, through such a wrapper.
+#' A node that `mira_node(highlight = )` highlights must pass the filter,
+#' or MiRA highlights nothing (a warning).
+#'
 #' @param nodes A condition on the columns of `net$nodes` (e.g.
 #'   `type == "bird"`), or node names. `NULL` or `NA` = no node filter.
 #' @param links A condition on the columns of `net$extended` (e.g.
@@ -87,16 +94,13 @@ mira_filter <- function(nodes, links) {
 .filter_nodes <- function(condition, net) {
   nodes <- as.data.frame(net$nodes)
   value <- .eval_condition(condition, nodes, "nodes", "net$nodes")
-  names <- as.character(nodes$node_name)
-  if (is.character(value) || is.factor(value)) {
-    value <- as.character(value)
+  names <- .node_names(net)
+  numeric_names <- is.numeric(value) && is.numeric(nodes$node_name) # names given as numbers
+  if (is.character(value) || is.factor(value) || numeric_names) {
+    if (anyNA(value)) .abort_arg("mira_filter", "nodes", "names must not be NA")
+    value <- if (is.factor(value)) as.character(value) else .format_names(value)
     unknown <- setdiff(value, names)
-    if (length(unknown) > 0) {
-      .abort_arg("mira_filter", "nodes", sprintf('"%s" %s not a node name (node_name values include %s)',
-                                                 paste(unknown, collapse = '", "'),
-                                                 if (length(unknown) == 1) "is" else "are",
-                                                 paste(utils::head(names, NAMES_SHOWN), collapse = ", ")))
-    }
+    if (length(unknown) > 0) .abort_arg("mira_filter", "nodes", .not_node_names(unknown, names))
     kept <- unique(value)
   } else if (is.logical(value) && length(value) == nrow(nodes)) {
     kept <- unique(names[value %in% TRUE])
@@ -117,7 +121,7 @@ mira_filter <- function(nodes, links) {
   }
   kept <- unique(links[value %in% TRUE, LINK_ID_COLUMNS, drop = FALSE])
   if (nrow(kept) == 0) warning("mira_filter(): `links` keeps no links; MiRA will draw none", call. = FALSE)
-  lapply(seq_len(nrow(kept)), function(i) as.list(vapply(kept[i, ], as.character, character(1), USE.NAMES = FALSE)))
+  lapply(seq_len(nrow(kept)), function(i) as.list(vapply(kept[i, ], .format_names, character(1), USE.NAMES = FALSE)))
 }
 
 # The condition's columns come from the table; other names from where

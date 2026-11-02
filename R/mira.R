@@ -118,6 +118,7 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
   e2 <- .resolve_filter(e2, e1) # conditions -> names, against this network
   .validate_piece(e2, e1)
   e1$spec <- .merge_piece(e1$spec, e2)
+  .warn_hidden_highlight(e1$spec, e2$fn)
   .update_scales(e1, e2)
 }
 
