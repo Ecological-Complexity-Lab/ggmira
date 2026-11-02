@@ -33,12 +33,14 @@
 #' - [mira_legends()]: which legends are open, and where.
 #'
 #' @section Data (what is drawn):
-#' - [mira_filter()]: draw only some nodes or links.
+#' - [mira_filter()]: draw only some nodes or links (network, grid and map
+#'   modes).
 #'
 #' @section Views (modes):
 #' One view per plot; the other components still apply.
 #' - [mira_mode_grid()]: the layers side by side.
-#' - [mira_mode_meta()]: the network aggregated over layers.
+#' - [mira_mode_meta()]: the network aggregated over layers; `layers` dims
+#'   the nodes and links of the other layers.
 #' - [mira_mode_map()], [mira_mode_layer()], [mira_mode_dashboard()],
 #'   [mira_mode_data()]: the other views, with MiRA's defaults.
 #'

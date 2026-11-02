@@ -27,9 +27,10 @@ NAMES_SHOWN <- 5 # node names listed in an error message
 #' function that passes its arguments on through `...` does not see its
 #' caller's variables; pass values, not names, through such a wrapper.
 #' A node that `mira_node(highlight = )` highlights must pass the filter,
-#' or MiRA highlights nothing (a warning). MiRA filters in network and map
-#' modes only: in the other views ([mira_mode]) the whole network is shown,
-#' with a warning.
+#' or MiRA highlights nothing (a warning). MiRA filters in network, grid
+#' and map modes only: in the other views ([mira_mode]) the whole network
+#' is shown, with a warning. The meta-network has its own layer filter,
+#' which dims layers instead: `mira_mode_meta(layers = )`.
 #'
 #' @param nodes A condition on the columns of `net$nodes` (e.g.
 #'   `type == "bird"`), or node names. `NULL` or `NA` = no node filter.

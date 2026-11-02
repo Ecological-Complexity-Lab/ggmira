@@ -132,10 +132,10 @@ test_that("mira_mode_meta(layers = ) takes layer names or a condition on net$lay
   expect_equal(layers_of(mira_mode_meta(layers = layer_name == keep)), list("L1"))
   expect_equal(layers_of(mira_mode_meta(layers = NULL)), list())
   expect_equal(layers_of(mira_mode_meta(layers = NA)), list())
-  json_layers <- function(layers) jsonlite::fromJSON(mira_spec(mode_plot() + mira_mode_meta(layers = layers),
-                                                               json = TRUE), simplifyVector = FALSE)$mode$layers
-  expect_identical(json_layers("L1"), list("L1")) # a JSON array, also for one name
-  expect_identical(json_layers(NULL), list())
+  # a JSON array, also for one name or none (whitespace removed from the printed JSON)
+  json_of <- function(layers) gsub("\\s", "", mira_spec(mode_plot() + mira_mode_meta(layers = layers), json = TRUE))
+  expect_match(json_of("L1"), '"layers":["L1"]', fixed = TRUE)
+  expect_match(json_of(NULL), '"layers":[]', fixed = TRUE)
   # a later meta component keeps the layers; a later layers replaces them
   p <- mode_plot() + mira_mode_meta(layers = "L1") + mira_mode_meta(size = 2)
   expect_equal(mira_spec(p)$mode$layers, list("L1"))

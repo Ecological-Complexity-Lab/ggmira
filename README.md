@@ -130,16 +130,19 @@ The components, grouped as in `?ggmira` and the reference index:
   neighbors stand out, as in MiRA's Search Node.
 - **Data.** `mira_filter()`: draw only some nodes (`nodes = type == "bird"`,
   or node names) or links (`links = weight > 0.1`), with conditions as in
-  `subset()`.
+  `subset()`, in network, grid and map modes.
 - **Views.** `mira_mode_grid(columns)` (layers side by side),
   `mira_mode_meta()` (the meta-network: `aggregation`, `layout`,
-  `color_by`, `size_by`, `min_weight`, `labels`...), and
+  `color_by`, `size_by`, `min_weight`, `labels`..., and `layers`, which
+  dims the nodes and links of the other layers, by name or by a condition
+  such as `layer_name != "layer_1"`), and
   `mira_mode_map()`, `mira_mode_layer()`, `mira_mode_dashboard()`,
   `mira_mode_data()` with MiRA's defaults. A plot opens in one view: a
   later `mira_mode_*()` of another view replaces the earlier one, with a
   warning. The other components still apply where MiRA uses them;
   `mira_camera()` works in network mode only and `mira_filter()` in
-  network and map modes only, with a warning otherwise (see `?mira_mode`).
+  network, grid and map modes only, with a warning otherwise (see
+  `?mira_mode`).
 
 ### Color scales
 

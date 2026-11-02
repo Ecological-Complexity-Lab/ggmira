@@ -201,6 +201,19 @@ p + mira_mode_meta(aggregation = "weights", color_by = "participation", labels =
 knitr::include_graphics("figures/step-8-meta.png")
 ```
 
+`layers` selects layers in the meta-network's *Filter Layers* panel: the
+nodes and links of the other layers are dimmed. It takes layer names or a
+condition on the columns of `net$layers`, like `mira_filter()`; here, the
+two layers north of latitude -0.6:
+
+```{r}
+p + mira_mode_meta(layers = latitude > -0.6)
+```
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
+knitr::include_graphics("figures/step-8-meta-layers.png")
+```
+
 `mira_mode_map()`, `mira_mode_layer()`, `mira_mode_dashboard()` and
 `mira_mode_data()` open the other views with MiRA's defaults. A few rules:
 
@@ -208,8 +221,9 @@ knitr::include_graphics("figures/step-8-meta.png")
   view replaces the first, with a warning; to see two views, make two
   plots.
 - `mira_camera()` works in **network mode only**, and `mira_filter()` in
-  **network and map modes only**; R warns when either is combined with
-  another view.
+  **network, grid and map modes only**; R warns when either is combined
+  with another view. The meta-network shows the whole network; to dim
+  layers in it, use `mira_mode_meta(layers = )`.
 - The map needs `latitude` and `longitude` in `net$layers`.
 - `plot_mira(net, mode = "meta")` opens a network in any view with no
   components, with MiRA's defaults.

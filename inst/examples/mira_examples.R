@@ -79,7 +79,9 @@ print(p1c)
 # ---- 1d. Views (MiRA's modes) --------------------------------------------------
 # One view per plot: a second mira_mode_*() of another view replaces the first,
 # with a warning. mira_camera() works in network mode only, mira_filter() in
-# network and map modes only (R warns otherwise).
+# network, grid and map modes only (R warns otherwise).
+
+print(p1b + mira_mode_grid())     # the filter of 1b, in the grid
 
 print(p1 + mira_mode_grid(columns = 2))
 
@@ -92,6 +94,12 @@ print(p1d)
 
 # One color per node set (color replaces color_by)
 print(p1 + mira_mode_meta(color = c(bird = "orange", plant = "darkgreen")))
+
+# Dim the nodes and links of layers: select the others, by name or by a
+# condition on net$layers
+print(p1 + mira_mode_meta(layers = c("layer_3", "layer_4")))
+print(p1 + mira_mode_meta(layers = !layer_name %in% c("layer_1", "layer_2")))
+print(p1 + mira_mode_meta(layers = latitude > -0.6))
 
 print(p1 + mira_mode_map())       # the layers have latitude and longitude
 print(p1 + mira_mode_layer())

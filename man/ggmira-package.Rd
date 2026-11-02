@@ -65,7 +65,8 @@ does this too).
 \section{Data (what is drawn)}{
 
 \itemize{
-\item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes or links.
+\item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes or links (network, grid and map
+modes).
 }
 }
 
@@ -74,7 +75,8 @@ does this too).
 One view per plot; the other components still apply.
 \itemize{
 \item \code{\link[=mira_mode_grid]{mira_mode_grid()}}: the layers side by side.
-\item \code{\link[=mira_mode_meta]{mira_mode_meta()}}: the network aggregated over layers.
+\item \code{\link[=mira_mode_meta]{mira_mode_meta()}}: the network aggregated over layers; \code{layers} dims
+the nodes and links of the other layers.
 \item \code{\link[=mira_mode_map]{mira_mode_map()}}, \code{\link[=mira_mode_layer]{mira_mode_layer()}}, \code{\link[=mira_mode_dashboard]{mira_mode_dashboard()}},
 \code{\link[=mira_mode_data]{mira_mode_data()}}: the other views, with MiRA's defaults.
 }
