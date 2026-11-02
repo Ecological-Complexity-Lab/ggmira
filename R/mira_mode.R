@@ -34,8 +34,10 @@ LATITUDE_COLUMNS <- c("latitude", "Latitude") # as MiRA reads them
 #' network, grid and map modes; `highlight` also carries over to the
 #' meta-network. Two components work in fewer views, and R warns when they
 #' are combined with another one:
-#' - [mira_filter()]: network and map modes only (MiRA's data filter); the
-#'   other views show the whole network.
+#' - [mira_filter()]: network, grid and map modes only (MiRA's data
+#'   filter); the other views show the whole network. The meta-network has
+#'   its own layer filter, which dims the other layers:
+#'   `mira_mode_meta(layers = )`.
 #' - [mira_camera()]: network mode only.
 #'
 #' The map needs the layers' coordinates (`latitude` and `longitude` in
@@ -217,10 +219,12 @@ mira_mode_meta <- function(aggregation, layout, color_by, size_by, size, min_wei
 }
 
 # Components that work in some views only: the camera (network mode) and
-# the filter (MiRA's data filter: network and map modes). Warned once, when
-# the component or the view is added.
+# the filter (MiRA's data filter: network, grid and map modes). Warned once,
+# when the component or the view is added.
 CAMERA_MODES <- NETWORK_MODE
-FILTER_MODES <- c(NETWORK_MODE, "map")
+FILTER_MODES <- c(NETWORK_MODE, "grid", "map")
+VIEW_NAMES <- c(meta = "the meta-network", layer = "layer mode", dashboard = "dashboard mode",
+                data = "data mode") # views without the data filter, as warnings name them
 
 .warn_view_only <- function(spec, piece) {
   view <- spec$mode$view
@@ -230,8 +234,10 @@ FILTER_MODES <- c(NETWORK_MODE, "map")
                     piece$fn, view), call. = FALSE)
   }
   if (piece$section %in% c("filter", "mode") && length(spec$filter) > 0 && !view %in% FILTER_MODES) {
-    warning(sprintf("%s(): mira_filter() has no effect in mira_mode_%s(); MiRA filters in network and map modes only",
-                    piece$fn, view), call. = FALSE)
+    hint <- if (view == "meta") "; to dim layers in the meta-network, use mira_mode_meta(layers = )" else ""
+    warning(sprintf(paste0("%s(): mira_filter() is not applied in %s, which shows the whole network; ",
+                           "MiRA's data filter works in network, grid and map modes%s"),
+                    piece$fn, VIEW_NAMES[[view]], hint), call. = FALSE)
   }
   invisible(NULL)
 }

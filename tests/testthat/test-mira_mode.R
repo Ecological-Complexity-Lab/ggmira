@@ -97,12 +97,15 @@ test_that("mira_camera() with another view is a warning, in either order, once",
   expect_silent(mode_plot() + mira_camera(zoom = 2) + mira_node(size = 5))
 })
 
-test_that("mira_filter() with a view other than network or map is a warning, once", {
+test_that("mira_filter() with a view other than network, grid or map is a warning, once", {
   expect_warning(mode_plot() + mira_filter(nodes = "p1") + mira_mode_meta(),
-                 "mira_mode_meta\\(\\): mira_filter\\(\\) has no effect in mira_mode_meta\\(\\)")
-  expect_warning(mode_plot() + mira_mode_data() + mira_filter(links = weight > 0), "MiRA filters in network and map modes only")
+                 paste0("mira_mode_meta\\(\\): mira_filter\\(\\) is not applied in the meta-network, ",
+                        ".*network, grid and map modes; to dim layers .* mira_mode_meta\\(layers = \\)"))
+  expect_warning(mode_plot() + mira_mode_data() + mira_filter(links = weight > 0),
+                 "mira_filter\\(\\): mira_filter\\(\\) is not applied in data mode, which shows the whole network; MiRA's data filter works in network, grid and map modes$")
   expect_silent(mode_plot(coordinates = TRUE) + mira_filter(nodes = "p1") + mira_mode_map())
-  p <- suppressWarnings(mode_plot() + mira_mode_grid() + mira_filter(nodes = "p1"))
+  expect_silent(mode_plot() + mira_filter(nodes = "p1") + mira_mode_grid())
+  p <- suppressWarnings(mode_plot() + mira_mode_layer() + mira_filter(nodes = "p1"))
   expect_silent(p + mira_node(size = 5))
 })
 
