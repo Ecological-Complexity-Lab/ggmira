@@ -42,7 +42,8 @@ VIEW_SPEC_VERSION <- 1
 #'
 #' @inheritParams plot_mira
 #' @param net A multilayer object (created by `emln::create_multilayer_network()`
-#'   or `emln::load_emln()`).
+#'   or `emln::load_emln()`). MiRA does not draw links with weight 0 (weight
+#'   0 means "no link" in MiRA); R warns how many there are.
 #' @param directed Logical or NULL. Whether intralayer links are directed.
 #'   If NULL (default): undirected when `bipartite = TRUE` (bipartite edge
 #'   lists usually store each link once, which would look directed);
@@ -82,6 +83,7 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
     directed <- FALSE
     message("Bipartite network: drawn as undirected. Use directed = TRUE for a directed one.")
   }
+  .warn_zero_weight(net, "mira")
   network_json <- .network_json(
     net,
     bipartite           = bipartite,

@@ -145,7 +145,7 @@ test_that("a computed name MiRA will not have is a warning with the variants it 
 test_that("interlayer attributes need interlayer links with a weight", {
   net <- toy_net()
   net$extended$weight[4] <- 0 # MiRA drops weight-0 links
-  p <- suppressMessages(mira(net, bipartite = TRUE))
+  expect_warning(p <- suppressMessages(mira(net, bipartite = TRUE)), "1 of 4 links have weight 0")
   expect_warning(p + mira_node(size_by = "inter_degree_sum"), "the network has no interlayer links")
   expect_silent(p + mira_node(size_by = "intra_degree_sum"))
 })
@@ -446,4 +446,11 @@ test_that("outside an interactive session a plot opens only when a browser is gi
   expect_false(served)
   expect_equal(suppressMessages(print(p, browser = "firefox")), "handle")
   expect_true(served)
+})
+
+test_that("mira() warns about links with weight 0", {
+  net <- toy_net()
+  net$extended$weight[2] <- 0
+  expect_warning(suppressMessages(mira(net, bipartite = TRUE, setA_type = "parasite")), "1 of 4 links have weight 0")
+  expect_no_warning(toy_plot())
 })
