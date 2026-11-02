@@ -38,10 +38,14 @@ VIEW_SPEC_VERSION <- 1
 #'   `color_values` named by layer set some of them.
 #'
 #' MiRA keeps one color scale per attribute name, used wherever that
-#' attribute colors nodes, links or layers. So when two pieces color by the
-#' same attribute, their settings are merged; if they disagree (a value
-#' given two colors, or two scale types), the later piece wins, with a
-#' warning. A new `color_by` or `color` in a section drops that section's
+#' attribute colors nodes, links or layers (as in MiRA's legends, where
+#' changing a color changes it for every element). So when two pieces color
+#' by the same attribute name, their settings are merged: a value that
+#' appears in both tables (node `module` 1 and link `module` 1) has one
+#' color. If the pieces disagree (a value given two colors, or two scale
+#' types), the later piece wins, with a warning; a continuous scale cannot
+#' be combined with `color_values` for the same attribute (an error). A
+#' `color`, or a `color_by` of a different column, drops that section's
 #' earlier `color_values` and `color_scale`.
 #'
 #' @inheritParams plot_multilayer
@@ -89,7 +93,7 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
     set_types    = if (bipartite) .node_types(net$nodes) else NULL,
     computed     = .computed_node_attrs(net, network_json, directed_interlayer),
     spec         = list(),
-    scale_order  = character() # sections with color scales, the latest last
+    scale_order  = character() # color scale settings (section, attribute, part), the latest last
   ), class = "mira_plot")
 }
 
@@ -159,10 +163,11 @@ mira_spec <- function(x, json = FALSE) {
 #' Merge a piece into the spec: its fields replace the same fields
 #'
 #' `color` and `color_by` are one channel, so a later `color` removes an
-#' earlier `color_by` in the same section, and the other way round. Either
-#' one also removes earlier `color_values` / `color_scale` (they belong to
-#' the earlier mapping), unless the piece gives them too. `pairs` turns
-#' interlayer links on unless the piece gives `show`.
+#' earlier `color_by` in the same section, and the other way round. A
+#' `color`, or a `color_by` of a different column, also removes earlier
+#' `color_values` / `color_scale` (they belong to the earlier mapping),
+#' unless the piece gives them too. `pairs` turns interlayer links on unless
+#' the piece gives `show`.
 #' @keywords internal
 #' @noRd
 .merge_piece <- function(spec, piece) {
@@ -170,9 +175,10 @@ mira_spec <- function(x, json = FALSE) {
   if (length(fields) == 0) return(spec)
   section <- spec[[piece$section]]
   if (is.null(section)) section <- list()
+  new_mapping <- "color_by" %in% names(fields) && !identical(fields$color_by, section$color_by)
   if ("color" %in% names(fields)) section[["color_by"]] <- NULL
   if ("color_by" %in% names(fields)) section[["color"]] <- NULL
-  if (any(c("color", "color_by") %in% names(fields))) {
+  if ("color" %in% names(fields) || new_mapping) {
     for (field in setdiff(COLOR_SCALE_FIELDS, names(fields))) section[[field]] <- NULL
   }
   if ("pairs" %in% names(fields) && !"show" %in% names(fields)) section$show <- TRUE

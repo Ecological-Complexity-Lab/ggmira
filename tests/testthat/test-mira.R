@@ -330,8 +330,82 @@ test_that("the same attribute in two pieces is merged; disagreements warn and th
   expect_warning(q <- p + mira_intralayer(color_by = "module", color_values = c("1" = "blue")),
                  'color_values "1" for "module" replaces the setting in mira_node\\(\\)')
   expect_equal(mira_spec(q)$scales$module$values, list("1" = "#0000ff"))
-  expect_warning(p + mira_intralayer(color_by = "module", color_scale = "continuous"),
-                 'color_scale "continuous" for "module" replaces the setting in mira_node\\(\\)')
+  p <- suppressMessages(mira(net, bipartite = TRUE)) +
+    mira_intralayer(color_by = "module", color_scale = "categorical")
+  expect_warning(q <- p + mira_interlayer(color_by = "module", color_scale = "continuous"),
+                 'color_scale "continuous" for "module" replaces the setting in mira_intralayer\\(\\)')
+  expect_equal(mira_spec(q)$scales, list(module = list(type = "continuous")))
+})
+
+test_that("a continuous scale and color_values for the same attribute are an error across pieces", {
+  net <- toy_net()
+  net$extended$module <- c(1, 2, 1, 2)
+  p <- suppressMessages(mira(net, bipartite = TRUE))
+  expect_error(p + mira_node(color_by = "module", color_values = c("1" = "red")) +
+                 mira_intralayer(color_by = "module", color_scale = "continuous"),
+               'color_scale = "continuous" for "module" cannot be combined with the color_values in mira_node\\(\\)')
+  expect_error(p + mira_intralayer(color_by = "module", color_scale = "continuous") +
+                 mira_node(color_by = "module", color_values = c("1" = "red")),
+               'color_values for "module" cannot be combined with color_scale = "continuous" in mira_intralayer\\(\\)')
+  # and within one section, from two pieces
+  expect_error(p + mira_node(color_by = "module", color_values = c("1" = "red")) +
+                 mira_node(color_scale = "continuous"),
+               "need a categorical scale")
+})
+
+test_that("two sets giving the same attribute different colors warn; the later set wins", {
+  expect_warning(
+    p <- toy_plot() + mira_node(color_by = c(parasite = "module", host = "module"),
+                                color_values = list(parasite = c("1" = "red"), host = c("1" = "blue"))),
+    'mira_node\\(\\): color_values "1" for "module" replaces the setting for set "parasite"')
+  expect_equal(mira_spec(p)$scales$module$values, list("1" = "#0000ff"))
+  expect_error(toy_plot() + mira_node(color_by = c(parasite = "module", host = "module"),
+                                      color_values = list(parasite = c("1" = "red")),
+                                      color_scale = list(host = "continuous")),
+               'cannot be combined with the color_values for set "parasite"')
+  # different attributes, or the same colors: no warning
+  expect_silent(toy_plot() + mira_node(color_by = c(parasite = "module", host = "abundance"),
+                                       color_values = list(parasite = c("1" = "red"), host = c("5" = "blue"))))
+  expect_silent(toy_plot() + mira_node(color_by = c(parasite = "module", host = "module"),
+                                       color_values = list(parasite = c("1" = "red"), host = c("1" = "red"))))
+})
+
+test_that("a later piece without scale settings repeats no warning and keeps the winner", {
+  net <- toy_net()
+  net$extended$module <- c(1, 2, 1, 2)
+  expect_warning(p <- toy_plot() + mira_node(color_by = "module", color_values = c("9" = "red")),
+                 '"9" is not a value')
+  expect_silent(p + mira_node(color_scale = "categorical"))
+  expect_silent(p + mira_node(size = 10))
+  p <- suppressMessages(mira(net, bipartite = TRUE)) +
+    mira_node(color_by = "module", color_values = c("1" = "red"))
+  expect_warning(p <- p + mira_intralayer(color_by = "module", color_values = c("1" = "blue")))
+  expect_silent(p <- p + mira_node(color_scale = "categorical"))
+  expect_equal(mira_spec(p)$scales$module$values, list("1" = "#0000ff"))
+})
+
+test_that("repeating the same color_by keeps the color_values; a different one drops them", {
+  p <- toy_plot() + mira_node(color_by = "module", color_values = c("1" = "red"))
+  expect_equal(mira_spec(p + mira_node(color_by = "module"))$scales$module$values, list("1" = "#ff0000"))
+  expect_null(mira_spec(p + mira_node(color_by = "abundance"))$scales)
+  expect_null(mira_spec(p + mira_node(color = "blue"))$scales)
+})
+
+test_that('color_values of "node_type" are checked against the type column, whatever its name', {
+  net <- toy_net()
+  names(net$nodes)[names(net$nodes) == "node_type"] <- "type"
+  p <- suppressMessages(mira(net, bipartite = TRUE, setA_type = "parasite"))
+  expect_warning(p + mira_node(color_by = "node_type", color_values = c(parasite = "red", zzz = "blue")),
+                 '"zzz" is not a value of "node_type"')
+  expect_silent(p + mira_node(color_by = "node_type", color_values = c(parasite = "red")))
+})
+
+test_that("links colored by weight send neither the mapping nor a scale", {
+  expect_warning(p <- toy_plot() + mira_intralayer(color_by = "weight", color_values = c("1" = "red")),
+                 "not available in MiRA yet")
+  spec <- mira_spec(p)
+  expect_null(spec$intralayer)
+  expect_null(spec$scales)
 })
 
 test_that('color_by = "layer_name" with color_values sends per-layer colors', {
