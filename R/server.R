@@ -27,6 +27,22 @@ CONTENT_TYPES <- c(
 )
 BINARY_EXTENSIONS <- c("png", "jpg", "jpeg", "gif", "ico", "woff", "woff2")
 
+#' Whether to start a server and open the browser
+#'
+#' Not when R is not interactive (a script, R CMD check, building the docs)
+#' and no browser was given: no one would see the plot, and the server would
+#' stop when the script ends. Giving `browser` serves anyway.
+#' @keywords internal
+#' @noRd
+.should_serve <- function(browser_given) {
+  if (.is_interactive() || browser_given) return(TRUE)
+  message("Not opened: R is not interactive. Print the plot in an R session, ",
+          "or give `browser` to open it from a script.")
+  FALSE
+}
+
+.is_interactive <- function() interactive() # a function, so tests can mock it
+
 #' Serve MiRA with a network (and optional view spec) and open the browser
 #'
 #' @param network_json Network JSON string (from `.network_json()`).

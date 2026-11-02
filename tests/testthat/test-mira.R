@@ -223,7 +223,7 @@ test_that("printing serves the network and the view spec", {
   local_mocked_bindings(.serve_mira = function(...) {
     served <<- list(...)
     invisible("handle")
-  })
+  }, .is_interactive = function() TRUE)
   p <- toy_plot() + mira_node(size = 10)
   expect_equal(suppressMessages(print(p, port = 9000)), "handle")
   expect_identical(served[[1]], p$network_json)
@@ -433,4 +433,17 @@ test_that('color_by = "layer_name" with color_values sends per-layer colors', {
                "must use layer_name values \\(L1, L2\\); not: L9")
   expect_error(toy_plot() + mira_layer(color_by = "layer_name", color_scale = "categorical"),
                "does not apply to one color per layer")
+})
+
+test_that("outside an interactive session a plot opens only when a browser is given", {
+  served <- FALSE
+  local_mocked_bindings(.serve_mira = function(...) {
+    served <<- TRUE
+    invisible("handle")
+  }, .is_interactive = function() FALSE)
+  p <- toy_plot()
+  expect_message(expect_null(print(p)), "Not opened: R is not interactive")
+  expect_false(served)
+  expect_equal(suppressMessages(print(p, browser = "firefox")), "handle")
+  expect_true(served)
 })

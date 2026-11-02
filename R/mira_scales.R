@@ -55,7 +55,7 @@
 #'
 #' @name mira_scales
 #' @seealso [mira()] for how components combine.
-#' @examplesIf interactive()
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #' p <- mira(net, bipartite = TRUE, setA_type = "bird")

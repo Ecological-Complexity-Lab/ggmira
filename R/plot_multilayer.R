@@ -67,24 +67,27 @@
 #'
 #' @export
 #'
-#' @examplesIf interactive()
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17)
 #'
-#' # Open with MiRA's defaults; returns the server
-#' srv <- plot_multilayer(net, bipartite = TRUE, setA_type = "bird")
+#' # Open with MiRA's defaults
+#' plot_multilayer(net, bipartite = TRUE, setA_type = "bird")
 #'
-#' # Directed links, another port and browser, a local copy of MiRA
+#' # Directed links, on another port
 #' plot_multilayer(net, bipartite = TRUE, setA_type = "bird",
-#'                 directed = TRUE, directed_interlayer = TRUE,
-#'                 port = 9000, browser = "firefox", mira_path = "~/MiRA")
+#'                 directed = TRUE, directed_interlayer = TRUE, port = 9000)
 #'
-#' # When done
-#' httpuv::stopServer(srv)
+#' # Another browser; a local copy of MiRA, not the bundled one
+#' # plot_multilayer(net, browser = "firefox", mira_path = "~/MiRA")
+#'
+#' # When done, stop the servers
+#' httpuv::stopAllServers()
 plot_multilayer <- function(multilayer, bipartite = FALSE, setA_type = NULL,
                             directed = NULL, directed_interlayer = NULL,
                             port = 8080, mira_path = NULL,
                             browser = getOption("browser")) {
+  if (!.should_serve(browser_given = !missing(browser))) return(invisible(NULL))
   message("Please report issues at ",
           "https://github.com/Ecological-Complexity-Lab/MiRA/issues")
   network_json <- .network_json(

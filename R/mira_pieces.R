@@ -50,7 +50,7 @@ LAYER_NAME_COLUMN <- "layer_name"   # mira_layer(color_by = "layer_name") = ".in
 #'   [mira_interlayer()] and [mira_layer()] for the elements it draws.
 #' @family components
 #' @export
-#' @examplesIf interactive()
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #' p <- mira(net, bipartite = TRUE, setA_type = "bird")
@@ -113,7 +113,7 @@ mira_layout <- function(type, seed, nested) {
 #'   [mira()] for how components combine.
 #' @family components
 #' @export
-#' @examplesIf interactive()
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #' p <- mira(net, bipartite = TRUE, setA_type = "bird")
@@ -174,7 +174,7 @@ mira_node <- function(color_by, color, size_by, size, shape, labels, label_size,
 #'   [mira_scales] for `color_values` and `color_scale`.
 #' @family components
 #' @export
-#' @examplesIf interactive()
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #' p <- mira(net, bipartite = TRUE, setA_type = "bird")
@@ -226,7 +226,7 @@ mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_value
 #'   [mira_scales] for `color_values` and `color_scale`.
 #' @family components
 #' @export
-#' @examplesIf interactive()
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #' p <- mira(net, bipartite = TRUE, setA_type = "bird")
@@ -286,7 +286,7 @@ mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs,
 #' @seealso [mira_scales] for `color_values` and `color_scale`.
 #' @family components
 #' @export
-#' @examplesIf interactive()
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #' p <- mira(net, bipartite = TRUE, setA_type = "bird")

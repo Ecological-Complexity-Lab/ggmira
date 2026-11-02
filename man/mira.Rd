@@ -74,7 +74,7 @@ that setting. \code{\link[=mira_spec]{mira_spec()}} shows what a plot sends to M
 }
 
 \examples{
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 library(emln)
 net <- load_emln(17) # 4 layers; bird and plant nodes
 

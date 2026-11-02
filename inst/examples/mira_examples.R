@@ -8,7 +8,7 @@
 # Install:   remotes::install_github("Ecological-Complexity-Lab/ggmira")
 # Help:      ?ggmira (the functions by group), ?mira_node, ?mira_scales, ...
 # Site:      from a checkout of the repository (it is not published yet)
-#            pkgdown::build_site("~/GitHub/ecomplab/ggmira")
+#            pkgdown::build_site("~/GitHub/ecomplab/ggmira", examples = FALSE)
 #            pkgdown::preview_site("~/GitHub/ecomplab/ggmira")
 
 

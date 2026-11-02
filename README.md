@@ -157,7 +157,7 @@ The documentation site (reference pages and articles) is built with
 pkgdown into `docs/`, which is not committed:
 
 ```r
-pkgdown::build_site()
+pkgdown::build_site(examples = FALSE) # examples shown as code, not run
 ```
 
 Design notes, decisions and the roadmap live in the

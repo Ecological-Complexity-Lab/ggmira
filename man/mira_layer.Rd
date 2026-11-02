@@ -53,7 +53,7 @@ constant), their names and the node set names, and how they are stacked
 and spaced. Add it to a plot made with \code{\link[=mira]{mira()}}.
 }
 \examples{
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 library(emln)
 net <- load_emln(17) # 4 layers; bird and plant nodes
 p <- mira(net, bipartite = TRUE, setA_type = "bird")

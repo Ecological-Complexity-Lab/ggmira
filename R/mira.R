@@ -50,7 +50,7 @@ VIEW_SPEC_VERSION <- 1
 #'   [plot_multilayer()] to open a network with MiRA's defaults and no
 #'   components.
 #' @export
-#' @examplesIf interactive()
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #'
@@ -131,23 +131,22 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
 #'   `httpuv::stopServer(handle)`, or stop all servers with
 #'   `httpuv::stopAllServers()`.
 #' @export
-#' @examplesIf interactive()
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #' p <- mira(net, bipartite = TRUE, setA_type = "bird")
 #'
 #' p        # the same as print(p)
 #'
-#' # Another port and browser
-#' print(p, port = 9000, browser = "firefox")
-#'
-#' # A local copy of MiRA instead of the one in the package
-#' print(p, mira_path = "~/MiRA")
+#' print(p, port = 9000)            # another port
+#' # print(p, browser = "firefox")  # another browser
+#' # print(p, mira_path = "~/MiRA") # a local copy of MiRA, not the bundled one
 #'
 #' # When done, stop the servers the plots started
 #' httpuv::stopAllServers()
 print.mira_plot <- function(x, port = 8080, mira_path = NULL,
                             browser = getOption("browser"), ...) {
+  if (!.should_serve(browser_given = !missing(browser))) return(invisible(NULL))
   message("Please report issues at ",
           "https://github.com/Ecological-Complexity-Lab/MiRA/issues")
   .serve_mira(x$network_json, view_json = mira_spec(x, json = TRUE), port = port,
@@ -164,7 +163,7 @@ print.mira_plot <- function(x, port = 8080, mira_path = NULL,
 #'   MiRA receives.
 #' @return A list, or a JSON string.
 #' @export
-#' @examplesIf interactive()
+#' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
 #' net <- load_emln(17) # 4 layers; bird and plant nodes
 #' p <- mira(net, bipartite = TRUE, setA_type = "bird")
