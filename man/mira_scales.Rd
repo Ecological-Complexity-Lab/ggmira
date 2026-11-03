@@ -18,6 +18,29 @@ Dark2 palette); \code{"continuous"} a gradient (Viridis, from the column's
 minimum to its maximum; numeric columns only). Without it, MiRA decides
 from the data: a gradient for a numeric column with many values, one
 color per value otherwise.
+\item \code{color_palette} chooses the palette by name (matched without case):
+\itemize{
+\item categorical: \code{"Dark2"} (MiRA's default), \code{"Set1"}, \code{"Set2"},
+\code{"Set3"}, \code{"Paired"}, \code{"Accent"}, \code{"Okabe-Ito"} (colorblind-safe).
+Columns with more values than colors reuse them.
+\item continuous, sequential: \code{"viridis"} (MiRA's default), \code{"magma"},
+\code{"cividis"} (colorblind-optimized), \code{"Blues"}, \code{"Greens"}, \code{"Reds"},
+\code{"Purples"}, \code{"Oranges"}, \code{"Greys"}, \code{"YlOrRd"}, \code{"YlGnBu"}.
+\item continuous, diverging (two sides of a middle): \code{"RdBu"}, \code{"RdYlBu"},
+\code{"Spectral"}, \code{"PiYG"}, \code{"BrBG"}, \code{"PuOr"}.
+}
+
+A categorical palette gives a categorical scale and a continuous one a
+gradient, so \code{color_scale} is not needed with it. \code{color_reverse = TRUE}
+reverses the palette (light to dark, or the two sides of a diverging
+one). In MiRA, the legend has the same choices.
+\item \code{color_limits = c(min, max)} sets the ends of a gradient instead of the
+data's range, so several plots can share one scale (e.g. 0 to 1 for
+proportions); values outside take the end colors. With a diverging
+palette, limits centered on 0 put the middle color at 0. It gives a
+continuous scale.
+\item Palettes and limits need no values, so they also work for the
+attributes MiRA computes (\code{intra_degree_sum}, ...).
 \item \code{color_values} sets the colors of some values, named by value:
 \code{c("1" = "red", "3" = "#1f77b4")} (numbers need quotes as names). Values
 not listed keep the palette's color. It gives a categorical scale, so it
@@ -32,8 +55,9 @@ colors layers one by one, and
 the two node sets.
 }
 
-\strong{One scale per attribute name.} MiRA keeps one color scale per
-attribute name, used wherever that attribute colors nodes, links or
+\strong{One scale per attribute name.} MiRA keeps one color scale (type,
+palette, reversal, limits and colors) per attribute name, used wherever
+that attribute colors nodes, links or
 layers (as in MiRA's legends, where changing a color changes it for every
 element). So when two components color by the same attribute name, their
 settings are merged: a value that appears in both tables (node \code{module}
@@ -65,6 +89,12 @@ p + mira_node(color_by = "verification_level",
 # The same numeric attribute as a gradient, or one color per value
 p + mira_node(color_by = "intra_degree_sum", color_scale = "continuous")
 p + mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
+
+# A palette, reversed; a gradient with fixed ends
+p + mira_node(color_by = "verification_level", color_palette = "Okabe-Ito")
+p + mira_node(color_by = "intra_degree_sum", color_palette = "magma", color_reverse = TRUE)
+p + mira_node(color_by = "intra_degree_sum", color_palette = "cividis", color_limits = c(0, 30))
+p + mira_intralayer(color_by = "type", color_palette = "Set1")
 
 # Per node set
 p + mira_node(color_by = c(bird = "intra_degree_sum", plant = "verification_level"),

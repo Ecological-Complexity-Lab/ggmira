@@ -163,6 +163,19 @@ p3b <- mira(net, bipartite = TRUE, setA_type = "bird") +
   mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
 print(p3b)
 
+# ---- 3b. Palettes: named, reversed, with fixed limits ---------------------------
+
+p3b <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_layout("bipartite", seed = 42) +
+  # a continuous palette, dark for high degree, from 0 to 30 whatever the data
+  mira_node(color_by = "intra_degree_sum", color_palette = "magma",
+            color_reverse = TRUE, color_limits = c(0, 30)) +
+  # a categorical palette (colorblind-safe)
+  mira_intralayer(color_by = "type", color_palette = "Okabe-Ito") +
+  mira_layer(color_by = "interaction_type", color_palette = "Set2") +
+  mira_legends(show = c("node_color", "intralayer_color", "layer_color"))
+p3b
+
 # ---- 4. Constant colors --------------------------------------------------------
 
 p4 <- mira(net, bipartite = TRUE, setA_type = "bird") +

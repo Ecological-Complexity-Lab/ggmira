@@ -15,7 +15,10 @@ mira_node(
   perspective,
   color_values,
   color_scale,
-  highlight
+  highlight,
+  color_palette,
+  color_reverse,
+  color_limits
 )
 }
 \arguments{
@@ -56,6 +59,20 @@ decides from the data. Per set: \code{c(pollinator = "continuous")}. See
 \item{highlight}{A node name: the node and its neighbors stand out in
 every layer and the rest is dimmed, as when the node is picked in
 MiRA's Search Node. The banner "Selected node" clears it.}
+
+\item{color_palette}{A named palette for the \code{color_by} scale: a
+categorical one (\code{"Okabe-Ito"}, \code{"Set1"}, ...) gives one color per
+value, a continuous one (\code{"magma"}, \code{"RdBu"}, ...) a gradient. Names
+are matched without case; the list is in \link{mira_scales}. Per set:
+\code{c(pollinator = "magma")}.}
+
+\item{color_reverse}{\code{TRUE} reverses the palette. Per set:
+\code{c(pollinator = TRUE)}.}
+
+\item{color_limits}{\code{c(min, max)}: the gradient runs from \code{min} to \code{max}
+instead of the data's range, so several plots can share one scale;
+values outside take the end colors. Gives a continuous scale. Per set:
+\code{list(pollinator = c(0, 10))}.}
 }
 \value{
 A component, to add to a plot with \code{+}.

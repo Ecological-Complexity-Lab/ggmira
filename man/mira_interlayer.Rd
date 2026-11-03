@@ -12,7 +12,10 @@ mira_interlayer(
   curvature,
   pairs,
   color_values,
-  color_scale
+  color_scale,
+  color_palette,
+  color_reverse,
+  color_limits
 )
 }
 \arguments{
@@ -40,6 +43,16 @@ not matter. Also turns interlayer links on, unless the same piece gives
 value. See \link{mira_scales}.}
 
 \item{color_scale}{\code{"categorical"} or \code{"continuous"}. See \link{mira_scales}.}
+
+\item{color_palette}{A named palette for the \code{color_by} scale:
+categorical (\code{"Okabe-Ito"}, ...) or continuous (\code{"magma"}, ...); see
+\link{mira_scales} for the list.}
+
+\item{color_reverse}{\code{TRUE} reverses the palette.}
+
+\item{color_limits}{\code{c(min, max)}: the gradient runs from \code{min} to \code{max}
+instead of the data's range; values outside take the end colors. Gives a
+continuous scale.}
 }
 \value{
 A component, to add to a plot with \code{+}.
