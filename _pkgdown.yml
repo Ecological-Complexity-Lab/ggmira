@@ -22,6 +22,13 @@ home:
   - text: Report a bug
     href: https://github.com/Ecological-Complexity-Lab/ggmira/issues
 
+authors:
+  sidebar:
+    after: >
+      <a href="https://ecomplab.com" title="Ecological Complexity Lab">
+      <img src="reference/figures/ecomplab_logo.png" alt="Ecological Complexity Lab" width="80" style="margin-top: 0.5rem;">
+      </a>
+
 footer:
   structure:
     left: developed_by
