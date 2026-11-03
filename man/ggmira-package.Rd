@@ -38,7 +38,8 @@ does this too).
 
 \itemize{
 \item \link{mira_scales}: how values become colors (\code{color_values},
-\code{color_scale}) and sizes.
+\code{color_scale}, \code{color_palette}, \code{color_reverse}, \code{color_limits}) and
+sizes.
 }
 }
 
