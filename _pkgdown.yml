@@ -31,9 +31,10 @@ footer:
 
 reference:
 - title: Plot basics
-  desc: Start a plot from a multilayer network, see what it sends to MiRA, and open it in the browser.
+  desc: Start a plot from a multilayer network, see what each component can be set to and what the plot sends to MiRA, and open it in the browser.
   contents:
   - mira
+  - mira_options
   - mira_spec
   - print.mira_plot
 - title: "Elements: nodes, links, layers"

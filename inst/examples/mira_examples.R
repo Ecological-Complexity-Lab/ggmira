@@ -18,6 +18,10 @@ library(ggmira)
 
 net <- load_emln(17)
 
+# What each component can be set to for this network: columns, computed
+# attributes, scale types and values
+mira_options(net, bipartite = TRUE, setA_type = "bird")
+
 # ---- 1. Display: layout, labels, layers, interlayer pairs -------------------
 
 p1 <- mira(net, bipartite = TRUE, setA_type = "bird") +

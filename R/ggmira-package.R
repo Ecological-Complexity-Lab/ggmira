@@ -12,6 +12,7 @@
 #' - [print.mira_plot()]: open the plot in the browser (typing its name
 #'   does this too).
 #' - [mira_spec()]: what the plot sends to MiRA.
+#' - [mira_options()]: what each component can be set to, for a network.
 #'
 #' @section Elements (nodes, links, layers):
 #' - [mira_node()]: node color, size, shape, labels and a highlighted node.
