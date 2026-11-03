@@ -18,8 +18,9 @@ attribute, with columns \code{component}, \code{argument}, \code{attribute}, \co
 \code{switchable}, \code{source} (\code{"node"}, \code{"state node"}, \code{"link"}, \code{"layer"},
 \code{"computed"} by MiRA, or \code{"keyword"}), \code{sets} (on a bipartite network,
 the node sets that have the attribute) and \code{values}. It prints grouped
-by component, with MiRA's computed node attributes on one line; the
-data frame has a row for each. Filter it as a data frame.
+by component, with MiRA's computed node attributes on one line (the
+data frame has a row for each), and with the sets only when they differ
+between attributes. Filter it as a data frame.
 }
 \description{
 Lists the attributes a network offers to each component's arguments: the

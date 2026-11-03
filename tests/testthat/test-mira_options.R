@@ -114,3 +114,12 @@ test_that("colors: by element where the console has colors, none otherwise", {
                             c("color_by", "nodes", "links", "color_by", "color_by", "layers")),
                c("node", "node", "intralayer link", "interlayer link", "node", "layer"))
 })
+
+test_that("the printed sets column shows only when the sets differ", {
+  same <- capture.output(print(toy_options(bipartite = TRUE)))
+  expect_false(any(grepl("parasite, host", same[!grepl("one color per set", same)])))
+  net <- options_net()
+  net$nodes$host_range <- c(NA, NA, "narrow", "wide")
+  differ <- capture.output(print(mira_options(net, bipartite = TRUE)))
+  expect_true(any(grepl("host_range.*host ", differ)))
+})

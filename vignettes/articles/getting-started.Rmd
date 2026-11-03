@@ -50,6 +50,29 @@ p
 knitr::include_graphics("figures/step-1-plot.png")
 ```
 
+### What the network offers
+
+Before adding components, see what the network offers. `mira_options()`
+lists what each component's arguments can take: the columns and the
+attributes MiRA computes, the scale type MiRA gives each (`*`: `color_scale`
+can switch it), the node sets that have it, and its values. Give it the
+same arguments as `mira()`:
+
+```{r, include = FALSE, eval = requireNamespace("emln", quietly = TRUE)}
+library(emln) # load_emln() needs emln attached
+net <- suppressMessages(load_emln(17))
+options(width = 85) # fits the code box
+```
+
+```{r, eval = requireNamespace("emln", quietly = TRUE)}
+opts <- mira_options(net, bipartite = TRUE, setA_type = "bird")
+opts[opts$component == "mira_node", ]
+```
+
+The whole table also covers the links, the layers, the columns
+`mira_filter()` and `mira_mode_meta(layers = )` conditions can use, and the
+meta-network's measures.
+
 ## 2. Layout: where the nodes go
 
 `mira_layout()` chooses the layout algorithm; a `seed` makes the positions
@@ -348,24 +371,8 @@ add it as a column to the right one:
 | `net$extended` (links) | `mira_intralayer(color_by)`, `mira_interlayer(color_by)` |
 | `net$layers` | `mira_layer(color_by)`, `mira_mode_meta(layers)` |
 
-`mira_options()` lists, for one network, what each component's arguments
-can take: the columns and the attributes MiRA computes, the scale type MiRA
-gives each (`*`: `color_scale` can switch it), the node sets that have it,
-and its values. Give it the same arguments as `mira()`:
-
-```{r, include = FALSE, eval = requireNamespace("emln", quietly = TRUE)}
-net <- suppressMessages(emln::load_emln(17))
-options(width = 100)
-```
-
-```{r, eval = requireNamespace("emln", quietly = TRUE)}
-opts <- mira_options(net, bipartite = TRUE, setA_type = "bird")
-opts[opts$component == "mira_node", ]
-```
-
-The whole table also covers the links, the layers, the columns
-`mira_filter()` and `mira_mode_meta(layers = )` conditions can use, and the
-meta-network's measures.
+`mira_options(net)` (step 1) lists the columns each table offers to each
+component.
 
 ```{r}
 net$extended$log_weight <- log10(net$extended$weight)

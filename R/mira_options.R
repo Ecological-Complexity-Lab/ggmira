@@ -40,8 +40,9 @@ META_MEASURE_TYPES <- c(participation = "continuous", degree = "continuous", uni
 #'   `switchable`, `source` (`"node"`, `"state node"`, `"link"`, `"layer"`,
 #'   `"computed"` by MiRA, or `"keyword"`), `sets` (on a bipartite network,
 #'   the node sets that have the attribute) and `values`. It prints grouped
-#'   by component, with MiRA's computed node attributes on one line; the
-#'   data frame has a row for each. Filter it as a data frame.
+#'   by component, with MiRA's computed node attributes on one line (the
+#'   data frame has a row for each), and with the sets only when they differ
+#'   between attributes. Filter it as a data frame.
 #' @seealso [mira()] to start a plot; [mira_node()] and the other
 #'   components for the arguments; [mira_scales] for `color_values` and
 #'   `color_scale`.
@@ -76,7 +77,8 @@ print.mira_options <- function(x, ...) {
     cat("<no options>\n")
     return(invisible(x))
   }
-  show_sets <- any(nzchar(rows$sets))
+  # The sets column only when attributes differ in which sets have them
+  show_sets <- length(unique(rows$sets[rows$component == "mira_node" & rows$source != "keyword"])) > 1
   type <- ifelse(rows$switchable, paste0(rows$type, "*"), rows$type)
   argument <- rows$argument
   argument[duplicated(paste(rows$component, rows$argument))] <- ""
@@ -102,7 +104,8 @@ print.mira_options <- function(x, ...) {
     cat('* MiRA\'s default scale; color_scale can choose the other (see ?mira_scales)\n')
   }
   if (cli::num_ansi_colors() > 1) {
-    cat(paste(vapply(ELEMENTS, function(e) .element_style(e)(paste0(e, "s")), character(1)), collapse = "  "), "\n")
+    shown <- intersect(ELEMENTS, element)
+    cat(paste(vapply(shown, function(e) .element_style(e)(paste0(e, "s")), character(1)), collapse = "  "), "\n")
   }
   invisible(x)
 }
