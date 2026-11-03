@@ -87,14 +87,49 @@ print.mira_options <- function(x, ...) {
   width <- getOption("width", 80)
   long <- nchar(lines) > width
   lines[long] <- paste0(substr(lines[long], 1, width - 3), "...")
+  # Color the attribute by its element and grey the values (where the console has colors)
+  element <- .row_element(rows$component, rows$argument)
+  attr_start <- 2 + nchar(columns[[1]][1]) + 2 + 1
+  values_start <- sum(nchar(vapply(columns, `[`, character(1), 1))) + 2 * length(columns) + 2 + 1
+  lines <- .color_lines(lines, element, attr_start, attr_start + nchar(columns[[2]][1]) - 1, values_start)
   for (component in unique(rows$component)) {
-    cat(component, "()\n", sep = "")
+    elements <- unique(element[rows$component == component])
+    header <- paste0(component, "()")
+    cat(if (length(elements) == 1) .element_style(elements)(header) else cli::style_bold(header), "\n", sep = "")
     cat(lines[rows$component == component], sep = "\n")
   }
   if (any(rows$switchable)) {
     cat('* MiRA\'s default scale; color_scale can choose the other (see ?mira_scales)\n')
   }
+  if (cli::num_ansi_colors() > 1) {
+    cat(paste(vapply(ELEMENTS, function(e) .element_style(e)(paste0(e, "s")), character(1)), collapse = "  "), "\n")
+  }
   invisible(x)
+}
+
+# Each row is about nodes, links or layers
+ELEMENTS <- c("node", "link", "layer")
+ELEMENT_COLORS <- c(node = "#0072b2", link = "#d97706", layer = "#8b5cf6") # MiRA's set A and layer colors
+
+.row_element <- function(component, argument) {
+  link <- component %in% c("mira_intralayer", "mira_interlayer") |
+    (component == "mira_filter" & argument == "links")
+  layer <- component == "mira_layer" | (component == "mira_mode_meta" & argument == "layers")
+  ifelse(link, "link", ifelse(layer, "layer", "node"))
+}
+
+.element_style <- function(element) cli::make_ansi_style(ELEMENT_COLORS[[element]])
+
+# Positions are those of the plain line, so colors never change the alignment
+.color_lines <- function(lines, element, attr_start, attr_end, values_start) {
+  if (cli::num_ansi_colors() <= 1) return(lines)
+  vapply(seq_along(lines), function(i) {
+    line <- lines[i]
+    paste0(substr(line, 1, attr_start - 1),
+           .element_style(element[i])(substr(line, attr_start, attr_end)),
+           substr(line, attr_end + 1, values_start - 1),
+           cli::col_grey(substr(line, values_start, nchar(line))))
+  }, character(1))
 }
 
 # One printed row per component and argument for MiRA's computed node

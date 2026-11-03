@@ -100,3 +100,16 @@ test_that("sets: the node sets that have the attribute, on a bipartite network",
   expect_equal(color$sets[color$attribute == "habitat"], "parasite, host")
   expect_equal(unique(toy_options()$sets), "") # not bipartite: no sets
 })
+
+test_that("colors: by element where the console has colors, none otherwise", {
+  plain <- capture.output(print(toy_options()))
+  expect_false(any(grepl("\033[", plain, fixed = TRUE)))
+  old <- options(cli.num_colors = 256)
+  colored <- capture.output(print(toy_options()))
+  options(old)
+  expect_true(any(grepl("\033[", colored, fixed = TRUE)))
+  expect_equal(cli::ansi_strip(colored[seq_along(plain)]), plain) # the same text and alignment
+  expect_equal(.row_element(c("mira_node", "mira_filter", "mira_filter", "mira_mode_meta", "mira_mode_meta"),
+                            c("color_by", "nodes", "links", "color_by", "layers")),
+               c("node", "node", "link", "node", "layer"))
+})
