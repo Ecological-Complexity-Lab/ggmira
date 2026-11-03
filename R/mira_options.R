@@ -107,15 +107,18 @@ print.mira_options <- function(x, ...) {
   invisible(x)
 }
 
-# Each row is about nodes, links or layers
-ELEMENTS <- c("node", "link", "layer")
-ELEMENT_COLORS <- c(node = "#0072b2", link = "#d97706", layer = "#8b5cf6") # MiRA's set A and layer colors
+# Each row is about nodes, intralayer links, interlayer links or layers.
+# mira_filter(links = ) takes both kinds of link: the intralayer color.
+ELEMENTS <- c("node", "intralayer link", "interlayer link", "layer")
+ELEMENT_COLORS <- c(node = "#d97706", "intralayer link" = "#0ea5e9", "interlayer link" = "#1e40af",
+                    layer = "#8b5cf6") # amber, light blue, blue, MiRA's layer purple
 
 .row_element <- function(component, argument) {
-  link <- component %in% c("mira_intralayer", "mira_interlayer") |
-    (component == "mira_filter" & argument == "links")
-  layer <- component == "mira_layer" | (component == "mira_mode_meta" & argument == "layers")
-  ifelse(link, "link", ifelse(layer, "layer", "node"))
+  element <- rep("node", length(component))
+  element[component == "mira_intralayer" | (component == "mira_filter" & argument == "links")] <- "intralayer link"
+  element[component == "mira_interlayer"] <- "interlayer link"
+  element[component == "mira_layer" | (component == "mira_mode_meta" & argument == "layers")] <- "layer"
+  element
 }
 
 .element_style <- function(element) cli::make_ansi_style(ELEMENT_COLORS[[element]])

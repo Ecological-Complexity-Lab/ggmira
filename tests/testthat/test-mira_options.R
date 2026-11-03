@@ -109,7 +109,8 @@ test_that("colors: by element where the console has colors, none otherwise", {
   options(old)
   expect_true(any(grepl("\033[", colored, fixed = TRUE)))
   expect_equal(cli::ansi_strip(colored[seq_along(plain)]), plain) # the same text and alignment
-  expect_equal(.row_element(c("mira_node", "mira_filter", "mira_filter", "mira_mode_meta", "mira_mode_meta"),
-                            c("color_by", "nodes", "links", "color_by", "layers")),
-               c("node", "node", "link", "node", "layer"))
+  expect_equal(.row_element(c("mira_node", "mira_filter", "mira_filter", "mira_interlayer", "mira_mode_meta",
+                              "mira_mode_meta"),
+                            c("color_by", "nodes", "links", "color_by", "color_by", "layers")),
+               c("node", "node", "intralayer link", "interlayer link", "node", "layer"))
 })
