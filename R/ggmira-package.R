@@ -22,7 +22,8 @@
 #'
 #' @section Scales:
 #' - [mira_scales]: how values become colors (`color_values`,
-#'   `color_scale`) and sizes.
+#'   `color_scale`, `color_palette`, `color_reverse`, `color_limits`) and
+#'   sizes.
 #'
 #' @section Layout:
 #' - [mira_layout()]: where the nodes go.

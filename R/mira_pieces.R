@@ -109,6 +109,17 @@ mira_layout <- function(type, seed, nested) {
 #'   `"continuous"` (a gradient; numeric columns only). Without it, MiRA
 #'   decides from the data. Per set: `c(pollinator = "continuous")`. See
 #'   [mira_scales].
+#' @param color_palette A named palette for the `color_by` scale: a
+#'   categorical one (`"Okabe-Ito"`, `"Set1"`, ...) gives one color per
+#'   value, a continuous one (`"magma"`, `"RdBu"`, ...) a gradient. Names
+#'   are matched without case; the list is in [mira_scales]. Per set:
+#'   `c(pollinator = "magma")`.
+#' @param color_reverse `TRUE` reverses the palette. Per set:
+#'   `c(pollinator = TRUE)`.
+#' @param color_limits `c(min, max)`: the gradient runs from `min` to `max`
+#'   instead of the data's range, so several plots can share one scale;
+#'   values outside take the end colors. Gives a continuous scale. Per set:
+#'   `list(pollinator = c(0, 10))`.
 #' @param highlight A node name: the node and its neighbors stand out in
 #'   every layer and the rest is dimmed, as when the node is picked in
 #'   MiRA's Search Node. The banner "Selected node" clears it.
@@ -143,7 +154,8 @@ mira_layout <- function(type, seed, nested) {
 #'               color_values = c(species = "#1f77b4", genus = "orange"))
 #' p + mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
 mira_node <- function(color_by, color, size_by, size, shape, labels, label_size, perspective,
-                      color_values, color_scale, highlight) {
+                      color_values, color_scale, highlight, color_palette, color_reverse,
+                      color_limits) {
   .build_piece("node", "mira_node", environment(), list(
     color_by     = .shared_or_per_set(.mapping(SET_KEYWORD), .mapping()),
     color        = .check_color,
@@ -155,7 +167,10 @@ mira_node <- function(color_by, color, size_by, size, shape, labels, label_size,
     perspective  = .check_flag,
     color_values = .check_color_values(per_set = TRUE),
     color_scale  = .shared_or_per_set(.choice(SCALE_TYPES)),
-    highlight    = .check_name
+    highlight    = .check_name,
+    color_palette = .shared_or_per_set(.check_palette),
+    color_reverse = .shared_or_per_set(.check_flag),
+    color_limits  = .shared_or_per_set(.check_limits)
   ))
 }
 
@@ -177,6 +192,13 @@ mira_node <- function(color_by, color, size_by, size, shape, labels, label_size,
 #' @param color_values Colors for values of the `color_by` column, named by
 #'   value. See [mira_scales].
 #' @param color_scale `"categorical"` or `"continuous"`. See [mira_scales].
+#' @param color_palette A named palette for the `color_by` scale:
+#'   categorical (`"Okabe-Ito"`, ...) or continuous (`"magma"`, ...); see
+#'   [mira_scales] for the list.
+#' @param color_reverse `TRUE` reverses the palette.
+#' @param color_limits `c(min, max)`: the gradient runs from `min` to `max`
+#'   instead of the data's range; values outside take the end colors. Gives a
+#'   continuous scale.
 #' @return A component, to add to a plot with `+`.
 #' @seealso [mira_interlayer()] for the links between layers;
 #'   [mira_scales] for `color_values` and `color_scale`.
@@ -200,14 +222,18 @@ mira_node <- function(color_by, color, size_by, size, shape, labels, label_size,
 #' # Arrowheads, on a directed network
 #' mira(net, bipartite = TRUE, setA_type = "bird", directed = TRUE) +
 #'   mira_intralayer(arrow_size = 0.5)
-mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_values, color_scale) {
+mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_values, color_scale,
+                            color_palette, color_reverse, color_limits) {
   .build_piece("intralayer", "mira_intralayer", environment(), list(
     color_by     = .mapping(),
     color        = .check_color,
     min_weight   = .number_at_least(WEIGHT_MIN),
     arrow_size   = .number_in(ARROW_SIZE_MIN, ARROW_SIZE_MAX),
     color_values = .check_color_values(per_set = FALSE),
-    color_scale  = .choice(SCALE_TYPES)
+    color_scale  = .choice(SCALE_TYPES),
+    color_palette = .check_palette,
+    color_reverse = .check_flag,
+    color_limits  = .check_limits
   ))
 }
 
@@ -253,7 +279,7 @@ mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_value
 #'                     color_values = c(interlayer = "black"))
 #' p + mira_interlayer(show = TRUE, color_by = "type", color_scale = "categorical")
 mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs, color_values,
-                            color_scale) {
+                            color_scale, color_palette, color_reverse, color_limits) {
   .build_piece("interlayer", "mira_interlayer", environment(), list(
     show         = .check_flag,
     color_by     = .mapping(),
@@ -262,7 +288,10 @@ mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs,
     curvature    = .number_in(CURVATURE_MIN, CURVATURE_MAX),
     pairs        = .check_pairs,
     color_values = .check_color_values(per_set = FALSE),
-    color_scale  = .choice(SCALE_TYPES)
+    color_scale  = .choice(SCALE_TYPES),
+    color_palette = .check_palette,
+    color_reverse = .check_flag,
+    color_limits  = .check_limits
   ))
 }
 
@@ -283,6 +312,7 @@ mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs,
 #'   See [mira_scales].
 #' @param color_scale `"categorical"` or `"continuous"`. Not with
 #'   `color_by = "layer_name"`. See [mira_scales].
+#' @inheritParams mira_intralayer
 #' @param labels `TRUE` or `FALSE`: show layer names.
 #' @param label_size Layer name size, a whole number between 8 and 32.
 #' @param set_labels `TRUE` or `FALSE`: show node set names (bipartite
@@ -317,7 +347,7 @@ mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs,
 #' # Stack the layers top to bottom, closer together
 #' p + mira_layer(stack = "vertical", spacing = 250)
 mira_layer <- function(color_by, color, color_values, color_scale, labels, label_size, set_labels,
-                       stack, spacing) {
+                       stack, spacing, color_palette, color_reverse, color_limits) {
   .build_piece("layer", "mira_layer", environment(), list(
     color_by     = .layer_mapping,
     color        = .check_color,
@@ -327,7 +357,10 @@ mira_layer <- function(color_by, color, color_values, color_scale, labels, label
     label_size   = .whole_number_in(LAYER_LABEL_SIZE_MIN, LAYER_LABEL_SIZE_MAX),
     set_labels   = .check_flag,
     stack        = .choice(STACK_MODES),
-    spacing      = .whole_number_in(LAYER_SPACING_MIN, LAYER_SPACING_MAX)
+    spacing      = .whole_number_in(LAYER_SPACING_MIN, LAYER_SPACING_MAX),
+    color_palette = .check_palette,
+    color_reverse = .check_flag,
+    color_limits  = .check_limits
   ))
 }
 
@@ -425,6 +458,24 @@ mira_layer <- function(color_by, color, color_values, color_scale, labels, label
     if (!ok || value < min) .abort_arg(fn, arg, sprintf("must be a number of %s or more", min))
     unname(value)
   }
+}
+
+# A palette name, matched without case; returned as MiRA spells it
+.check_palette <- function(value, arg, fn) {
+  palettes <- c(CATEGORICAL_PALETTES, CONTINUOUS_PALETTES)
+  match <- if (is.character(value) && .is_scalar(value)) palettes[tolower(palettes) == tolower(value)] else character()
+  if (length(match) == 0) {
+    .abort_arg(fn, arg, sprintf("must be a palette name: categorical %s; continuous %s",
+                                paste(CATEGORICAL_PALETTES, collapse = ", "),
+                                paste(CONTINUOUS_PALETTES, collapse = ", ")))
+  }
+  match
+}
+
+.check_limits <- function(value, arg, fn) {
+  ok <- is.numeric(value) && length(value) == 2 && all(is.finite(value)) && value[1] < value[2]
+  if (!ok) .abort_arg(fn, arg, "must be c(min, max), two numbers with min < max")
+  unname(as.numeric(value))
 }
 
 .choice <- function(choices) {

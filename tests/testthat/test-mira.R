@@ -454,3 +454,63 @@ test_that("mira() warns about links with weight 0", {
   expect_warning(suppressMessages(mira(net, bipartite = TRUE, setA_type = "parasite")), "1 of 4 links have weight 0")
   expect_no_warning(toy_plot())
 })
+
+# ---- Palettes, reversal, limits ----
+
+test_that("a palette, its reversal and limits go to the attribute's scale, with the type they need", {
+  p <- toy_plot() + mira_node(color_by = "abundance", color_palette = "MAGMA", color_reverse = TRUE,
+                              color_limits = c(0, 20))
+  expect_equal(mira_spec(p)$scales,
+               list(abundance = list(type = "continuous", palette = "magma", reverse = TRUE, limits = list(0, 20))))
+  expect_match(mira_spec(p, json = TRUE), '"limits": \\[\\s*0,\\s*20\\s*\\]')
+  p <- toy_plot() + mira_intralayer(color_by = "kind", color_palette = "okabe-ito")
+  expect_equal(mira_spec(p)$scales, list(kind = list(type = "categorical", palette = "Okabe-Ito")))
+  p <- toy_plot() + mira_layer(color_by = "habitat", color_reverse = TRUE)
+  expect_equal(mira_spec(p)$scales, list(habitat = list(reverse = TRUE))) # MiRA's default type
+})
+
+test_that("palette names, limits and reverse are checked", {
+  expect_error(mira_node(color_palette = "rainbow"), "must be a palette name: categorical Dark2")
+  expect_error(mira_node(color_limits = c(5, 1)), "must be c\\(min, max\\)")
+  expect_error(mira_node(color_limits = 1), "must be c\\(min, max\\)")
+  expect_error(mira_intralayer(color_reverse = "yes"), "TRUE or FALSE")
+})
+
+test_that("settings that need different scale types are an error", {
+  expect_error(toy_plot() + mira_node(color_by = "module", color_scale = "categorical", color_palette = "magma"),
+               "need different scale types: `color_scale` \\(categorical\\), `color_palette` \\(continuous\\)")
+  expect_error(toy_plot() + mira_node(color_by = "module", color_values = c("1" = "red"), color_limits = c(0, 2)),
+               "`color_limits` \\(continuous\\), `color_values` \\(categorical\\)")
+  expect_error(toy_plot() + mira_node(color_by = "abundance", color_palette = "Set1", color_limits = c(0, 2)),
+               "need different scale types")
+})
+
+test_that("per set: each set's attribute gets its palette", {
+  p <- toy_plot() + mira_node(color_by = c(parasite = "abundance", host = "guild"),
+                              color_palette = c(parasite = "magma", host = "Set1"))
+  expect_equal(mira_spec(p)$scales, list(abundance = list(type = "continuous", palette = "magma"),
+                                         guild = list(type = "categorical", palette = "Set1")))
+})
+
+test_that("a different palette for the same attribute in a later piece warns and wins", {
+  net <- toy_net()
+  net$extended$module <- c(1, 1, 2, 2) # a link column with the nodes' attribute name
+  p <- suppressMessages(mira(net, bipartite = TRUE, setA_type = "parasite")) +
+    mira_node(color_by = "module", color_palette = "Set1")
+  expect_warning(p <- p + mira_intralayer(color_by = "module", color_palette = "Set2"),
+                 'color_palette for "module" replaces the setting in mira_node\\(\\)')
+  expect_equal(mira_spec(p)$scales$module$palette, "Set2")
+})
+
+test_that("palettes do not apply to .set or one color per layer", {
+  expect_error(toy_plot() + mira_node(color_by = ".set", color_palette = "Set1"),
+               '`color_palette` does not apply to color_by = ".set"')
+  expect_error(toy_plot() + mira_layer(color_by = "layer_name", color_reverse = TRUE),
+               "`color_reverse` does not apply to one color per layer")
+})
+
+test_that("palettes work on MiRA's computed attributes (no values needed)", {
+  p <- toy_plot() + mira_node(color_by = "intra_degree_sum", color_palette = "cividis", color_limits = c(1, 5))
+  expect_equal(mira_spec(p)$scales$intra_degree_sum,
+               list(type = "continuous", palette = "cividis", limits = list(1, 5)))
+})

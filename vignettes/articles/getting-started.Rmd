@@ -286,6 +286,9 @@ In every component, `color_by` chooses what is colored; `color_values` and
   decides from the data.
 - `color_values` sets the colors of some values, named by value (numbers
   need quotes: `c("1" = "red")`). Values not listed keep MiRA's palette.
+- `color_palette` chooses the palette (`"Okabe-Ito"`, `"magma"`, ...),
+  `color_reverse = TRUE` reverses it, and `color_limits = c(min, max)` fixes
+  the ends of a gradient.
 - MiRA keeps one scale per attribute name, so components that color by the
   same attribute share its colors.
 
@@ -342,6 +345,29 @@ mira(net, bipartite = TRUE, setA_type = "bird") +
 ```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
 knitr::include_graphics("figures/scale-categorical.png")
 ```
+
+### Palettes
+
+A named palette replaces MiRA's defaults (Dark2 for categories, viridis for
+gradients); `?mira_scales` lists them. `color_limits` fixes the ends of the
+gradient, so plots of different networks can share one scale; values outside
+take the end colors.
+
+```{r}
+mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_layout("bipartite", seed = 42) +
+  mira_node(color_by = "intra_degree_sum", color_palette = "magma",
+            color_reverse = TRUE, color_limits = c(0, 30)) +
+  mira_intralayer(color_by = "type", color_palette = "Okabe-Ito") +
+  mira_legends(show = c("node_color", "intralayer_color"))
+```
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
+knitr::include_graphics("figures/scale-palettes.png")
+```
+
+In MiRA, the legend of a scale has the same choices: a palette dropdown and
+a button that reverses it.
 
 ## Constant colors
 

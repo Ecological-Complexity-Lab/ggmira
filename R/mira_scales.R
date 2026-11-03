@@ -23,6 +23,27 @@
 #'   minimum to its maximum; numeric columns only). Without it, MiRA decides
 #'   from the data: a gradient for a numeric column with many values, one
 #'   color per value otherwise.
+#' - `color_palette` chooses the palette by name (matched without case):
+#'   - categorical: `"Dark2"` (MiRA's default), `"Set1"`, `"Set2"`,
+#'     `"Set3"`, `"Paired"`, `"Accent"`, `"Okabe-Ito"` (colorblind-safe).
+#'     Columns with more values than colors reuse them.
+#'   - continuous, sequential: `"viridis"` (MiRA's default), `"magma"`,
+#'     `"cividis"` (colorblind-optimized), `"Blues"`, `"Greens"`, `"Reds"`,
+#'     `"Purples"`, `"Oranges"`, `"Greys"`, `"YlOrRd"`, `"YlGnBu"`.
+#'   - continuous, diverging (two sides of a middle): `"RdBu"`, `"RdYlBu"`,
+#'     `"Spectral"`, `"PiYG"`, `"BrBG"`, `"PuOr"`.
+#'
+#'   A categorical palette gives a categorical scale and a continuous one a
+#'   gradient, so `color_scale` is not needed with it. `color_reverse = TRUE`
+#'   reverses the palette (light to dark, or the two sides of a diverging
+#'   one). In MiRA, the legend has the same choices.
+#' - `color_limits = c(min, max)` sets the ends of a gradient instead of the
+#'   data's range, so several plots can share one scale (e.g. 0 to 1 for
+#'   proportions); values outside take the end colors. With a diverging
+#'   palette, limits centered on 0 put the middle color at 0. It gives a
+#'   continuous scale.
+#' - Palettes and limits need no values, so they also work for the
+#'   attributes MiRA computes (`intra_degree_sum`, ...).
 #' - `color_values` sets the colors of some values, named by value:
 #'   `c("1" = "red", "3" = "#1f77b4")` (numbers need quotes as names). Values
 #'   not listed keep the palette's color. It gives a categorical scale, so it
@@ -36,8 +57,9 @@
 #'   `mira_node(color_by = ".set", color_values = c(bird = "red"))` colors
 #'   the two node sets.
 #'
-#' **One scale per attribute name.** MiRA keeps one color scale per
-#' attribute name, used wherever that attribute colors nodes, links or
+#' **One scale per attribute name.** MiRA keeps one color scale (type,
+#' palette, reversal, limits and colors) per attribute name, used wherever
+#' that attribute colors nodes, links or
 #' layers (as in MiRA's legends, where changing a color changes it for every
 #' element). So when two components color by the same attribute name, their
 #' settings are merged: a value that appears in both tables (node `module`
@@ -68,6 +90,12 @@
 #' p + mira_node(color_by = "intra_degree_sum", color_scale = "continuous")
 #' p + mira_node(color_by = "intra_degree_sum", color_scale = "categorical")
 #'
+#' # A palette, reversed; a gradient with fixed ends
+#' p + mira_node(color_by = "verification_level", color_palette = "Okabe-Ito")
+#' p + mira_node(color_by = "intra_degree_sum", color_palette = "magma", color_reverse = TRUE)
+#' p + mira_node(color_by = "intra_degree_sum", color_palette = "cividis", color_limits = c(0, 30))
+#' p + mira_intralayer(color_by = "type", color_palette = "Set1")
+#'
 #' # Per node set
 #' p + mira_node(color_by = c(bird = "intra_degree_sum", plant = "verification_level"),
 #'               color_scale = c(bird = "continuous"),
@@ -81,12 +109,17 @@
 #' p + mira_node(size_by = "intra_degree_sum", size = 6)
 NULL
 
-COLOR_SCALE_FIELDS <- c("color_values", "color_scale")
+COLOR_SCALE_FIELDS <- c("color_values", "color_scale", "color_palette", "color_reverse", "color_limits")
+# MiRA's named palettes (js/palettes.js), by scale type
+CATEGORICAL_PALETTES <- c("Dark2", "Set1", "Set2", "Set3", "Paired", "Accent", "Okabe-Ito")
+CONTINUOUS_PALETTES <- c("viridis", "magma", "cividis", "Blues", "Greens", "Reds", "Purples",
+                         "Oranges", "Greys", "YlOrRd", "YlGnBu", # sequential
+                         "RdBu", "RdYlBu", "Spectral", "PiYG", "BrBG", "PuOr") # diverging
 COLOR_FIELDS <- c("color_by", "color", COLOR_SCALE_FIELDS)
 LINK_SECTIONS <- c("intralayer", "interlayer")
 WEIGHT_COLUMN <- "weight" # MiRA does not color links by it (yet)
 
-SCALE_PARTS <- c("type", "values")
+SCALE_PARTS <- c("type", "values", "palette", "reverse", "limits")
 SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_order
 
 #' Update the plot's scales after a piece was merged into its section
@@ -161,13 +194,11 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
                                .set_suffix(set)))
     }
     scale <- list(type = .per_set(section$color_scale, set),
-                  values = .per_set(section$color_values, set))
-    if (!is.null(scale$values)) {
-      if (identical(scale$type, "continuous")) {
-        .abort_piece(fn, '`color_values` need a categorical scale, not color_scale = "continuous"')
-      }
-      scale$type <- "categorical"
-    }
+                  values = .per_set(section$color_values, set),
+                  palette = .per_set(section$color_palette, set),
+                  reverse = .per_set(section$color_reverse, set),
+                  limits = .per_set(section$color_limits, set))
+    scale$type <- .scale_type(scale, fn, set)
     if (warn && !is.null(scales[[attr]])) {
       .check_scale_conflict(scale, scales[[attr]], attr, fn, sprintf('for set "%s"', set_of[[attr]]))
     }
@@ -175,6 +206,33 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
     set_of[[attr]] <- set
   }
   scales
+}
+
+#' The scale type a scale's settings give: color_scale, or the one its
+#' palette, limits or values need. Settings that need different types are an
+#' error (fn is NULL when the section was already checked).
+#' @keywords internal
+#' @noRd
+.scale_type <- function(scale, fn, set) {
+  needs <- c(
+    color_scale   = scale$type,
+    color_palette = if (!is.null(scale$palette)) .palette_type(scale$palette),
+    color_limits  = if (!is.null(scale$limits)) "continuous",
+    color_values  = if (!is.null(scale$values)) "categorical"
+  )
+  if (length(unique(needs)) > 1 && !is.null(fn)) {
+    if (identical(scale$type, "continuous") && !is.null(scale$values)) {
+      .abort_piece(fn, '`color_values` need a categorical scale, not color_scale = "continuous"')
+    }
+    shown <- sprintf("`%s` (%s)", names(needs), needs)
+    .abort_piece(fn, sprintf("these need different scale types%s: %s", .set_suffix(set),
+                             paste(shown, collapse = ", ")))
+  }
+  if (length(needs) == 0) NULL else unname(needs[length(needs)])
+}
+
+.palette_type <- function(palette) {
+  if (palette %in% CONTINUOUS_PALETTES) "continuous" else "categorical"
 }
 
 #' The sets a section's color settings apply to: NA for a shared color_by;
@@ -210,6 +268,7 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
     if (!is.null(section$color_scale)) {
       .abort_piece(fn, '`color_scale` does not apply to color_by = ".set"')
     }
+    .abort_palette_fields(section, fn, 'color_by = ".set"')
     if (is.list(section$color_values)) {
       .abort_piece(fn, 'with color_by = ".set", `color_values` are named by node set: c(pollinator = "red")')
     }
@@ -238,7 +297,16 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
   if (!is.null(section$color_scale)) {
     .abort_piece(fn, '`color_scale` does not apply to one color per layer (color_by = "layer_name")')
   }
+  .abort_palette_fields(section, fn, 'one color per layer (color_by = "layer_name")')
   .check_layer_names(names(section$color_values), "color_values", fn, plot)
+}
+
+# Palettes, reversal and limits belong to a scale of a column
+.abort_palette_fields <- function(section, fn, what) {
+  given <- intersect(c("color_palette", "color_reverse", "color_limits"), names(section))
+  if (length(given) > 0) {
+    .abort_piece(fn, sprintf("`%s` does not apply to %s; give colors with `color_values`", given[1], what))
+  }
 }
 
 .check_layer_names <- function(names, arg, fn, plot) {
@@ -258,8 +326,11 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
     old <- scales[[attr]]
     new <- later[[attr]]
     values <- c(old$values[setdiff(names(old$values), names(new$values))], new$values)
-    scales[[attr]] <- list(type = if (is.null(new$type)) old$type else new$type,
-                           values = if (length(values) > 0) values else NULL)
+    later_or <- function(part) if (is.null(new[[part]])) old[[part]] else new[[part]]
+    scales[[attr]] <- list(type = later_or("type"),
+                           values = if (length(values) > 0) values else NULL,
+                           palette = later_or("palette"), reverse = later_or("reverse"),
+                           limits = later_or("limits"))
   }
   scales
 }
@@ -284,6 +355,11 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
   }
   if (!is.null(new$type) && !is.null(old$type) && new$type != old$type) {
     .warn_replaces(fn, sprintf('color_scale "%s" for "%s"', new$type, attr), other)
+  }
+  for (part in c("palette", "reverse", "limits")) {
+    if (!is.null(new[[part]]) && !is.null(old[[part]]) && !identical(new[[part]], old[[part]])) {
+      .warn_replaces(fn, sprintf('color_%s for "%s"', part, attr), other)
+    }
   }
   shared <- intersect(names(new$values), names(old$values))
   changed <- shared[new$values[shared] != old$values[shared]]
@@ -384,5 +460,8 @@ SCALE_KEY_SEP <- "\u001f" # joins section, attribute and part in plot$scale_orde
   json <- list()
   if (!is.null(scale$type)) json$type <- scale$type
   if (!is.null(scale$values)) json$values <- as.list(scale$values)
+  if (!is.null(scale$palette)) json$palette <- scale$palette
+  if (!is.null(scale$reverse)) json$reverse <- scale$reverse
+  if (!is.null(scale$limits)) json$limits <- as.list(scale$limits)
   json
 }

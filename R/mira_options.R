@@ -28,7 +28,9 @@ META_MEASURE_TYPES <- c(participation = "continuous", degree = "continuous", uni
 #' values, or with a name such as `abundance` or `degree`, are continuous,
 #' unless the name marks groups (`module`, `cluster`); text is categorical.
 #' Where `switchable` is `TRUE`, `color_scale` can choose the other one (see
-#' [mira_scales]). `"set"` and `"individual"` are keywords: one color per
+#' [mira_scales]). The type also decides the palettes `color_palette` can
+#' name: categorical ones (`"Okabe-Ito"`, `"Set1"`, ...) or continuous ones
+#' (`"magma"`, `"RdBu"`, ...). `"set"` and `"individual"` are keywords: one color per
 #' node set, one color per layer. Columns for conditions have the type of
 #' their values: `"number"`, `"text"` or `"logical"`.
 #'
@@ -44,8 +46,8 @@ META_MEASURE_TYPES <- c(participation = "continuous", degree = "continuous", uni
 #'   data frame has a row for each), and with the sets only when they differ
 #'   between attributes. Filter it as a data frame.
 #' @seealso [mira()] to start a plot; [mira_node()] and the other
-#'   components for the arguments; [mira_scales] for `color_values` and
-#'   `color_scale`.
+#'   components for the arguments; [mira_scales] for `color_values`,
+#'   `color_scale`, `color_palette`, `color_reverse` and `color_limits`.
 #' @export
 #' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)

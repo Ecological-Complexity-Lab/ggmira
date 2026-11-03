@@ -40,7 +40,9 @@ gradient) is the scale MiRA picks by default: numbers with more than two
 values, or with a name such as \code{abundance} or \code{degree}, are continuous,
 unless the name marks groups (\code{module}, \code{cluster}); text is categorical.
 Where \code{switchable} is \code{TRUE}, \code{color_scale} can choose the other one (see
-\link{mira_scales}). \code{"set"} and \code{"individual"} are keywords: one color per
+\link{mira_scales}). The type also decides the palettes \code{color_palette} can
+name: categorical ones (\code{"Okabe-Ito"}, \code{"Set1"}, ...) or continuous ones
+(\code{"magma"}, \code{"RdBu"}, ...). \code{"set"} and \code{"individual"} are keywords: one color per
 node set, one color per layer. Columns for conditions have the type of
 their values: \code{"number"}, \code{"text"} or \code{"logical"}.
 }
@@ -58,6 +60,6 @@ opts[opts$argument == "size_by", ]
 }
 \seealso{
 \code{\link[=mira]{mira()}} to start a plot; \code{\link[=mira_node]{mira_node()}} and the other
-components for the arguments; \link{mira_scales} for \code{color_values} and
-\code{color_scale}.
+components for the arguments; \link{mira_scales} for \code{color_values},
+\code{color_scale}, \code{color_palette}, \code{color_reverse} and \code{color_limits}.
 }
