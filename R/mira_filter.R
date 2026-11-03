@@ -76,8 +76,8 @@ mira_filter <- function(nodes, links) {
 #' Evaluate a filter component's conditions against the plot's network
 #'
 #' @return The component with each condition replaced by what MiRA receives:
-#'   a list of node names, or a list of [layer_from, node_from, layer_to,
-#'   node_to] links.
+#'   a list of node names, or a list of `c(layer_from, node_from, layer_to,
+#'   node_to)` links.
 #' @keywords internal
 #' @noRd
 .resolve_filter <- function(piece, plot) {
