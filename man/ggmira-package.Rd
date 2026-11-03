@@ -20,6 +20,7 @@ be changed in MiRA's interface.
 \item \code{\link[=print.mira_plot]{print.mira_plot()}}: open the plot in the browser (typing its name
 does this too).
 \item \code{\link[=mira_spec]{mira_spec()}}: what the plot sends to MiRA.
+\item \code{\link[=mira_options]{mira_options()}}: what each component can be set to, for a network.
 }
 }
 
