@@ -7,10 +7,12 @@
 #' be changed in MiRA's interface.
 #'
 #' @section Plot basics:
-#' - [mira()]: start a plot from a multilayer network.
+#' - [mira()]: start a plot from a multilayer network. Or start in MiRA:
+#'   [plot_mira()] opens a network with MiRA's defaults, and MiRA's R button
+#'   gives the `mira()` code for the view made there.
 #' - `+`: add a component to a plot.
 #' - [print.mira_plot()]: open the plot in the browser (typing its name
-#'   does this too).
+#'   does this too). MiRA's R button copies the view back as R code.
 #' - [mira_save()]: save the plot as a PNG, JPG or PDF file, without
 #'   opening a window.
 #' - [mira_spec()]: what the plot sends to MiRA.

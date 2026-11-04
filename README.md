@@ -48,8 +48,10 @@ mira(net, bipartite = TRUE, setA_type = "bird") +
 
 <img src="man/figures/README-network.jpg" width="100%" alt="The plot in MiRA: four stacked layers, birds as squares and plants as circles, links colored by interaction type" />
 
-`plot_mira(net)` opens a network with MiRA's defaults. *Get started* builds
-a plot step by step; the reference lists every component.
+`plot_mira(net)` opens a network with MiRA's defaults; adjust it in MiRA,
+and MiRA's R button gives the `mira()` code for the view. `mira_save()`
+saves a plot as a PNG, JPG or PDF file. *Get started* builds a plot step by
+step; the reference lists every component.
 
 ## Lifecycle
 

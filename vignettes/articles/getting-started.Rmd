@@ -177,8 +177,8 @@ knitr::include_graphics("figures/step-6-filter.png")
 
 Legends start minimized; `mira_legends()` opens them, all or some, and
 `position` moves them. `mira_camera()` turns, tilts, zooms and pans the
-view; to find the values, move the view with the mouse in MiRA and click
-*Copy for R* under the zoom buttons. `mira_node(highlight = )` makes a
+view; to find the values, move the view with the mouse in MiRA and copy
+the code with MiRA's R button (step 10). `mira_node(highlight = )` makes a
 node and its neighbors stand out, as when it is picked in MiRA's Search
 Node. In MiRA, all of this can still be changed with the mouse.
 
@@ -300,6 +300,37 @@ a table.
 
 ```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
 knitr::include_graphics("figures/step-9-save.png")
+```
+
+## 10. Copy the view back as R code
+
+A plot opened from R can still be changed in MiRA: colors, sizes, the
+camera, the view. MiRA's **R** button, next to *Save Session*, shows the
+ggmira code that draws the current view, changes included, with a *Copy*
+button: paste it into your script to keep the view. Each element's
+component is colored as in `mira_options()`, and the code starts with your
+`mira()` call.
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%", fig.alt = "MiRA's top bar, with the R button (Copy as R code) marked in red, next to Save Session"}
+knitr::include_graphics("figures/step-10-button.png")
+```
+
+You can also start in MiRA: `plot_mira(net)` opens the network with MiRA's
+defaults; adjust it with the mouse, and the R button gives the `mira()` code
+for what you made.
+
+```{r}
+plot_mira(net, bipartite = TRUE, setA_type = "bird") # adjust in MiRA, then click R
+```
+
+Only settings that differ from MiRA's default view are written. What R
+cannot set (a layer moved with Cmd/Ctrl+drag, a layer filter, legends
+dragged away from a corner) is listed in comments under the code. A layout
+recomputed in MiRA has no seed: add `seed =` to `mira_layout()` for the
+same layout on every run.
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
+knitr::include_graphics("figures/step-10-copy.png")
 ```
 
 ## Scales: how values become colors

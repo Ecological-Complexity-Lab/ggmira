@@ -15,10 +15,12 @@ be changed in MiRA's interface.
 \section{Plot basics}{
 
 \itemize{
-\item \code{\link[=mira]{mira()}}: start a plot from a multilayer network.
+\item \code{\link[=mira]{mira()}}: start a plot from a multilayer network. Or start in MiRA:
+\code{\link[=plot_mira]{plot_mira()}} opens a network with MiRA's defaults, and MiRA's R button
+gives the \code{mira()} code for the view made there.
 \item \code{+}: add a component to a plot.
 \item \code{\link[=print.mira_plot]{print.mira_plot()}}: open the plot in the browser (typing its name
-does this too).
+does this too). MiRA's R button copies the view back as R code.
 \item \code{\link[=mira_save]{mira_save()}}: save the plot as a PNG, JPG or PDF file, without
 opening a window.
 \item \code{\link[=mira_spec]{mira_spec()}}: what the plot sends to MiRA.

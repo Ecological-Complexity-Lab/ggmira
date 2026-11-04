@@ -77,7 +77,7 @@ mira_save <- function(plot, file, format = NULL, resolution = 2, width = 1500, h
   }
 
   received <- new.env()
-  app <- .mira_app(plot$network_json, mira_spec(plot, json = TRUE), .resolve_mira_path(mira_path),
+  app <- .mira_app(plot$network_json, .view_json(plot), .resolve_mira_path(mira_path),
                    on_save = function(body) received$image <- body)
   server <- .start_server(app, SAVE_PORT)
   on.exit(httpuv::stopServer(server$handle), add = TRUE)

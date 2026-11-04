@@ -21,8 +21,9 @@ LEGEND_POSITIONS <- c("bottom-right", "top-right", "bottom-left")
 #'
 #' **Finding the values.** When a plot is opened from R, MiRA shows the
 #' current camera under its zoom buttons, in these units, and updates it as
-#' you move the view. Set the view with the mouse, click **Copy for R**, and
-#' paste the `mira_camera()` call into your script.
+#' you move the view. Set the view with the mouse, click MiRA's **R** button
+#' (Copy as R code, next to Save Session), and paste the code, with its
+#' `mira_camera()` call, into your script.
 #'
 #' **Limits.** The same call gives the same view only in a browser window of
 #' the same size:
@@ -32,8 +33,8 @@ LEGEND_POSITIONS <- c("bottom-right", "top-right", "bottom-left")
 #'   identical pixels. Use the same window size when a figure must match
 #'   exactly.
 #' - Layers moved one by one (Cmd/Ctrl+drag on a layer) are not part of the
-#'   camera: Copy for R does not include them, and `mira_camera()` cannot
-#'   set them.
+#'   camera: `mira_camera()` cannot set them (the R button lists them as
+#'   a comment).
 #' - The view also depends on everything else in the plot (layout and
 #'   `seed`, `mira_layer(stack, spacing)`): copy the camera from the plot it
 #'   is meant for.

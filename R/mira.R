@@ -98,8 +98,19 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
     set_types    = if (bipartite) .node_types(net$nodes) else NULL,
     computed     = .computed_node_attrs(net, network_json, directed_interlayer),
     spec         = list(),
-    scale_order  = character() # color scale settings (section, attribute, part), the latest last
+    scale_order  = character(), # color scale settings (section, attribute, part), the latest last
+    r_call       = .mira_call_text(sys.call()), # for Copy as R code in MiRA
+    r_filter     = list()                       # mira_filter() conditions as written
   ), class = "mira_plot")
+}
+
+# A call longer than this was not typed (e.g. do.call() with the network
+# itself): MiRA then starts its code with mira(net)
+MAX_CALL_CHARS <- 500
+
+.mira_call_text <- function(call) {
+  text <- deparse1(call)
+  if (nchar(text) > MAX_CALL_CHARS) NULL else text
 }
 
 #' Add a component to a mira plot
@@ -117,6 +128,7 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
   if (!inherits(e2, "mira_piece")) {
     stop("Only mira_*() components (e.g. mira_node()) can be added to a mira plot.", call. = FALSE)
   }
+  e1 <- .record_filter_text(e1, e2) # before the conditions become names
   e2 <- .resolve_filter(e2, e1) # conditions -> names, against this network
   e2 <- .resolve_meta_layers(e2, e1) # the same, for mira_mode_meta(layers = )
   .validate_piece(e2, e1)
@@ -133,6 +145,11 @@ mira <- function(net, bipartite = FALSE, setA_type = NULL, directed = NULL,
 #' Typing a plot's name at the console does this; call `print()` to choose
 #' the port or the browser. Each print starts a new server (on the next free
 #' port when `port` is taken).
+#'
+#' In MiRA, the plot can still be changed. MiRA's **R** button (Copy as R
+#' code, next to Save Session) shows the ggmira code for the current view,
+#' starting with the `mira()` call that made the plot, to paste into a
+#' script. What R cannot set is listed in comments under the code.
 #'
 #' @param x A `mira_plot`.
 #' @inheritParams plot_mira
@@ -159,7 +176,7 @@ print.mira_plot <- function(x, port = 8080, mira_path = NULL,
   if (!.should_serve(browser_given = !missing(browser))) return(invisible(NULL))
   message("Please report issues at ",
           "https://github.com/Ecological-Complexity-Lab/MiRA/issues")
-  .serve_mira(x$network_json, view_json = mira_spec(x, json = TRUE), port = port,
+  .serve_mira(x$network_json, view_json = .view_json(x), port = port,
               mira_path = mira_path, browser = browser)
 }
 
@@ -211,4 +228,29 @@ mira_spec <- function(x, json = FALSE) {
   for (field in names(fields)) section[field] <- list(fields[[field]]) # keeps NULL values
   spec[[piece$section]] <- section
   spec
+}
+
+#' The view spec as MiRA receives it
+#'
+#' The spec, and in `r` R's own text for MiRA's Copy as R code button: the
+#' mira() call and the mira_filter() conditions as written (not settings;
+#' view-spec.md).
+#' @keywords internal
+#' @noRd
+.view_json <- function(plot) {
+  spec <- mira_spec(plot)
+  r <- list(mira = plot$r_call, filter = if (length(plot$r_filter) > 0) plot$r_filter)
+  r <- Filter(Negate(is.null), r)
+  if (length(r) > 0) spec$r <- r
+  .to_json(spec)
+}
+
+# A later mira_filter() replaces the same argument; NULL / NA clears it
+.record_filter_text <- function(plot, piece) {
+  if (piece$section != "filter") return(plot)
+  for (arg in names(piece$fields)) {
+    condition <- piece$fields[[arg]]
+    plot$r_filter[[arg]] <- if (is.null(condition)) NULL else deparse1(condition$expr)
+  }
+  plot
 }
