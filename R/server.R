@@ -66,9 +66,11 @@ BINARY_EXTENSIONS <- c("png", "jpg", "jpeg", "gif", "ico", "woff", "woff2")
 }
 
 #' httpuv app: API endpoints first, then static MiRA files
+#' @param on_save For mira_save(): a function given the body (raw) MiRA
+#'   posts to /api/save; NULL = no such endpoint.
 #' @keywords internal
 #' @noRd
-.mira_app <- function(network_json, view_json, mira_path) {
+.mira_app <- function(network_json, view_json, mira_path, on_save = NULL) {
   # Evaluate now: the handler runs later, when the plot the arguments were
   # computed from may have been changed or reassigned
   force(network_json)
@@ -76,6 +78,10 @@ BINARY_EXTENSIONS <- c("png", "jpg", "jpeg", "gif", "ico", "woff", "woff2")
   list(
     call = function(req) {
       path <- req$PATH_INFO
+      if (!is.null(on_save) && path == SAVE_ENDPOINT && identical(req$REQUEST_METHOD, "POST")) {
+        on_save(req$rook.input$read())
+        return(list(status = 200L, headers = list(), body = "saved"))
+      }
       if (path == NETWORK_ENDPOINT) return(.json_response(network_json))
       if (path == VIEW_ENDPOINT && !is.null(view_json)) return(.json_response(view_json))
       .static_response(path, mira_path)
