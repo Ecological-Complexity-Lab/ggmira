@@ -276,6 +276,32 @@ Anything not set keeps MiRA's default. When a setting is given twice, the
 later component wins, so `p + mira_node(color = "grey50")` recolors the
 nodes of `p` and keeps everything else.
 
+## 9. Save the plot to a file
+
+`mira_save()` draws the plot in MiRA without opening a window and saves
+MiRA's own export: the picture of the camera button, with the legends and
+the "Visualized with MiRA" mark. It works in scripts and R Markdown, where
+printing a plot does nothing. It needs the chromote package and Google
+Chrome (or Chromium, or Edge).
+
+```{r}
+mira_save(p, "network.png")                     # PNG, at high resolution (2)
+mira_save(p, "network.pdf")                     # the format from the extension
+mira_save(p, "network", format = "jpg", resolution = 4,
+          width = 1600, height = 1000)          # 6400 x 4000 pixels
+mira_save(p, "clear.png", background = "transparent", legends = FALSE)
+```
+
+`width` and `height` are the size of MiRA's window (the plot is fitted to
+it, as in the browser); the image is `resolution` times that. `background`
+is `"grid"` (MiRA's grid, or the map in map view), `"white"` or
+`"transparent"` (PNG only). Each view can be saved except the data view,
+a table.
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
+knitr::include_graphics("figures/step-9-save.png")
+```
+
 ## Scales: how values become colors
 
 In every component, `color_by` chooses what is colored; `color_values` and

@@ -38,12 +38,13 @@ footer:
 
 reference:
 - title: Plot basics
-  desc: Start a plot from a multilayer network, see what each component can be set to and what the plot sends to MiRA, and open it in the browser.
+  desc: Start a plot from a multilayer network, see what each component can be set to and what the plot sends to MiRA, open it in the browser, and save it to a file.
   contents:
   - mira
   - mira_options
   - mira_spec
   - print.mira_plot
+  - mira_save
 - title: "Elements: nodes, links, layers"
   desc: >
     One component per element of the plot. `color_by` and `size_by` map an

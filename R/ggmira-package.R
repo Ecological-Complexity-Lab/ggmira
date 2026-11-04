@@ -11,6 +11,8 @@
 #' - `+`: add a component to a plot.
 #' - [print.mira_plot()]: open the plot in the browser (typing its name
 #'   does this too).
+#' - [mira_save()]: save the plot as a PNG, JPG or PDF file, without
+#'   opening a window.
 #' - [mira_spec()]: what the plot sends to MiRA.
 #' - [mira_options()]: what each component can be set to, for a network.
 #'

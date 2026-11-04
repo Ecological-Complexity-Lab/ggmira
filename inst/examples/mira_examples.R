@@ -176,6 +176,14 @@ p3b <- mira(net, bipartite = TRUE, setA_type = "bird") +
   mira_legends(show = c("node_color", "intralayer_color", "layer_color"))
 p3b
 
+# ---- 3c. Save to a file (needs the chromote package and Chrome) ----------------
+
+mira_save(p3b, "palettes.png")                  # PNG at resolution 2
+mira_save(p3b, "palettes", format = "pdf")      # format given: ".pdf" added
+mira_save(p3b, "palettes-print.jpg", resolution = 4, width = 1600, height = 1000)
+mira_save(p3b, "palettes-clear.png", background = "transparent", legends = FALSE)
+mira_save(p3b + mira_mode_grid(columns = 2), "palettes-grid.png", background = "white")
+
 # ---- 4. Constant colors --------------------------------------------------------
 
 p4 <- mira(net, bipartite = TRUE, setA_type = "bird") +

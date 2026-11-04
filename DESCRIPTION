@@ -24,7 +24,10 @@ Imports:
     tools,
     utils
 Suggests:
+    chromote,
     emln,
+    later,
+    promises,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
