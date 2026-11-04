@@ -31,8 +31,9 @@ mouse wheel to zoom, Shift+drag to pan.
 \details{
 \strong{Finding the values.} When a plot is opened from R, MiRA shows the
 current camera under its zoom buttons, in these units, and updates it as
-you move the view. Set the view with the mouse, click \strong{Copy for R}, and
-paste the \code{mira_camera()} call into your script.
+you move the view. Set the view with the mouse, click MiRA's \strong{R} button
+(Copy as R code, next to Save Session), and paste the code, with its
+\code{mira_camera()} call, into your script.
 
 \strong{Limits.} The same call gives the same view only in a browser window of
 the same size:
@@ -43,8 +44,8 @@ full-screen window) shows the same framing at a different size, not
 identical pixels. Use the same window size when a figure must match
 exactly.
 \item Layers moved one by one (Cmd/Ctrl+drag on a layer) are not part of the
-camera: Copy for R does not include them, and \code{mira_camera()} cannot
-set them.
+camera: \code{mira_camera()} cannot set them (the R button lists them as
+a comment).
 \item The view also depends on everything else in the plot (layout and
 \code{seed}, \code{mira_layer(stack, spacing)}): copy the camera from the plot it
 is meant for.

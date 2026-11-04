@@ -8,6 +8,11 @@
 #' `plot_multilayer()` is the same function without `mode` (always network
 #' mode), under the name emln uses.
 #'
+#' **From MiRA back to R.** Change the plot in MiRA, then click MiRA's **R**
+#' button (Copy as R code, next to Save Session): it shows the [mira()] code
+#' that draws the current view, starting from this network and these
+#' arguments, to paste into a script. Not for `plot_multilayer()`.
+#'
 #' @param multilayer A multilayer object (created by \code{create_multilayer_network}
 #'   or \code{load_emln}).
 #' @param bipartite Logical. Whether the network is bipartite. Defaults to
@@ -119,8 +124,13 @@ plot_mira <- function(multilayer, bipartite = FALSE, setA_type = NULL,
     directed            = directed,
     directed_interlayer = directed_interlayer
   )
-  # Network mode sends no view spec: exactly plot_multilayer()
-  view_json <- if (mode == NETWORK_MODE) NULL else .to_json(list(version = VIEW_SPEC_VERSION, mode = list(view = mode)))
+  # A view spec with no settings, only R's text for MiRA's R button (the
+  # same plot as mira() code), and the view
+  spec <- list(version = VIEW_SPEC_VERSION)
+  r_call <- .as_mira_call(match.call(), bipartite, directed, network_json)
+  if (!is.null(r_call)) spec$r <- list(mira = r_call)
+  if (mode != NETWORK_MODE) spec$mode <- list(view = mode)
+  view_json <- .to_json(spec)
   .serve_mira(network_json, view_json = view_json, port = port,
               mira_path = mira_path, browser = browser)
 }
@@ -144,4 +154,28 @@ plot_multilayer <- function(multilayer, bipartite = FALSE, setA_type = NULL,
   )
   .serve_mira(network_json, view_json = NULL, port = port,
               mira_path = mira_path, browser = browser)
+}
+
+# plot_mira()'s arguments that mira() takes
+MIRA_CALL_ARGS <- c("bipartite", "setA_type", "directed", "directed_interlayer")
+
+#' The mira() call that makes the same plot as a plot_mira() call
+#'
+#' The network and the arguments mira() takes, as written. mira() draws a
+#' bipartite network as undirected unless told; plot_mira() auto-detects,
+#' so `directed = TRUE` is added when it found a directed network.
+#' @return The call's text, or NULL when it is too long to have been typed.
+#' @keywords internal
+#' @noRd
+.as_mira_call <- function(call, bipartite, directed, network_json) {
+  args <- as.list(call)[-1]
+  args <- c(args["multilayer"], args[intersect(MIRA_CALL_ARGS, names(args))])
+  names(args)[1] <- ""
+  if (isTRUE(bipartite) && is.null(directed) && .json_directed(network_json)) args$directed <- TRUE
+  .mira_call_text(as.call(c(as.name("mira"), args)))
+}
+
+# The network's "directed" flag, MiRA's JSON's first field
+.json_directed <- function(network_json) {
+  identical(regmatches(network_json, regexpr('"directed": (true|false)', network_json)), '"directed": true')
 }

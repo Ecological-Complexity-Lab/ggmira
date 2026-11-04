@@ -227,7 +227,9 @@ test_that("printing serves the network and the view spec", {
   p <- toy_plot() + mira_node(size = 10)
   expect_equal(suppressMessages(print(p, port = 9000)), "handle")
   expect_identical(served[[1]], p$network_json)
-  expect_identical(served$view_json, mira_spec(p, json = TRUE))
+  # the spec, with R's own text for MiRA's Copy as R code (test-copy_r.R)
+  expect_identical(served$view_json, .view_json(p))
+  expect_match(served$view_json, '"size": 10', fixed = TRUE)
   expect_equal(served$port, 9000)
 })
 

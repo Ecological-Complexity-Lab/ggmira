@@ -82,6 +82,11 @@ the plot should look in code, use \code{\link[=mira]{mira()}} instead.
 \code{plot_multilayer()} is the same function without \code{mode} (always network
 mode), under the name emln uses.
 
+\strong{From MiRA back to R.} Change the plot in MiRA, then click MiRA's \strong{R}
+button (Copy as R code, next to Save Session): it shows the \code{\link[=mira]{mira()}} code
+that draws the current view, starting from this network and these
+arguments, to paste into a script. Not for \code{plot_multilayer()}.
+
 The function:
 \enumerate{
 \item Converts the multilayer object to MiRA's JSON format (the same
