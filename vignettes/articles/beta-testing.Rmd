@@ -41,9 +41,36 @@ pkgdown::preview_site("path/to/ggmira")
 - Each plot opens in the browser; stop them all with
   `httpuv::stopAllServers()`.
 
-## 4. Report
+## 4. Leave feedback
 
-Report each problem as an issue at
-<https://github.com/Ecological-Complexity-Lab/ggmira/issues>, with the code
-you ran, what you expected and what happened, and a screenshot of MiRA.
-Report also what you could not figure out how to do, even if nothing broke.
+Report what is wrong, confusing or missing, and also what you could not
+figure out how to do, even if nothing broke. Every way below opens a new
+GitHub issue, already filled in: check it and click *Submit new issue*
+(sign in to GitHub first).
+
+- **On a page of this site:**
+  - select text, and click the *💬 Feedback* bubble next to it;
+  - or click the 💬 next to a heading (it shows when the mouse is over the
+    heading) for feedback on that section;
+  - or click the *💬 Feedback* button at the bottom right, for the page.
+
+  The issue gets the page, section, argument and the selected text; add
+  what you expected. Pick the type: bug, unclear, missing or idea.
+
+- **From R,** for example when something breaks while you work:
+
+  ```r
+  mira_feedback("mira_node", "color_limits seems ignored with color_by = \".set\"")
+  mira_feedback("Getting started", "Step 6: what is a link condition?", type = "unclear")
+  ```
+
+  The issue gets your R session (R, ggmira and package versions).
+
+- **In MiRA:** its *Feedback* button, for the visualizer itself.
+
+With a bug, add the code you ran and, if it helps, a screenshot of MiRA
+(paste it into the issue before submitting).
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%", fig.alt = "A page of the ggmira site with text selected and the feedback form open"}
+knitr::include_graphics("figures/beta-feedback.png")
+```
