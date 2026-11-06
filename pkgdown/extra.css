@@ -1,0 +1,142 @@
+/* Beta feedback on the docs (pkgdown/extra.js) */
+
+.fb-page {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1040;
+  border-radius: 20px;
+  padding: 6px 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.fb-bubble {
+  position: absolute;
+  z-index: 1050;
+  padding: 3px 10px;
+  border: 1px solid var(--bs-primary, #0d6efd);
+  border-radius: 14px;
+  background: var(--bs-body-bg, #fff);
+  color: var(--bs-primary, #0d6efd);
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.fb-heading {
+  margin-left: 0.4em;
+  padding: 0 0.2em;
+  border: none;
+  background: none;
+  font-size: 0.6em;
+  vertical-align: middle;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+h1:hover > .fb-heading,
+h2:hover > .fb-heading,
+h3:hover > .fb-heading,
+.fb-heading:focus {
+  opacity: 0.8;
+}
+
+.fb-dialog {
+  width: min(520px, calc(100vw - 32px));
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.25);
+  color: var(--bs-body-color, #212529);
+  background: var(--bs-body-bg, #fff);
+}
+
+.fb-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.fb-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+}
+
+.fb-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fb-close {
+  border: none;
+  background: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: #6c757d;
+  cursor: pointer;
+}
+
+.fb-where {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.fb-quote {
+  margin: 0;
+  padding: 6px 10px;
+  border-left: 3px solid #ced4da;
+  color: #495057;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  max-height: 8em;
+  overflow: auto;
+}
+
+.fb-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.fb-types legend {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.fb-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.fb-label textarea,
+.fb-label input {
+  font-weight: normal;
+  padding: 6px 8px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+}
+
+.fb-note {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+.fb-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media print {
+  .fb-page, .fb-bubble, .fb-heading { display: none; }
+}

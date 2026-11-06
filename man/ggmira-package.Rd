@@ -99,6 +99,14 @@ the nodes and links of the other layers.
 }
 }
 
+\section{Beta testing}{
+
+\itemize{
+\item \code{\link[=mira_feedback]{mira_feedback()}}: send feedback as a filled-in GitHub issue. The
+documentation pages have a \emph{Feedback} button too.
+}
+}
+
 \section{Networks}{
 
 ggmira works with the multilayer objects of the emln package
