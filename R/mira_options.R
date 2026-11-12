@@ -122,7 +122,7 @@ ELEMENT_COLORS <- c(node = "#d97706", "intralayer link" = "#0ea5e9", "interlayer
   element <- rep("node", length(component))
   element[component == "mira_intralayer" | (component == "mira_filter" & argument == "links")] <- "intralayer link"
   element[component == "mira_interlayer"] <- "interlayer link"
-  element[component == "mira_layer" | (component == "mira_mode_meta" & argument == "layers")] <- "layer"
+  element[component == "mira_layer" | (component %in% c("mira_mode_meta", "mira_filter") & argument == "layers")] <- "layer"
   element
 }
 
@@ -233,7 +233,8 @@ ELEMENT_COLORS <- c(node = "#d97706", "intralayer link" = "#0ea5e9", "interlayer
 .filter_options <- function(plot) {
   rbind(
     .condition_rows("mira_filter", "nodes", as.data.frame(plot$net$nodes), "node"),
-    .condition_rows("mira_filter", "links", as.data.frame(plot$net$extended), "link")
+    .condition_rows("mira_filter", "links", as.data.frame(plot$net$extended), "link"),
+    .condition_rows("mira_filter", "layers", as.data.frame(plot$net$layers), "layer")
   )
 }
 

@@ -34,7 +34,7 @@ views where MiRA uses them:\tabular{lllllll}{
    \code{\link[=mira_interlayer]{mira_interlayer()}} \tab yes \tab  \tab yes \tab  \tab  \tab  \cr
    \code{\link[=mira_layer]{mira_layer()}} colors \tab yes \tab yes \tab yes \tab yes \tab  \tab  \cr
    \code{mira_node(highlight = )} \tab yes \tab yes \tab yes \tab  \tab yes \tab  \cr
-   \code{\link[=mira_filter]{mira_filter()}} \tab yes \tab yes \tab yes \tab  \tab  \tab  \cr
+   \code{\link[=mira_filter]{mira_filter()}} \tab yes \tab yes \tab yes \tab \code{layers} only \tab  \tab  \cr
    \code{\link[=mira_camera]{mira_camera()}} \tab yes \tab  \tab  \tab  \tab  \tab  \cr
 }
 
@@ -46,20 +46,20 @@ dims the other layers instead: \code{mira_mode_meta(layers = )}.
 \seealso{
 \code{\link[=plot_mira]{plot_mira()}} to open a network in a view with MiRA's defaults.
 
-Other components: 
-\code{\link{mira_camera}()},
-\code{\link{mira_filter}()},
-\code{\link{mira_interlayer}()},
-\code{\link{mira_intralayer}()},
-\code{\link{mira_layer}()},
-\code{\link{mira_layout}()},
-\code{\link{mira_legends}()},
-\code{\link{mira_mode_dashboard}()},
-\code{\link{mira_mode_data}()},
-\code{\link{mira_mode_grid}()},
-\code{\link{mira_mode_layer}()},
-\code{\link{mira_mode_map}()},
-\code{\link{mira_mode_meta}()},
-\code{\link{mira_node}()}
+Other components:
+\code{\link[=mira_camera]{mira_camera()}},
+\code{\link[=mira_filter]{mira_filter()}},
+\code{\link[=mira_interlayer]{mira_interlayer()}},
+\code{\link[=mira_intralayer]{mira_intralayer()}},
+\code{\link[=mira_layer]{mira_layer()}},
+\code{\link[=mira_layout]{mira_layout()}},
+\code{\link[=mira_legends]{mira_legends()}},
+\code{\link[=mira_mode_dashboard]{mira_mode_dashboard()}},
+\code{\link[=mira_mode_data]{mira_mode_data()}},
+\code{\link[=mira_mode_grid]{mira_mode_grid()}},
+\code{\link[=mira_mode_layer]{mira_mode_layer()}},
+\code{\link[=mira_mode_map]{mira_mode_map()}},
+\code{\link[=mira_mode_meta]{mira_mode_meta()}},
+\code{\link[=mira_node]{mira_node()}}
 }
 \concept{components}

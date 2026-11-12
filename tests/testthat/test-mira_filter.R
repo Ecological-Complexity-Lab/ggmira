@@ -42,6 +42,28 @@ test_that("link conditions become [layer_from, node_from, layer_to, node_to]", {
                fixed = TRUE)
 })
 
+test_that("layer conditions and names become layer names", {
+  net <- filter_net()
+  net$layers$habitat <- c("forest", "lake")
+  p <- suppressMessages(mira(net, bipartite = TRUE, setA_type = "parasite"))
+  expect_equal(mira_spec(p + mira_filter(layers = habitat == "lake"))$filter, list(layers = list("L2")))
+  expect_equal(mira_spec(p + mira_filter(layers = c("L2", "L1", "L2")))$filter$layers, list("L2", "L1"))
+  expect_equal(format(mira_filter(layers = habitat == "lake")), 'mira_filter(layers = habitat == "lake")')
+  expect_null(mira_spec(p + mira_filter(layers = "L1") + mira_filter(layers = NULL))$filter$layers)
+  expect_error(p + mira_filter(layers = "L9"), '`layers` "L9" is not a layer name \\(layer_name values: L1, L2\\)')
+  expect_error(p + mira_filter(layers = depth > 1), "could not be evaluated on the columns of net\\$layers")
+  x <- NULL # a variable set to NULL is not "no filter" (only a literal NULL is), as for nodes
+  expect_error(p + mira_filter(layers = x), "must be layer names or a condition")
+  expect_warning(p + mira_filter(layers = habitat == "sea"), "`layers` keeps no layers; MiRA will draw none")
+})
+
+test_that("R's layer condition reaches MiRA as text, for the R button", {
+  net <- filter_net()
+  net$layers$habitat <- c("forest", "lake")
+  p <- suppressMessages(mira(net, bipartite = TRUE, setA_type = "parasite")) + mira_filter(layers = habitat == "lake")
+  expect_equal(p$r_filter$layers, 'habitat == "lake"')
+})
+
 test_that("conditions see the caller's variables, inside functions too", {
   keep <- "p1"
   expect_equal(mira_spec(filter_plot() + mira_filter(nodes = node_name %in% keep))$filter$nodes, list("p1"))

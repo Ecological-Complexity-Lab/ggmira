@@ -13,7 +13,8 @@ A component, to add to a plot with \code{+}.
 Opens the plot in MiRA's data mode: the network's tables (nodes, state
 nodes, links, layers), with every attribute, sortable and filterable,
 and \emph{Export CSV}. A filter set there applies to network, grid and map
-modes, like \code{\link[=mira_filter]{mira_filter()}} from R. It opens on the nodes table with
+modes (its layers also to the layer view), like \code{\link[=mira_filter]{mira_filter()}} from R.
+It opens on the nodes table with
 every row; the other components of the plot do not apply (see
 \link{mira_mode}). In MiRA, the data button (a table) opens this view.
 }
@@ -31,20 +32,20 @@ mira(net, bipartite = TRUE, setA_type = "bird") + mira_mode_data()
 \code{\link[=mira_filter]{mira_filter()}} to filter from R; \link{mira_mode} for the other
 views.
 
-Other components: 
-\code{\link{mira_camera}()},
-\code{\link{mira_filter}()},
-\code{\link{mira_interlayer}()},
-\code{\link{mira_intralayer}()},
-\code{\link{mira_layer}()},
-\code{\link{mira_layout}()},
-\code{\link{mira_legends}()},
+Other components:
+\code{\link[=mira_camera]{mira_camera()}},
+\code{\link[=mira_filter]{mira_filter()}},
+\code{\link[=mira_interlayer]{mira_interlayer()}},
+\code{\link[=mira_intralayer]{mira_intralayer()}},
+\code{\link[=mira_layer]{mira_layer()}},
+\code{\link[=mira_layout]{mira_layout()}},
+\code{\link[=mira_legends]{mira_legends()}},
 \code{\link{mira_mode}},
-\code{\link{mira_mode_dashboard}()},
-\code{\link{mira_mode_grid}()},
-\code{\link{mira_mode_layer}()},
-\code{\link{mira_mode_map}()},
-\code{\link{mira_mode_meta}()},
-\code{\link{mira_node}()}
+\code{\link[=mira_mode_dashboard]{mira_mode_dashboard()}},
+\code{\link[=mira_mode_grid]{mira_mode_grid()}},
+\code{\link[=mira_mode_layer]{mira_mode_layer()}},
+\code{\link[=mira_mode_map]{mira_mode_map()}},
+\code{\link[=mira_mode_meta]{mira_mode_meta()}},
+\code{\link[=mira_node]{mira_node()}}
 }
 \concept{components}
