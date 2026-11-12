@@ -43,6 +43,13 @@
 #'   the system default via \code{getOption("browser")}. Can be a browser
 #'   name (e.g. "chrome", "firefox") or a command
 #'   (e.g. "open -a 'Google Chrome'").
+#' @param viewer `TRUE` to open MiRA in RStudio's Viewer pane instead of the
+#'   browser (outside RStudio, the browser opens). Defaults to `FALSE`, or to
+#'   `getOption("ggmira.viewer")`: put `options(ggmira.viewer = TRUE)` in
+#'   your `.Rprofile` to always use the pane. A `browser` given in the call
+#'   wins. MiRA needs room (at least 1024 x 600 pixels): maximize the pane,
+#'   or click its *Show in new window* button to move the plot to the
+#'   browser.
 #'
 #' @note
 #' MiRA (Multilayer Interactive Rendering Application) is a browser-based
@@ -100,6 +107,9 @@
 #' # Another browser; a local copy of MiRA, not the bundled one
 #' # plot_mira(net, browser = "firefox", mira_path = "~/MiRA")
 #'
+#' # In RStudio's Viewer pane
+#' # plot_mira(net, bipartite = TRUE, setA_type = "bird", viewer = TRUE)
+#'
 #' # The same as plot_mira(net, bipartite = TRUE, setA_type = "bird")
 #' plot_multilayer(net, bipartite = TRUE, setA_type = "bird")
 #'
@@ -108,8 +118,10 @@
 plot_mira <- function(multilayer, bipartite = FALSE, setA_type = NULL,
                       directed = NULL, directed_interlayer = NULL,
                       mode = NETWORK_MODE, port = 8080, mira_path = NULL,
-                      browser = getOption("browser")) {
+                      browser = getOption("browser"),
+                      viewer = getOption(VIEWER_OPTION, FALSE)) {
   mode <- .choice(MODES)(mode, "mode", "plot_mira")
+  viewer <- .use_viewer(viewer, !missing(browser), "plot_mira")
   if (mode == "map" && !.has_coordinates(multilayer)) {
     .abort_arg("plot_mira", "mode", '"map" needs the layers\' coordinates: `latitude` and `longitude` in net$layers')
   }
@@ -132,7 +144,7 @@ plot_mira <- function(multilayer, bipartite = FALSE, setA_type = NULL,
   if (mode != NETWORK_MODE) spec$mode <- list(view = mode)
   view_json <- .to_json(spec)
   .serve_mira(network_json, view_json = view_json, port = port,
-              mira_path = mira_path, browser = browser)
+              mira_path = mira_path, browser = browser, viewer = viewer)
 }
 
 #' @rdname plot_mira
@@ -140,7 +152,9 @@ plot_mira <- function(multilayer, bipartite = FALSE, setA_type = NULL,
 plot_multilayer <- function(multilayer, bipartite = FALSE, setA_type = NULL,
                             directed = NULL, directed_interlayer = NULL,
                             port = 8080, mira_path = NULL,
-                            browser = getOption("browser")) {
+                            browser = getOption("browser"),
+                            viewer = getOption(VIEWER_OPTION, FALSE)) {
+  viewer <- .use_viewer(viewer, !missing(browser), "plot_multilayer")
   if (!.should_serve(browser_given = !missing(browser))) return(invisible(NULL))
   message("Please report issues at ",
           "https://github.com/Ecological-Complexity-Lab/MiRA/issues")
@@ -153,7 +167,7 @@ plot_multilayer <- function(multilayer, bipartite = FALSE, setA_type = NULL,
     directed_interlayer = directed_interlayer
   )
   .serve_mira(network_json, view_json = NULL, port = port,
-              mira_path = mira_path, browser = browser)
+              mira_path = mira_path, browser = browser, viewer = viewer)
 }
 
 # plot_mira()'s arguments that mira() takes

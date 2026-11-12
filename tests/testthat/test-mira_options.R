@@ -61,7 +61,7 @@ test_that("links, layers, filters and the meta-network are listed", {
   opts <- toy_options()
   expect_true("min_weight" %in% opts$argument[opts$component == "mira_intralayer"])
   expect_false("weight" %in% opts$attribute[opts$component == "mira_intralayer" & opts$argument == "color_by"])
-  expect_true(".individual" %in% opts$attribute[opts$component == "mira_layer"])
+  expect_true("layer_name" %in% opts$attribute[opts$component == "mira_layer"])
   expect_setequal(opts$attribute[opts$component == "mira_filter" & opts$argument == "links"],
                   names(options_net()$extended))
   meta <- opts[opts$component == "mira_mode_meta", ]

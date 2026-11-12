@@ -143,13 +143,18 @@ MAX_CALL_CHARS <- 500
 #'
 #' Starts a local server with the network and its view spec and opens MiRA.
 #' Typing a plot's name at the console does this; call `print()` to choose
-#' the port or the browser. Each print starts a new server (on the next free
+#' the port or the browser, or to open the plot in RStudio's Viewer pane
+#' (`viewer = TRUE`, or `options(ggmira.viewer = TRUE)` for every plot).
+#' Each print starts a new server (on the next free
 #' port when `port` is taken).
 #'
 #' In MiRA, the plot can still be changed. MiRA's **R** button (Copy as R
 #' code, next to Save Session) shows the ggmira code for the current view,
 #' starting with the `mira()` call that made the plot, to paste into a
-#' script. What R cannot set is listed in comments under the code.
+#' script. What R cannot set is listed in comments under the code. By
+#' default the code ends with `print(p, viewer = TRUE)`, which opens the
+#' plot in RStudio's Viewer pane; untick the box under the code for the
+#' browser.
 #'
 #' @param x A `mira_plot`.
 #' @inheritParams plot_mira
@@ -167,17 +172,21 @@ MAX_CALL_CHARS <- 500
 #'
 #' print(p, port = 9000)            # another port
 #' # print(p, browser = "firefox")  # another browser
+#' # print(p, viewer = TRUE)        # RStudio's Viewer pane
+#' # options(ggmira.viewer = TRUE)  # the pane for every plot
 #' # print(p, mira_path = "~/MiRA") # a local copy of MiRA, not the bundled one
 #'
 #' # When done, stop the servers the plots started
 #' httpuv::stopAllServers()
 print.mira_plot <- function(x, port = 8080, mira_path = NULL,
-                            browser = getOption("browser"), ...) {
+                            browser = getOption("browser"),
+                            viewer = getOption(VIEWER_OPTION, FALSE), ...) {
+  viewer <- .use_viewer(viewer, !missing(browser), "print")
   if (!.should_serve(browser_given = !missing(browser))) return(invisible(NULL))
   message("Please report issues at ",
           "https://github.com/Ecological-Complexity-Lab/MiRA/issues")
   .serve_mira(x$network_json, view_json = .view_json(x), port = port,
-              mira_path = mira_path, browser = browser)
+              mira_path = mira_path, browser = browser, viewer = viewer)
 }
 
 #' What a plot sends to MiRA

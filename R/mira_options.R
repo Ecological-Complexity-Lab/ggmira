@@ -225,7 +225,7 @@ ELEMENT_COLORS <- c(node = "#d97706", "intralayer link" = "#0ea5e9", "interlayer
   attrs <- setdiff(names(layers), LAYER_HIDDEN_COLUMNS)
   rbind(
     .column_rows("mira_layer", "color_by", attrs, layers, "layer"),
-    .option_rows("mira_layer", "color_by", INDIVIDUAL_KEYWORD, "individual", "keyword",
+    .option_rows("mira_layer", "color_by", LAYER_NAME_COLUMN, "individual", "keyword",
                  sprintf("one color per layer (%d layers)", nrow(layers)))
   )
 }

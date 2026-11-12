@@ -8,6 +8,8 @@
 NETWORK_ENDPOINT <- "/api/network.json"
 VIEW_ENDPOINT <- "/api/view.json"
 MAX_PORT_ATTEMPTS <- 50
+VIEWER_OPTION <- "ggmira.viewer" # options(ggmira.viewer = TRUE): RStudio's Viewer pane by default
+RSTUDIO_PANE_QUERY <- "&pane=rstudio" # MiRA's small-window warning then talks about the pane
 
 CONTENT_TYPES <- c(
   html = "text/html; charset=utf-8",
@@ -48,11 +50,13 @@ BINARY_EXTENSIONS <- c("png", "jpg", "jpeg", "gif", "ico", "woff", "woff2")
 #' @param network_json Network JSON string (from `.network_json()`).
 #' @param view_json View spec JSON string, or NULL (then `/api/view.json`
 #'   returns 404 and MiRA shows its default view).
+#' @param viewer TRUE: RStudio's Viewer pane, when R runs in RStudio.
 #' @return The httpuv server handle, invisibly.
 #' @keywords internal
 #' @noRd
 .serve_mira <- function(network_json, view_json = NULL, port = 8080,
-                        mira_path = NULL, browser = getOption("browser")) {
+                        mira_path = NULL, browser = getOption("browser"),
+                        viewer = FALSE) {
   mira_path <- .resolve_mira_path(mira_path)
   message(sprintf("Serving MiRA from: %s", mira_path))
 
@@ -61,8 +65,28 @@ BINARY_EXTENSIONS <- c("png", "jpg", "jpeg", "gif", "ico", "woff", "woff2")
   message(sprintf("Server running at: %s", url))
   message("Call httpuv::stopServer(handle) to stop the server when done.")
 
-  utils::browseURL(url, browser = .resolve_browser(browser))
+  .open_mira(url, browser, viewer)
   invisible(server$handle)
+}
+
+#' Open MiRA in RStudio's Viewer pane (`viewer = TRUE`, in RStudio) or the browser
+#' @keywords internal
+#' @noRd
+.open_mira <- function(url, browser, viewer) {
+  rstudio_viewer <- getOption("viewer") # set by RStudio, as for htmlwidgets
+  if (viewer && is.function(rstudio_viewer)) {
+    rstudio_viewer(paste0(url, RSTUDIO_PANE_QUERY))
+    return(invisible())
+  }
+  if (viewer) message("Not in RStudio: opening MiRA in the browser.")
+  utils::browseURL(url, browser = .resolve_browser(browser))
+}
+
+#' `viewer`, checked; an explicit `browser` wins
+#' @keywords internal
+#' @noRd
+.use_viewer <- function(viewer, browser_given, fn) {
+  .check_flag(viewer, "viewer", fn) && !browser_given
 }
 
 #' httpuv app: API endpoints first, then static MiRA files

@@ -4,7 +4,14 @@
 \alias{print.mira_plot}
 \title{Open a mira plot in the browser}
 \usage{
-\method{print}{mira_plot}(x, port = 8080, mira_path = NULL, browser = getOption("browser"), ...)
+\method{print}{mira_plot}(
+  x,
+  port = 8080,
+  mira_path = NULL,
+  browser = getOption("browser"),
+  viewer = getOption(VIEWER_OPTION, FALSE),
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{mira_plot}.}
@@ -20,6 +27,14 @@ the system default via \code{getOption("browser")}. Can be a browser
 name (e.g. "chrome", "firefox") or a command
 (e.g. "open -a 'Google Chrome'").}
 
+\item{viewer}{\code{TRUE} to open MiRA in RStudio's Viewer pane instead of the
+browser (outside RStudio, the browser opens). Defaults to \code{FALSE}, or to
+\code{getOption("ggmira.viewer")}: put \code{options(ggmira.viewer = TRUE)} in
+your \code{.Rprofile} to always use the pane. A \code{browser} given in the call
+wins. MiRA needs room (at least 1024 x 600 pixels): maximize the pane,
+or click its \emph{Show in new window} button to move the plot to the
+browser.}
+
 \item{...}{Not used.}
 }
 \value{
@@ -30,14 +45,19 @@ Invisibly, the server handle. Stop it with
 \description{
 Starts a local server with the network and its view spec and opens MiRA.
 Typing a plot's name at the console does this; call \code{print()} to choose
-the port or the browser. Each print starts a new server (on the next free
+the port or the browser, or to open the plot in RStudio's Viewer pane
+(\code{viewer = TRUE}, or \code{options(ggmira.viewer = TRUE)} for every plot).
+Each print starts a new server (on the next free
 port when \code{port} is taken).
 }
 \details{
 In MiRA, the plot can still be changed. MiRA's \strong{R} button (Copy as R
 code, next to Save Session) shows the ggmira code for the current view,
 starting with the \code{mira()} call that made the plot, to paste into a
-script. What R cannot set is listed in comments under the code.
+script. What R cannot set is listed in comments under the code. By
+default the code ends with \code{print(p, viewer = TRUE)}, which opens the
+plot in RStudio's Viewer pane; untick the box under the code for the
+browser.
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
@@ -49,6 +69,8 @@ p        # the same as print(p)
 
 print(p, port = 9000)            # another port
 # print(p, browser = "firefox")  # another browser
+# print(p, viewer = TRUE)        # RStudio's Viewer pane
+# options(ggmira.viewer = TRUE)  # the pane for every plot
 # print(p, mira_path = "~/MiRA") # a local copy of MiRA, not the bundled one
 
 # When done, stop the servers the plots started

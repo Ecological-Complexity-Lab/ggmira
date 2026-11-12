@@ -91,9 +91,13 @@ test_that("the code MiRA shows gives the plot's spec back", {
   read_code <- "document.getElementById('copyRCodeBtn').click(); document.querySelector('#rCodePanel pre').innerText"
   result <- .wait_for(browser$Runtime$evaluate(read_code, returnByValue = TRUE, wait_ = FALSE), deadline, "test")
   code <- result$result$value
-  expect_match(code, 'mira(net, bipartite = TRUE, setA_type = "parasite") +', fixed = TRUE)
+  # by default for RStudio's Viewer pane: the plot in p, then print(p, viewer = TRUE)
+  expect_match(code, 'p <- mira(net, bipartite = TRUE, setA_type = "parasite") +', fixed = TRUE)
   expect_match(code, "mira_filter(nodes = size > 1)", fixed = TRUE)
+  expect_true(endsWith(code, "\nprint(p, viewer = TRUE)"))
 
-  copied <- suppressMessages(eval(parse(text = code)))
-  expect_equal(mira_spec(copied), mira_spec(p))
+  # not interactive: the print opens nothing
+  run <- new.env(parent = environment())
+  suppressMessages(eval(parse(text = code), envir = run))
+  expect_equal(mira_spec(run$p), mira_spec(p))
 })

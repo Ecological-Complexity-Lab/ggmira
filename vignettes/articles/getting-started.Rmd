@@ -34,7 +34,10 @@ net <- load_emln(17)
 ```
 
 Each plot starts a small local server; stop them all with
-`httpuv::stopAllServers()`.
+`httpuv::stopAllServers()`. Plots open in the browser; in RStudio, to open
+them in the Viewer pane instead, run `options(ggmira.viewer = TRUE)` (or
+`print(p, viewer = TRUE)` for one plot). MiRA needs at least 1024 x 600
+pixels, so maximize the pane.
 
 ## 1. The plot
 
@@ -320,7 +323,9 @@ camera, the view. MiRA's **R** button, next to *Save Session*, shows the
 ggmira code that draws the current view, changes included, with a *Copy*
 button: paste it into your script to keep the view. Each element's
 component is colored as in `mira_options()`, and the code starts with your
-`mira()` call.
+`mira()` call. With *Open in RStudio's Viewer pane* ticked (the default), the
+code keeps the plot in `p` and ends with `print(p, viewer = TRUE)`; untick it
+for code that opens the plot in the browser.
 
 ```{r, echo = FALSE, eval = TRUE, out.width = "100%", fig.alt = "MiRA's top bar, with the R button (Copy as R code) marked in red, next to Save Session"}
 knitr::include_graphics("figures/step-10-button.png")
@@ -335,8 +340,9 @@ plot_mira(net, bipartite = TRUE, setA_type = "bird") # adjust in MiRA, then clic
 ```
 
 Only settings that differ from MiRA's default view are written. What R
-cannot set (a layer moved with Cmd/Ctrl+drag, a layer filter, legends
-dragged away from a corner) is listed in comments under the code. A layout
+cannot set (a layer moved with Cmd/Ctrl+drag or in the layer view, legends
+dragged away from a corner, the map's and the layer view's own settings) is
+listed in comments under the code. A layout
 recomputed in MiRA has no seed: add `seed =` to `mira_layout()` for the
 same layout on every run.
 
