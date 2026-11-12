@@ -130,6 +130,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Shai Pilosof \email{pilos@bgu.ac.il} (\href{https://orcid.org/0000-0003-0430-5568}{ORCID})
   \item Shir Miryam Nehoray (\href{https://orcid.org/0009-0001-8453-4426}{ORCID})
 }
 

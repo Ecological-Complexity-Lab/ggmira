@@ -45,20 +45,20 @@ p + mira_layout("bipartite", nested = TRUE)
 \code{\link[=mira]{mira()}} to start a plot; \code{\link[=mira_node]{mira_node()}}, \code{\link[=mira_intralayer]{mira_intralayer()}},
 \code{\link[=mira_interlayer]{mira_interlayer()}} and \code{\link[=mira_layer]{mira_layer()}} for the elements it draws.
 
-Other components: 
-\code{\link{mira_camera}()},
-\code{\link{mira_filter}()},
-\code{\link{mira_interlayer}()},
-\code{\link{mira_intralayer}()},
-\code{\link{mira_layer}()},
-\code{\link{mira_legends}()},
+Other components:
+\code{\link[=mira_camera]{mira_camera()}},
+\code{\link[=mira_filter]{mira_filter()}},
+\code{\link[=mira_interlayer]{mira_interlayer()}},
+\code{\link[=mira_intralayer]{mira_intralayer()}},
+\code{\link[=mira_layer]{mira_layer()}},
+\code{\link[=mira_legends]{mira_legends()}},
 \code{\link{mira_mode}},
-\code{\link{mira_mode_dashboard}()},
-\code{\link{mira_mode_data}()},
-\code{\link{mira_mode_grid}()},
-\code{\link{mira_mode_layer}()},
-\code{\link{mira_mode_map}()},
-\code{\link{mira_mode_meta}()},
-\code{\link{mira_node}()}
+\code{\link[=mira_mode_dashboard]{mira_mode_dashboard()}},
+\code{\link[=mira_mode_data]{mira_mode_data()}},
+\code{\link[=mira_mode_grid]{mira_mode_grid()}},
+\code{\link[=mira_mode_layer]{mira_mode_layer()}},
+\code{\link[=mira_mode_map]{mira_mode_map()}},
+\code{\link[=mira_mode_meta]{mira_mode_meta()}},
+\code{\link[=mira_node]{mira_node()}}
 }
 \concept{components}
