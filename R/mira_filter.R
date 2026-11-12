@@ -1,23 +1,26 @@
-# Filters: draw only some nodes or links (MiRA's Data mode filter).
+# Filters: draw only some nodes, links or layers (MiRA's Data mode filter).
 # A condition is captured when mira_filter() is called and evaluated against
 # the network when the component is added to a plot (components do not know
-# the network), so MiRA receives plain lists: node names, and links as
-# [layer_from, node_from, layer_to, node_to].
+# the network), so MiRA receives plain lists: node names, links as
+# [layer_from, node_from, layer_to, node_to], and layer names.
 
 LINK_ID_COLUMNS <- c("layer_from", "node_from", "layer_to", "node_to")
 NAMES_SHOWN <- 5 # node names listed in an error message
 
-#' Filter: draw only some nodes or links
+#' Filter: draw only some nodes, links or layers
 #'
-#' Keeps part of the network: some nodes, some links, or both. Each argument
-#' takes a condition on the columns of the network's tables, evaluated like
-#' [subset()]: `nodes` on `net$nodes`, `links` on `net$extended`. Variables
-#' of your session can be used too. `nodes` also takes node names.
+#' Keeps part of the network: some nodes, some links, some layers, or a
+#' combination. Each argument takes a condition on the columns of the
+#' network's tables, evaluated like [subset()]: `nodes` on `net$nodes`,
+#' `links` on `net$extended`, `layers` on `net$layers`. Variables of your
+#' session can be used too. `nodes` also takes node names, and `layers`
+#' layer names.
 #'
-#' A hidden node hides its links. Filters on nodes and links combine: a link
-#' is drawn when it passes `links` and both its nodes pass `nodes`. A later
-#' `mira_filter()` replaces the same argument of an earlier one, so combine
-#' two conditions on nodes in one: `nodes = A & B`.
+#' A hidden node hides its links; a hidden layer hides its nodes and links,
+#' and the other layers close up the stack. Filters combine: a link is drawn
+#' when it passes `links`, both its nodes pass `nodes` and both its layers
+#' pass `layers`. A later `mira_filter()` replaces the same argument of an
+#' earlier one, so combine two conditions on nodes in one: `nodes = A & B`.
 #'
 #' Rows where a condition is `NA` are dropped. MiRA shows "Data filter
 #' active" with a button that removes the filter.
@@ -28,7 +31,8 @@ NAMES_SHOWN <- 5 # node names listed in an error message
 #' caller's variables; pass values, not names, through such a wrapper.
 #' A node that `mira_node(highlight = )` highlights must pass the filter,
 #' or MiRA highlights nothing (a warning). MiRA filters in network, grid
-#' and map modes only: in the other views ([mira_mode]) the whole network
+#' and map modes; the layer view applies `layers` only (each bubble stands
+#' for a whole layer). In the other views ([mira_mode]) the whole network
 #' is shown, with a warning. The meta-network has its own layer filter,
 #' which dims layers instead: `mira_mode_meta(layers = )`.
 #'
@@ -37,6 +41,8 @@ NAMES_SHOWN <- 5 # node names listed in an error message
 #' @param links A condition on the columns of `net$extended` (e.g.
 #'   `weight > 0.05`, `layer_from == "layer_1"`). `NULL` or `NA` = no link
 #'   filter.
+#' @param layers A condition on the columns of `net$layers` (e.g.
+#'   `latitude > -0.6`), or layer names. `NULL` or `NA` = no layer filter.
 #' @return A component, to add to a plot with `+`.
 #' @seealso [mira_intralayer()] and [mira_interlayer()] for `min_weight`,
 #'   which hides weak links without a filter.
@@ -60,10 +66,15 @@ NAMES_SHOWN <- 5 # node names listed in an error message
 #' # Both, in one call; a variable of your session
 #' keep <- c("species", "genus")
 #' p + mira_filter(nodes = verification_level %in% keep, links = weight > 0.05)
-mira_filter <- function(nodes, links) {
+#'
+#' # Layers by name, or by a condition on net$layers
+#' p + mira_filter(layers = c("layer_1", "layer_3"))
+#' p + mira_filter(layers = latitude > -0.6)
+mira_filter <- function(nodes, links, layers) {
   fields <- list()
   if (!missing(nodes)) fields["nodes"] <- list(.capture_condition(substitute(nodes), parent.frame()))
   if (!missing(links)) fields["links"] <- list(.capture_condition(substitute(links), parent.frame()))
+  if (!missing(layers)) fields["layers"] <- list(.capture_condition(substitute(layers), parent.frame()))
   structure(list(section = "filter", fn = "mira_filter", fields = fields), class = "mira_piece")
 }
 
@@ -76,8 +87,8 @@ mira_filter <- function(nodes, links) {
 #' Evaluate a filter component's conditions against the plot's network
 #'
 #' @return The component with each condition replaced by what MiRA receives:
-#'   a list of node names, or a list of `c(layer_from, node_from, layer_to,
-#'   node_to)` links.
+#'   a list of node names, a list of `c(layer_from, node_from, layer_to,
+#'   node_to)` links, or a list of layer names.
 #' @keywords internal
 #' @noRd
 .resolve_filter <- function(piece, plot) {
@@ -87,7 +98,8 @@ mira_filter <- function(nodes, links) {
     if (is.null(condition)) next
     kept <- switch(arg,
       nodes = .filter_nodes(condition, plot$net),
-      links = .filter_links(condition, plot$net)
+      links = .filter_links(condition, plot$net),
+      layers = .filter_layers(condition, plot$net)
     )
     piece$fields[arg] <- list(kept)
   }
@@ -125,6 +137,11 @@ mira_filter <- function(nodes, links) {
   kept <- unique(links[value %in% TRUE, LINK_ID_COLUMNS, drop = FALSE])
   if (nrow(kept) == 0) warning("mira_filter(): `links` keeps no links; MiRA will draw none", call. = FALSE)
   lapply(seq_len(nrow(kept)), function(i) as.list(vapply(kept[i, ], .format_names, character(1), USE.NAMES = FALSE)))
+}
+
+# Layer names or a condition on net$layers, as in mira_mode_meta(layers = )
+.filter_layers <- function(condition, net) {
+  .layer_names(condition, net, "mira_filter", empty = "MiRA will draw none", null_ok = FALSE)
 }
 
 # The condition's columns come from the table; other names from where

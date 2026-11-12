@@ -13,7 +13,8 @@ A component, to add to a plot with \code{+}.
 Opens the plot in MiRA's data mode: the network's tables (nodes, state
 nodes, links, layers), with every attribute, sortable and filterable,
 and \emph{Export CSV}. A filter set there applies to network, grid and map
-modes, like \code{\link[=mira_filter]{mira_filter()}} from R. It opens on the nodes table with
+modes (its layers also to the layer view), like \code{\link[=mira_filter]{mira_filter()}} from R.
+It opens on the nodes table with
 every row; the other components of the plot do not apply (see
 \link{mira_mode}). In MiRA, the data button (a table) opens this view.
 }

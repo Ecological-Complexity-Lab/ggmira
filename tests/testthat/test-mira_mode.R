@@ -109,6 +109,14 @@ test_that("mira_filter() with a view other than network, grid or map is a warnin
   expect_silent(p + mira_node(size = 5))
 })
 
+test_that("the layer view applies mira_filter(layers = ) only; nodes and links are a warning", {
+  expect_silent(mode_plot() + mira_filter(layers = "L1") + mira_mode_layer())
+  expect_warning(mode_plot() + mira_mode_layer() + mira_filter(layers = "L1", nodes = "p1"),
+                 paste0("mira_filter\\(\\): mira_filter\\(nodes, links\\) is not applied in layer mode, ",
+                        "where each bubble is a whole layer; mira_filter\\(layers = \\) is$"))
+  expect_warning(mode_plot() + mira_filter(layers = "L1") + mira_mode_meta(), "not applied in the meta-network")
+})
+
 test_that("the highlight warning comes once, when the filter or the highlight is added", {
   p <- suppressWarnings(mode_plot() + mira_node(highlight = "h1") + mira_filter(nodes = "p1"))
   expect_silent(p + mira_layout("circle"))

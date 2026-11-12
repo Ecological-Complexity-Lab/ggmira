@@ -24,7 +24,9 @@ layer column, with the same colors and legend as in network mode; in
 MiRA, choosing a layer column in either view changes both. The layer
 view's other settings (bubble size, colors by node count or edge
 density, links between bubbles, labels) are not available from R yet;
-it opens with MiRA's defaults.
+it opens with MiRA's defaults. \code{mira_filter(layers = )} applies: only the
+layers it keeps are bubbles; its \code{nodes} and \code{links} do not (a bubble is
+a whole layer).
 
 A plot opens in one view: see \link{mira_mode} for the rules and for what
 applies in each view.

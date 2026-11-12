@@ -2,9 +2,9 @@
 % Please edit documentation in R/mira_filter.R
 \name{mira_filter}
 \alias{mira_filter}
-\title{Filter: draw only some nodes or links}
+\title{Filter: draw only some nodes, links or layers}
 \usage{
-mira_filter(nodes, links)
+mira_filter(nodes, links, layers)
 }
 \arguments{
 \item{nodes}{A condition on the columns of \code{net$nodes} (e.g.
@@ -13,21 +13,27 @@ mira_filter(nodes, links)
 \item{links}{A condition on the columns of \code{net$extended} (e.g.
 \code{weight > 0.05}, \code{layer_from == "layer_1"}). \code{NULL} or \code{NA} = no link
 filter.}
+
+\item{layers}{A condition on the columns of \code{net$layers} (e.g.
+\code{latitude > -0.6}), or layer names. \code{NULL} or \code{NA} = no layer filter.}
 }
 \value{
 A component, to add to a plot with \code{+}.
 }
 \description{
-Keeps part of the network: some nodes, some links, or both. Each argument
-takes a condition on the columns of the network's tables, evaluated like
-\code{\link[=subset]{subset()}}: \code{nodes} on \code{net$nodes}, \code{links} on \code{net$extended}. Variables
-of your session can be used too. \code{nodes} also takes node names.
+Keeps part of the network: some nodes, some links, some layers, or a
+combination. Each argument takes a condition on the columns of the
+network's tables, evaluated like \code{\link[=subset]{subset()}}: \code{nodes} on \code{net$nodes},
+\code{links} on \code{net$extended}, \code{layers} on \code{net$layers}. Variables of your
+session can be used too. \code{nodes} also takes node names, and \code{layers}
+layer names.
 }
 \details{
-A hidden node hides its links. Filters on nodes and links combine: a link
-is drawn when it passes \code{links} and both its nodes pass \code{nodes}. A later
-\code{mira_filter()} replaces the same argument of an earlier one, so combine
-two conditions on nodes in one: \code{nodes = A & B}.
+A hidden node hides its links; a hidden layer hides its nodes and links,
+and the other layers close up the stack. Filters combine: a link is drawn
+when it passes \code{links}, both its nodes pass \code{nodes} and both its layers
+pass \code{layers}. A later \code{mira_filter()} replaces the same argument of an
+earlier one, so combine two conditions on nodes in one: \code{nodes = A & B}.
 
 Rows where a condition is \code{NA} are dropped. MiRA shows "Data filter
 active" with a button that removes the filter.
@@ -38,7 +44,8 @@ function that passes its arguments on through \code{...} does not see its
 caller's variables; pass values, not names, through such a wrapper.
 A node that \code{mira_node(highlight = )} highlights must pass the filter,
 or MiRA highlights nothing (a warning). MiRA filters in network, grid
-and map modes only: in the other views (\link{mira_mode}) the whole network
+and map modes; the layer view applies \code{layers} only (each bubble stands
+for a whole layer). In the other views (\link{mira_mode}) the whole network
 is shown, with a warning. The meta-network has its own layer filter,
 which dims layers instead: \code{mira_mode_meta(layers = )}.
 }
@@ -61,6 +68,10 @@ p + mira_filter(links = layer_from == "layer_1" & layer_to == "layer_1")
 # Both, in one call; a variable of your session
 keep <- c("species", "genus")
 p + mira_filter(nodes = verification_level \%in\% keep, links = weight > 0.05)
+
+# Layers by name, or by a condition on net$layers
+p + mira_filter(layers = c("layer_1", "layer_3"))
+p + mira_filter(layers = latitude > -0.6)
 \dontshow{\}) # examplesIf}
 }
 \seealso{

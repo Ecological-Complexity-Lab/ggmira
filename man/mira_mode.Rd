@@ -34,7 +34,7 @@ views where MiRA uses them:\tabular{lllllll}{
    \code{\link[=mira_interlayer]{mira_interlayer()}} \tab yes \tab  \tab yes \tab  \tab  \tab  \cr
    \code{\link[=mira_layer]{mira_layer()}} colors \tab yes \tab yes \tab yes \tab yes \tab  \tab  \cr
    \code{mira_node(highlight = )} \tab yes \tab yes \tab yes \tab  \tab yes \tab  \cr
-   \code{\link[=mira_filter]{mira_filter()}} \tab yes \tab yes \tab yes \tab  \tab  \tab  \cr
+   \code{\link[=mira_filter]{mira_filter()}} \tab yes \tab yes \tab yes \tab \code{layers} only \tab  \tab  \cr
    \code{\link[=mira_camera]{mira_camera()}} \tab yes \tab  \tab  \tab  \tab  \tab  \cr
 }
 

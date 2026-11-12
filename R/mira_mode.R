@@ -46,7 +46,7 @@ LATITUDE_COLUMNS <- c("latitude", "Latitude") # as MiRA reads them
 #' | [mira_interlayer()] | yes | | yes | | | |
 #' | [mira_layer()] colors | yes | yes | yes | yes | | |
 #' | `mira_node(highlight = )` | yes | yes | yes | | yes | |
-#' | [mira_filter()] | yes | yes | yes | | | |
+#' | [mira_filter()] | yes | yes | yes | `layers` only | | |
 #' | [mira_camera()] | yes | | | | | |
 #'
 #' R warns when [mira_filter()] or [mira_camera()] is combined with a view
@@ -142,7 +142,9 @@ mira_mode_map <- function() .mode_piece("map", "mira_mode_map", environment(), l
 #' MiRA, choosing a layer column in either view changes both. The layer
 #' view's other settings (bubble size, colors by node count or edge
 #' density, links between bubbles, labels) are not available from R yet;
-#' it opens with MiRA's defaults.
+#' it opens with MiRA's defaults. `mira_filter(layers = )` applies: only the
+#' layers it keeps are bubbles; its `nodes` and `links` do not (a bubble is
+#' a whole layer).
 #'
 #' A plot opens in one view: see [mira_mode] for the rules and for what
 #' applies in each view.
@@ -193,7 +195,8 @@ mira_mode_dashboard <- function() .mode_piece("dashboard", "mira_mode_dashboard"
 #' Opens the plot in MiRA's data mode: the network's tables (nodes, state
 #' nodes, links, layers), with every attribute, sortable and filterable,
 #' and *Export CSV*. A filter set there applies to network, grid and map
-#' modes, like [mira_filter()] from R. It opens on the nodes table with
+#' modes (its layers also to the layer view), like [mira_filter()] from R.
+#' It opens on the nodes table with
 #' every row; the other components of the plot do not apply (see
 #' [mira_mode]). In MiRA, the data button (a table) opens this view.
 #'
@@ -315,14 +318,19 @@ mira_mode_meta <- function(aggregation, layout, color_by, size_by, size, min_wei
 .resolve_meta_layers <- function(piece, plot) {
   if (piece$section != "mode" || !"layers" %in% names(piece$fields)) return(piece)
   condition <- piece$fields$layers
-  piece$fields["layers"] <- list(if (is.null(condition)) list() else .meta_layers(condition, plot$net, piece$fn))
+  piece$fields["layers"] <- list(if (is.null(condition)) list() else .layer_names(condition, plot$net, piece$fn))
   piece
 }
 
-.meta_layers <- function(condition, net, fn) {
+# Layer names, or a condition on net$layers, as the layer names they keep
+# (mira_mode_meta(layers = ), mira_filter(layers = )). `empty`: what an empty
+# result means, for its warning. `null_ok`: a value of NULL keeps no layers
+# (the meta-network selects none) rather than being an error (a filter, like
+# `nodes`, is cleared only by a literal NULL).
+.layer_names <- function(condition, net, fn, empty = "nothing is dimmed", null_ok = TRUE) {
   layers <- as.data.frame(net$layers)
   value <- .eval_condition(condition, layers, "layers", "net$layers", fn)
-  if (is.null(value) || identical(value, NA)) return(list()) # e.g. a variable set to NULL: none selected
+  if (null_ok && (is.null(value) || identical(value, NA))) return(list()) # e.g. a variable set to NULL: none selected
   names <- .format_names(layers$layer_name)
   numeric_names <- is.numeric(value) && is.numeric(layers$layer_name) # names given as numbers
   if (is.character(value) || is.factor(value) || numeric_names) {
@@ -341,7 +349,7 @@ mira_mode_meta <- function(aggregation, layout, color_by, size_by, size, min_wei
     .abort_arg(fn, "layers",
                "must be layer names or a condition on the columns of net$layers (TRUE or FALSE for each layer)")
   }
-  if (length(kept) == 0) warning(sprintf("%s(): `layers` keeps no layers; nothing is dimmed", fn), call. = FALSE)
+  if (length(kept) == 0) warning(sprintf("%s(): `layers` keeps no layers; %s", fn, empty), call. = FALSE)
   as.list(kept)
 }
 
@@ -398,10 +406,12 @@ mira_mode_meta <- function(aggregation, layout, color_by, size_by, size, min_wei
 }
 
 # Components that work in some views only: the camera (network mode) and
-# the filter (MiRA's data filter: network, grid and map modes). Warned once,
-# when the component or the view is added.
+# the filter (MiRA's data filter: network, grid and map modes; the layer view
+# applies the layer filter only). Warned once, when the component or the view
+# is added.
 CAMERA_MODES <- NETWORK_MODE
 FILTER_MODES <- c(NETWORK_MODE, "grid", "map")
+LAYER_FILTER_MODES <- "layer" # views that apply only mira_filter(layers = )
 VIEW_NAMES <- c(meta = "the meta-network", layer = "layer mode", dashboard = "dashboard mode",
                 data = "data mode") # views without the data filter, as warnings name them
 
@@ -412,7 +422,13 @@ VIEW_NAMES <- c(meta = "the meta-network", layer = "layer mode", dashboard = "da
     warning(sprintf("%s(): mira_camera() has no effect in mira_mode_%s(); it sets the view in network mode only",
                     piece$fn, view), call. = FALSE)
   }
-  if (piece$section %in% c("filter", "mode") && length(spec$filter) > 0 && !view %in% FILTER_MODES) {
+  if (piece$section %in% c("filter", "mode") && view %in% LAYER_FILTER_MODES &&
+      length(setdiff(names(spec$filter), "layers")) > 0) {
+    warning(sprintf(paste0("%s(): mira_filter(nodes, links) is not applied in %s, where each bubble is a whole layer; ",
+                           "mira_filter(layers = ) is"),
+                    piece$fn, VIEW_NAMES[[view]]), call. = FALSE)
+  } else if (piece$section %in% c("filter", "mode") && length(spec$filter) > 0 &&
+             !view %in% c(FILTER_MODES, LAYER_FILTER_MODES)) {
     hint <- if (view == "meta") "; to dim layers in the meta-network, use mira_mode_meta(layers = )" else ""
     warning(sprintf(paste0("%s(): mira_filter() is not applied in %s, which shows the whole network; ",
                            "MiRA's data filter works in network, grid and map modes%s"),
