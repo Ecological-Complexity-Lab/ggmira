@@ -14,7 +14,8 @@ plot_mira(
   mode = NETWORK_MODE,
   port = 8080,
   mira_path = NULL,
-  browser = getOption("browser")
+  browser = getOption("browser"),
+  viewer = getOption(VIEWER_OPTION, FALSE)
 )
 
 plot_multilayer(
@@ -25,7 +26,8 @@ plot_multilayer(
   directed_interlayer = NULL,
   port = 8080,
   mira_path = NULL,
-  browser = getOption("browser")
+  browser = getOption("browser"),
+  viewer = getOption(VIEWER_OPTION, FALSE)
 )
 }
 \arguments{
@@ -67,6 +69,14 @@ meta-network settings), use \code{\link[=mira]{mira()}} with \code{\link[=mira_m
 the system default via \code{getOption("browser")}. Can be a browser
 name (e.g. "chrome", "firefox") or a command
 (e.g. "open -a 'Google Chrome'").}
+
+\item{viewer}{\code{TRUE} to open MiRA in RStudio's Viewer pane instead of the
+browser (outside RStudio, the browser opens). Defaults to \code{FALSE}, or to
+\code{getOption("ggmira.viewer")}: put \code{options(ggmira.viewer = TRUE)} in
+your \code{.Rprofile} to always use the pane. A \code{browser} given in the call
+wins. MiRA needs room (at least 1024 x 600 pixels): maximize the pane,
+or click its \emph{Show in new window} button to move the plot to the
+browser.}
 }
 \value{
 Invisibly returns the server handle. Use
@@ -134,6 +144,9 @@ plot_mira(net, bipartite = TRUE, setA_type = "bird",
 
 # Another browser; a local copy of MiRA, not the bundled one
 # plot_mira(net, browser = "firefox", mira_path = "~/MiRA")
+
+# In RStudio's Viewer pane
+# plot_mira(net, bipartite = TRUE, setA_type = "bird", viewer = TRUE)
 
 # The same as plot_mira(net, bipartite = TRUE, setA_type = "bird")
 plot_multilayer(net, bipartite = TRUE, setA_type = "bird")

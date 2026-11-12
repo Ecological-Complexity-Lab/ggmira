@@ -50,7 +50,9 @@ mira(net, bipartite = TRUE, setA_type = "bird") +
 
 `plot_mira(net)` opens a network with MiRA's defaults; adjust it in MiRA,
 and MiRA's R button gives the `mira()` code for the view. `mira_save()`
-saves a plot as a PNG, JPG or PDF file. *Get started* builds a plot step by
+saves a plot as a PNG, JPG or PDF file. In RStudio, `print(p, viewer = TRUE)`
+opens a plot in the Viewer pane (`options(ggmira.viewer = TRUE)` for every
+plot). *Get started* builds a plot step by
 step; the reference lists every component.
 
 ## Lifecycle
