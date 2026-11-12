@@ -158,11 +158,11 @@ knitr::include_graphics("figures/step-5-layers.png")
 
 ## 6. Filter: draw part of the network
 
-`mira_filter()` keeps some nodes or links, with a condition on the columns
-of the network's tables, as in `subset()`: `nodes` on `net$nodes`, `links`
-on `net$extended`. Here, all plants and two finches; a hidden node hides
-its links. MiRA shows "Data filter active", with a button to remove the
-filter.
+`mira_filter()` keeps some nodes, links or layers, with a condition on the
+columns of the network's tables, as in `subset()`: `nodes` on `net$nodes`,
+`links` on `net$extended`, `layers` on `net$layers`. Here, all plants and
+two finches; a hidden node hides its links. MiRA shows "Data filter
+active", with a button to remove the filter.
 
 ```{r}
 p + mira_filter(nodes = type == "plant" |
@@ -171,6 +171,17 @@ p + mira_filter(nodes = type == "plant" |
 
 ```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
 knitr::include_graphics("figures/step-6-filter.png")
+```
+
+`layers` keeps whole layers, by name or by a condition; the layers it keeps
+close up the stack. Here, the two layers north of latitude -0.6:
+
+```{r}
+p + mira_filter(layers = latitude > -0.6)
+```
+
+```{r, echo = FALSE, eval = TRUE, out.width = "100%"}
+knitr::include_graphics("figures/step-6-filter-layers.png")
 ```
 
 ## 7. Camera, legends and a highlighted node
