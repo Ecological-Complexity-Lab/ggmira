@@ -137,9 +137,12 @@ mira_mode_map <- function() .mode_piece("map", "mira_mode_map", environment(), l
 #' under MiRA's panels; otherwise they are placed by a force layout. In
 #' MiRA, the layer view button opens this view.
 #'
-#' The layer view's settings (bubble size and color, links between
-#' bubbles, labels) are not available from R yet; it opens with MiRA's
-#' defaults.
+#' Bubble colors follow `mira_layer(color_by = )`, one color per layer or a
+#' layer column, with the same colors and legend as in network mode; in
+#' MiRA, choosing a layer column in either view changes both. The layer
+#' view's other settings (bubble size, colors by node count or edge
+#' density, links between bubbles, labels) are not available from R yet;
+#' it opens with MiRA's defaults.
 #'
 #' A plot opens in one view: see [mira_mode] for the rules and for what
 #' applies in each view.
@@ -160,6 +163,9 @@ mira_mode_map <- function() .mode_piece("map", "mira_mode_map", environment(), l
 #' p + mira_layer(color_by = "layer_name",
 #'                color_values = c(layer_1 = "orange", layer_3 = "purple")) +
 #'   mira_mode_layer()
+#'
+#' # Bubbles colored by a layer column, as the layers are in network mode
+#' p + mira_layer(color_by = "location") + mira_mode_layer()
 mira_mode_layer <- function() .mode_piece("layer", "mira_mode_layer", environment(), list())
 
 #' Dashboard: open the plot as summary charts

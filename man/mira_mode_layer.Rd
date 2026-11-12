@@ -19,9 +19,12 @@ under MiRA's panels; otherwise they are placed by a force layout. In
 MiRA, the layer view button opens this view.
 }
 \details{
-The layer view's settings (bubble size and color, links between
-bubbles, labels) are not available from R yet; it opens with MiRA's
-defaults.
+Bubble colors follow \code{mira_layer(color_by = )}, one color per layer or a
+layer column, with the same colors and legend as in network mode; in
+MiRA, choosing a layer column in either view changes both. The layer
+view's other settings (bubble size, colors by node count or edge
+density, links between bubbles, labels) are not available from R yet;
+it opens with MiRA's defaults.
 
 A plot opens in one view: see \link{mira_mode} for the rules and for what
 applies in each view.
@@ -39,25 +42,28 @@ p + mira_mode_layer()
 p + mira_layer(color_by = "layer_name",
                color_values = c(layer_1 = "orange", layer_3 = "purple")) +
   mira_mode_layer()
+
+# Bubbles colored by a layer column, as the layers are in network mode
+p + mira_layer(color_by = "location") + mira_mode_layer()
 \dontshow{\}) # examplesIf}
 }
 \seealso{
 \link{mira_mode} for the other views.
 
-Other components: 
-\code{\link{mira_camera}()},
-\code{\link{mira_filter}()},
-\code{\link{mira_interlayer}()},
-\code{\link{mira_intralayer}()},
-\code{\link{mira_layer}()},
-\code{\link{mira_layout}()},
-\code{\link{mira_legends}()},
+Other components:
+\code{\link[=mira_camera]{mira_camera()}},
+\code{\link[=mira_filter]{mira_filter()}},
+\code{\link[=mira_interlayer]{mira_interlayer()}},
+\code{\link[=mira_intralayer]{mira_intralayer()}},
+\code{\link[=mira_layer]{mira_layer()}},
+\code{\link[=mira_layout]{mira_layout()}},
+\code{\link[=mira_legends]{mira_legends()}},
 \code{\link{mira_mode}},
-\code{\link{mira_mode_dashboard}()},
-\code{\link{mira_mode_data}()},
-\code{\link{mira_mode_grid}()},
-\code{\link{mira_mode_map}()},
-\code{\link{mira_mode_meta}()},
-\code{\link{mira_node}()}
+\code{\link[=mira_mode_dashboard]{mira_mode_dashboard()}},
+\code{\link[=mira_mode_data]{mira_mode_data()}},
+\code{\link[=mira_mode_grid]{mira_mode_grid()}},
+\code{\link[=mira_mode_map]{mira_mode_map()}},
+\code{\link[=mira_mode_meta]{mira_mode_meta()}},
+\code{\link[=mira_node]{mira_node()}}
 }
 \concept{components}
