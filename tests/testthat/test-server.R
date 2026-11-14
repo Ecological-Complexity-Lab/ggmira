@@ -71,3 +71,46 @@ test_that("the app serves the plot as it was when the server started", {
   spec <- '{"version": 2}'
   expect_equal(request(app, "/api/view.json")$body, '{"version": 1}')
 })
+
+test_that("the path check holds for Windows paths, which come with backslashes", {
+  expect_true(.inside_dir("C:\\Users\\a\\R\\ggmira\\MiRA\\index.html", "C:\\Users\\a\\R\\ggmira\\MiRA"))
+  expect_true(.inside_dir("C:\\lib\\MiRA\\js\\app.js", "C:/lib/MiRA/"))
+  expect_false(.inside_dir("C:\\lib\\MiRA-secret\\key.txt", "C:\\lib\\MiRA"))
+  expect_false(.inside_dir("C:\\lib\\MiRA", "C:\\lib\\MiRA"))
+  expect_true(.inside_dir("/lib/MiRA/index.html", "/lib/MiRA"))
+  expect_false(.inside_dir("/lib/MiRA-secret/key.txt", "/lib/MiRA"))
+})
+
+test_that("printed plots keep the servers of the last ten; the search skips this session's ports", {
+  app <- .mira_app("{}", NULL, make_mira_dir())
+  before <- httpuv::listServers()
+  old <- .printed$servers
+  .printed$servers <- list()
+  started <- list()
+  on.exit({
+    for (server in started) if (server$isRunning()) httpuv::stopServer(server)
+    .printed$servers <- old
+  }, add = TRUE)
+
+  port <- 18200
+  for (i in seq_len(MAX_OPEN_PLOTS + 2)) {
+    # every search starts at the same port, as every print() does
+    server <- .start_server(app, port)
+    started <- c(started, list(server$handle))
+    .remember_server(server$handle)
+  }
+  running <- vapply(started, function(server) server$isRunning(), logical(1))
+  expect_equal(running, c(FALSE, FALSE, rep(TRUE, MAX_OPEN_PLOTS))) # the two oldest were stopped
+  expect_length(httpuv::listServers(), length(before) + MAX_OPEN_PLOTS)
+  expect_length(.printed$servers, MAX_OPEN_PLOTS)
+  ports <- vapply(started[running], function(server) as.numeric(server$getPort()), numeric(1))
+  expect_equal(anyDuplicated(ports), 0L)
+
+  # a server the user stopped is forgotten, not stopped again
+  httpuv::stopServer(started[[5]])
+  server <- .start_server(app, port)
+  started <- c(started, list(server$handle))
+  expect_no_error(.remember_server(server$handle))
+  expect_length(.printed$servers, MAX_OPEN_PLOTS)
+})
+

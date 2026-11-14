@@ -156,6 +156,11 @@ MAX_CALL_CHARS <- 500
 #' plot in RStudio's Viewer pane; untick the box under the code for the
 #' browser.
 #'
+#' Every printed plot is served by its own small server, on its own port.
+#' ggmira keeps the servers of the 10 most recent plots and stops older
+#' ones: an older plot stays on screen, but reloading its page fails. Print
+#' it again to reopen it.
+#'
 #' @param x A `mira_plot`.
 #' @inheritParams plot_mira
 #' @param ... Not used.
@@ -219,7 +224,7 @@ mira_spec <- function(x, json = FALSE) {
 #' `color`, or a `color_by` of a different column, also removes earlier
 #' `color_values` / `color_scale` (they belong to the earlier mapping),
 #' unless the piece gives them too. `pairs` turns interlayer links on unless
-#' the piece gives `show`.
+#' the piece gives `show`. Legends given only a `position` open all.
 #' @keywords internal
 #' @noRd
 .merge_piece <- function(spec, piece) {
@@ -235,6 +240,8 @@ mira_spec <- function(x, json = FALSE) {
   }
   if ("pairs" %in% names(fields) && !"show" %in% names(fields)) section$show <- TRUE
   for (field in names(fields)) section[field] <- list(fields[[field]]) # keeps NULL values
+  # mira_legends(position = ) with no `show` so far: its default, all legends open
+  if (piece$section == "legend" && is.null(section$show)) section$show <- LEGEND_ALL
   spec[[piece$section]] <- section
   spec
 }

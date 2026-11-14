@@ -51,6 +51,19 @@ test_that("views and backgrounds MiRA cannot save are errors", {
                "not available in the dashboard view")
 })
 
+test_that("the map view is saved only on its map", {
+  expect_error(.check_save_view("map", "png", "white", "mira_save"),
+               '`background` "white" is not available in the map view')
+  expect_error(.check_save_view("map", "png", "transparent", "mira_save"), "not available in the map view")
+  expect_no_error(.check_save_view("map", "png", "grid", "mira_save"))
+  expect_no_error(.check_save_view(NULL, "png", "white", "mira_save"))
+})
+
+test_that("the export is given the time left, not chromote's ten seconds", {
+  expect_equal(.seconds_left(Sys.time() + 120), 120, tolerance = 0.05)
+  expect_equal(.seconds_left(Sys.time() - 5), 1)
+})
+
 test_that("the save endpoint takes the posted image only when asked for", {
   mira_dir <- file.path(tempfile("ggmira-save-"), "MiRA")
   dir.create(mira_dir, recursive = TRUE)

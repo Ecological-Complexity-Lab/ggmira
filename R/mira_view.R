@@ -101,7 +101,8 @@ mira_camera <- function(rotate, tilt, zoom, pan) {
 #'
 #' A later `mira_legends()` changes only the arguments it gives:
 #' `mira_legends(position = "top-right")` moves the legends and leaves an
-#' earlier `show` as it was.
+#' earlier `show` as it was. With no earlier `show` it opens all of them,
+#' as `mira_legends()` does.
 #'
 #' @param show `"all"` (default; `TRUE` is the same), the legends to open
 #'   (the others stay minimized): `"node_color"`, `"node_size"`,
@@ -135,7 +136,7 @@ mira_legends <- function(show = LEGEND_ALL, position) {
     position = .choice(LEGEND_POSITIONS)
   ))
   # mira_legends() alone opens all; with arguments, only those are sent, so a
-  # later component keeps an earlier `show`
+  # later component keeps an earlier `show` (with none, .merge_piece opens all)
   if (length(piece$fields) == 0) piece$fields$show <- LEGEND_ALL
   piece$fields <- piece$fields[intersect(c("show", "position"), names(piece$fields))]
   piece

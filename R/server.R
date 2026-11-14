@@ -8,6 +8,7 @@
 NETWORK_ENDPOINT <- "/api/network.json"
 VIEW_ENDPOINT <- "/api/view.json"
 MAX_PORT_ATTEMPTS <- 50
+MAX_OPEN_PLOTS <- 10 # printed plots whose servers are kept; older ones are stopped
 VIEWER_OPTION <- "ggmira.viewer" # options(ggmira.viewer = TRUE): RStudio's Viewer pane by default
 RSTUDIO_PANE_QUERY <- "&pane=rstudio" # MiRA's small-window warning then talks about the pane
 
@@ -61,6 +62,7 @@ BINARY_EXTENSIONS <- c("png", "jpg", "jpeg", "gif", "ico", "woff", "woff2")
   message(sprintf("Serving MiRA from: %s", mira_path))
 
   server <- .start_server(.mira_app(network_json, view_json, mira_path), port)
+  .remember_server(server$handle)
   url <- sprintf("http://localhost:%d?autoload=true", server$port)
   message(sprintf("Server running at: %s", url))
   message("Call httpuv::stopServer(handle) to stop the server when done.")
@@ -128,13 +130,24 @@ BINARY_EXTENSIONS <- c("png", "jpg", "jpeg", "gif", "ico", "woff", "woff2")
   )
 }
 
+#' Whether `file_path` is inside the directory `dir`
+#'
+#' Both are compared with "/": on Windows normalizePath() returns "\", so a
+#' prefix built with "/" would match no file there.
+#' @keywords internal
+#' @noRd
+.inside_dir <- function(file_path, dir) {
+  slashes <- function(path) gsub("\\", "/", path, fixed = TRUE)
+  startsWith(slashes(file_path), paste0(sub("/+$", "", slashes(dir)), "/"))
+}
+
 .static_response <- function(url_path, mira_path) {
   if (url_path == "/" || url_path == "") url_path <- "/index.html"
   file_path <- normalizePath(file.path(mira_path, gsub("^/", "", url_path)), mustWork = FALSE)
 
   # Only files inside mira_path. Compare against "<mira_path>/" so a sibling
   # directory that shares the prefix (e.g. ".../MiRA-dev") is rejected.
-  if (!startsWith(file_path, paste0(mira_path, .Platform$file.sep))) {
+  if (!.inside_dir(file_path, mira_path)) {
     return(list(status = 403L, headers = list(), body = "Forbidden"))
   }
   if (!file.exists(file_path) || dir.exists(file_path)) {
@@ -160,7 +173,9 @@ BINARY_EXTENSIONS <- c("png", "jpg", "jpeg", "gif", "ico", "woff", "woff2")
 #' @keywords internal
 #' @noRd
 .start_server <- function(app, port) {
+  held <- .session_ports()
   for (attempt in seq_len(MAX_PORT_ATTEMPTS)) {
+    while (port %in% held) port <- port + 1 # this session's own servers: no need to try
     handle <- tryCatch(
       httpuv::startServer("127.0.0.1", port, app),
       error = function(e) NULL # port in use: try the next one
@@ -170,6 +185,33 @@ BINARY_EXTENSIONS <- c("png", "jpg", "jpeg", "gif", "ico", "woff", "woff2")
   }
   stop("Could not find an available port to start the server after ",
        MAX_PORT_ATTEMPTS, " attempts.")
+}
+
+#' The ports of the servers running in this R session
+#' @keywords internal
+#' @noRd
+.session_ports <- function() {
+  vapply(httpuv::listServers(), function(server) as.numeric(server$getPort()), numeric(1))
+}
+
+# The servers of the plots printed in this session, oldest first
+.printed <- new.env(parent = emptyenv())
+
+#' Keep the servers of the last `MAX_OPEN_PLOTS` printed plots
+#'
+#' Every printed plot has its own server, which MiRA needs only while its
+#' page loads (and again if the page is reloaded). Without a limit a long
+#' session runs out of ports. Servers the user stopped are dropped.
+#' @keywords internal
+#' @noRd
+.remember_server <- function(handle) {
+  open <- Filter(function(server) server$isRunning(), c(.printed$servers, list(handle)))
+  while (length(open) > MAX_OPEN_PLOTS) {
+    httpuv::stopServer(open[[1]])
+    open <- open[-1]
+  }
+  .printed$servers <- open
+  invisible(handle)
 }
 
 # Chrome on macOS needs the `open -a` form

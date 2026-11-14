@@ -30,7 +30,8 @@ minimized and dragged.
 \details{
 A later \code{mira_legends()} changes only the arguments it gives:
 \code{mira_legends(position = "top-right")} moves the legends and leaves an
-earlier \code{show} as it was.
+earlier \code{show} as it was. With no earlier \code{show} it opens all of them,
+as \code{mira_legends()} does.
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

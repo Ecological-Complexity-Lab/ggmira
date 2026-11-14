@@ -38,10 +38,13 @@ SAVE_POLL_SECONDS <- 0.1
 #' @param width,height The size of MiRA's window, in pixels. The plot is
 #'   fitted to it as in the browser.
 #' @param background `"grid"` (MiRA's grid; the map in map view),
-#'   `"white"`, or `"transparent"` (PNG only).
+#'   `"white"`, or `"transparent"` (PNG only). The map view is saved only
+#'   with `"grid"`; the meta-network and the dashboard not with
+#'   `"transparent"`.
 #' @param legends `TRUE` to include the legends (as [mira_legends()] sets
 #'   them) and any open panels of the layer view.
-#' @param timeout Seconds to wait for MiRA to draw and save the plot.
+#' @param timeout Seconds to wait for MiRA to draw and save the plot. Large
+#'   pictures at `resolution = 4` can need more than the default.
 #' @inheritParams plot_mira
 #' @return The path of the file, invisibly.
 #' @seealso [print.mira_plot()] to open the plot in the browser.
@@ -97,8 +100,10 @@ mira_save <- function(plot, file, format = NULL, resolution = 2, width = 1500, h
 
   options <- sprintf('{"format": "%s", "resolution": %d, "background": "%s", "legends": %s}',
                      target$format, as.integer(resolution), background, tolower(legends))
+  # timeout_: chromote gives a command 10 seconds; a large export takes longer
   result <- .wait_for(browser$Runtime$evaluate(sprintf("window.miraSaveToR(%s)", options),
-                                               awaitPromise = TRUE, wait_ = FALSE), deadline, fn)
+                                               awaitPromise = TRUE, wait_ = FALSE,
+                                               timeout_ = .seconds_left(deadline)), deadline, fn)
   if (!is.null(result$exceptionDetails)) {
     .abort_piece(fn, paste("MiRA could not save the plot:", result$exceptionDetails$exception$description))
   }
@@ -149,6 +154,10 @@ mira_save <- function(plot, file, format = NULL, resolution = 2, width = 1500, h
   if (identical(view, "data")) {
     .abort_piece(fn, "the data view is a table, not a picture; it cannot be saved as an image")
   }
+  if (identical(view, "map") && background != "grid") {
+    # without its map the picture is the legends alone
+    .abort_arg(fn, "background", sprintf('"%s" is not available in the map view, which is drawn on its map', background))
+  }
   if (background == "transparent") {
     if (format != "png") .abort_arg(fn, "background", '"transparent" needs a PNG file')
     if (!is.null(view) && view %in% c("meta", "dashboard")) {
@@ -156,6 +165,13 @@ mira_save <- function(plot, file, format = NULL, resolution = 2, width = 1500, h
                                            if (view == "meta") "meta-network" else "dashboard"))
     }
   }
+}
+
+#' The seconds until `deadline`, at least one
+#' @keywords internal
+#' @noRd
+.seconds_left <- function(deadline) {
+  max(1, as.numeric(difftime(deadline, Sys.time(), units = "secs")))
 }
 
 #' Run R's event loop until a chromote promise settles
