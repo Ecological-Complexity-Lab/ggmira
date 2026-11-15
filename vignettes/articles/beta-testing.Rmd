@@ -24,7 +24,22 @@ R 4.1 or later, and Google Chrome (or Chromium, or Microsoft Edge), which
 `mira_save()` uses to draw the files:
 
 ```r
-install.packages(c("remotes", "emln", "chromote", "pkgdown", "rmarkdown"))
+install.packages(c("remotes", "emln", "chromote", "pkgdown", "rmarkdown",
+                   "usethis", "gitcreds"))
+```
+
+The repository is private until the release, so installing from it needs
+a GitHub account with access to it (ask us) and a token, once per
+computer:
+
+```r
+usethis::create_github_token() # opens GitHub: keep the defaults, click "Generate token", copy it
+gitcreds::gitcreds_set()       # paste the token
+```
+
+Then install ggmira:
+
+```r
 remotes::install_github("Ecological-Complexity-Lab/ggmira")
 ```
 
