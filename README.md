@@ -57,14 +57,16 @@ mira(net, bipartite = TRUE, setA_type = "bird") +
 and MiRA's R button gives the `mira()` code for the view. `mira_save()`
 saves a plot as a PNG, JPG or PDF file. In RStudio, `print(p, viewer = TRUE)`
 opens a plot in the Viewer pane (`options(ggmira.viewer = TRUE)` for every
-plot). *Get started* builds a plot step by
-step; the reference lists every component.
+plot). *Get started* builds a plot step by step; the reference lists every
+component.
+
+MiRA is best viewed on a large screen: it needs a window of at least
+1024 x 600 pixels.
 
 ## Lifecycle
 
-ggmira is in beta (version 0.1): it works and is being tested, and its
-interface may still change. Beta testers: please start with
-[Beta testing](https://github.com/Ecological-Complexity-Lab/ggmira/blob/main/vignettes/articles/beta-testing.Rmd).
+ggmira is in beta (version 0.9): it works and is being tested, and its
+interface may still change before version 1.0.
 
 ## Getting help
 

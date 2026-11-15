@@ -1,18 +1,17 @@
 /*
- * Beta feedback on the docs (pkgdown adds this file to every page).
+ * Feedback on the docs (pkgdown adds this file to every page).
  *
  * Three ways in: select text (a Feedback bubble appears), the 💬 next to a
  * heading, or the Feedback button at the bottom right. A small form takes
- * the comment, its type and the tester's name; "Open on GitHub" opens a
+ * the comment, its type and the reader's name; "Open on GitHub" opens a
  * new issue in the ggmira repository, filled in with the page, section,
- * argument, selected text and version (label beta-feedback and the type).
- * The tester checks it and clicks Submit. R has the same: mira_feedback().
+ * argument, selected text and version (label feedback and the type).
+ * The reader checks it and clicks Submit (a GitHub account is needed). R has the same: mira_feedback().
  */
 (() => {
 const start = () => {
   const REPO = 'https://github.com/Ecological-Complexity-Lab/ggmira';
-  const LABEL = 'beta-feedback';
-  const TITLE_PREFIX = '[beta]';
+  const LABEL = 'feedback';
   const TYPES = [
     ['bug', 'Bug: wrong or broken'],
     ['unclear', 'Unclear: hard to follow'],
@@ -74,7 +73,7 @@ const start = () => {
     const where = [section.heading?.text, section.argument && `\`${section.argument.name}\``].filter(Boolean).join(' › ');
     const anchor = section.argument?.id ?? section.heading?.id;
     const short = comment.replace(/\s+/g, ' ').trim();
-    const title = `${TITLE_PREFIX} [${page.name}] ${where ? `${where.replace(/`/g, '')}: ` : ''}` +
+    const title = `[${page.name}] ${where ? `${where.replace(/`/g, '')}: ` : ''}` +
       (short.length > TITLE_WORDS ? `${short.slice(0, TITLE_WORDS)}…` : short);
     const quoted = quote.length > MAX_QUOTE ? `${quote.slice(0, MAX_QUOTE)}… (shortened)` : quote;
     const meta = [

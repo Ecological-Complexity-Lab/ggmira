@@ -89,9 +89,9 @@ reference:
 - title: Opening a network with MiRA's defaults
   contents:
   - plot_mira
-- title: Beta testing
+- title: Feedback
   desc: >
-    Send feedback from R. On these pages: select text and click Feedback,
+    Send feedback from R, with a GitHub account. On these pages: select text and click Feedback,
     click the speech bubble next to a heading, or use the Feedback button.
   contents:
   - mira_feedback

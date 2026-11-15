@@ -1,14 +1,14 @@
-# mira_feedback(): beta testers' feedback from R, as a filled-in GitHub
+# mira_feedback(): feedback from R, as a filled-in GitHub
 # issue (the same as the Feedback button of the documentation pages,
 # pkgdown/extra.js).
 
 FEEDBACK_REPO <- "https://github.com/Ecological-Complexity-Lab/ggmira"
-FEEDBACK_LABEL <- "beta-feedback"
+FEEDBACK_LABEL <- "feedback"
 FEEDBACK_TYPES <- c("bug", "unclear", "missing", "idea")
 FEEDBACK_TITLE_CHARS <- 60  # characters of the comment in the issue title
 FEEDBACK_SESSION_CHARS <- 2500 # of sessionInfo(): GitHub drops longer links
 
-#' Send feedback on ggmira (beta testing)
+#' Send feedback on ggmira
 #'
 #' Opens a new issue in ggmira's GitHub repository in the browser, filled
 #' in with your comment, what it is about, and your R session (R, ggmira
@@ -56,7 +56,7 @@ mira_feedback <- function(topic, comment, type = "bug") {
 .feedback_url <- function(topic, comment, type, session = .session_text()) {
   short <- gsub("\\s+", " ", trimws(comment))
   if (nchar(short) > FEEDBACK_TITLE_CHARS) short <- paste0(substr(short, 1, FEEDBACK_TITLE_CHARS), "\u2026")
-  title <- sprintf("[beta] [%s] %s", topic, short)
+  title <- sprintf("[%s] %s", topic, short)
   body <- paste0(
     "**Topic:** ", topic, "  \n",
     "**Type:** ", type, "  \n",

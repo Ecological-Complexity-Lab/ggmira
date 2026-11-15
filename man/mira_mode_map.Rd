@@ -26,7 +26,7 @@ available from R yet; the map opens with MiRA's defaults.
 A plot opens in one view: see \link{mira_mode} for the rules and for what
 applies in each view.
 
-\if{html}{\figure{mira_mode_map.jpg}{options: width="100\%" alt="Network 17 in map mode: the Galapagos, with the layers' two islands marked"}}
+\if{html}{\figure{mira_mode_map.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in map mode: the Galapagos, with the layers' two islands marked"}}
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

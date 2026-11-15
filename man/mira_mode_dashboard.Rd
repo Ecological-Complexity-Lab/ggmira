@@ -17,7 +17,7 @@ other components of the plot do not apply (see \link{mira_mode}). In MiRA,
 the dashboard button (a bar chart) opens this view.
 }
 \details{
-\if{html}{\figure{mira_mode_dashboard.jpg}{options: width="100\%" alt="Network 17 in the dashboard: summary numbers, per-layer charts and link weight distributions"}}
+\if{html}{\figure{mira_mode_dashboard.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in the dashboard: summary numbers, per-layer charts and link weight distributions"}}
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

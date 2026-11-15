@@ -31,7 +31,7 @@ a whole layer).
 A plot opens in one view: see \link{mira_mode} for the rules and for what
 applies in each view.
 
-\if{html}{\figure{mira_mode_layer.jpg}{options: width="100\%" alt="Network 17 in the layer view: four bubbles on the map of the Galapagos, linked"}}
+\if{html}{\figure{mira_mode_layer.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in the layer view: four bubbles on the map of the Galapagos, linked"}}
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
