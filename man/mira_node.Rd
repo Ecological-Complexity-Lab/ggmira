@@ -28,18 +28,22 @@ mira_node(
 networks). \code{NULL} or \code{NA} = MiRA's default.}
 
 \item{color}{A constant node color: a color name (\code{"red"}) or \code{"#rrggbb"}.
-Give \code{color_by} or \code{color}, not both.}
+Give \code{color_by} or \code{color}, not both. Colors are opaque: the
+transparency of a color such as \code{"#ff000080"} is ignored, with a
+warning (here and in every other color argument).}
 
 \item{size_by}{Numeric column to size nodes by. \code{NULL} or \code{NA} = default.}
 
-\item{size}{Base node size, a whole number between 3 and 25.}
+\item{size}{Base node size, a whole number between 3 and 25 (10 = MiRA's
+default).}
 
 \item{shape}{\code{"circle"}, \code{"square"}, \code{"triangle"} or \code{"diamond"}. Every
 shape has the circle's area, so node sizes stay comparable.}
 
 \item{labels}{\code{TRUE} or \code{FALSE}: show node names.}
 
-\item{label_size}{Node name size, a whole number between 8 and 24.}
+\item{label_size}{Node name size, a whole number between 8 and 24 (12 =
+MiRA's default). Used when node names are shown.}
 
 \item{perspective}{\code{TRUE} or \code{FALSE}: draw nodes in the layers' 3D
 perspective (MiRA's default) or flat.}
@@ -85,12 +89,36 @@ default.
 }
 \details{
 \strong{Per set.} On a bipartite network (\code{mira(..., bipartite = TRUE)}),
-\code{color_by}, \code{size_by}, \code{shape} and \code{color_scale} also take a vector named
-by the \code{node_type} values, giving each set its own setting, e.g.
-\code{color_by = c(pollinator = "module", plant = NA)}; \code{color_values} takes a
-list named the same way, \code{list(pollinator = c("1" = "red"))}. When color
-or size is per set and \code{shape} is not given, MiRA draws one set as
-circles and the other as squares.
+\code{color_by}, \code{size_by}, \code{shape}, \code{color_scale}, \code{color_palette} and
+\code{color_reverse} also take a vector named by the \code{node_type} values,
+giving each set its own setting, e.g.
+\code{color_by = c(pollinator = "module", plant = NA)}; \code{color_values} and
+\code{color_limits} take a list named the same way,
+\code{list(pollinator = c("1" = "red"))}. A set that is not named keeps
+MiRA's default, and a later per-set value replaces an earlier one whole:
+name both sets in one call. The scale settings of the two sets differ
+only when the sets are colored by different attributes, because MiRA
+keeps one scale per attribute name (\link{mira_scales}). When color or size
+is per set and \code{shape} is not given, MiRA draws one set as circles and
+the other as squares.
+
+\strong{Computed attributes.} MiRA computes each node's degree (its number of
+links) and strength (the sum of their weights), within layers (\code{intra_})
+and between layers (\code{inter_}, when the network has interlayer links). For
+each node in each layer (a state node): \code{intra_degree}, \code{intra_strength},
+\code{inter_degree}, \code{inter_strength}. For each node over all its layers,
+their sum and their mean: \code{intra_degree_sum}, \code{intra_degree_mean}, and
+so on. On a directed network the names carry the direction instead:
+\code{intra_in_degree}, \code{intra_out_degree}, \code{intra_in_strength_sum}, ... R
+warns when a name is not computed for the network, and suggests the ones
+that are; \code{\link[=mira_options]{mira_options()}} lists them.
+
+\strong{Columns that cannot be mapped.} MiRA does not offer the columns that
+identify the rows: \code{node_id}, \code{node_name}, \code{layer_id}, \code{layer_name} and
+\code{layers_present} for nodes; \code{layer_from}, \code{node_from}, \code{layer_to},
+\code{node_to}, \code{weight} and \code{directed} for links; \code{layer_id}, \code{bipartite},
+\code{latitude} and \code{longitude} for layers. To map one, copy it to a column
+of another name (\code{net$layers$lat <- net$layers$latitude}).
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

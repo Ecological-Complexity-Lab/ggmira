@@ -37,7 +37,8 @@ See \link{mira_scales}.}
 
 \item{labels}{\code{TRUE} or \code{FALSE}: show layer names.}
 
-\item{label_size}{Layer name size, a whole number between 8 and 32.}
+\item{label_size}{Layer name size, a whole number between 8 and 32 (14 =
+MiRA's default). Used when layer names are shown.}
 
 \item{set_labels}{\code{TRUE} or \code{FALSE}: show node set names (bipartite
 layout only; needs \code{mira(..., bipartite = TRUE)}).}
@@ -64,6 +65,13 @@ A component, to add to a plot with \code{+}.
 Styles the layers: their color (by a layer column, one per layer, or one
 constant), their names and the node set names, and how they are stacked
 and spaced. Add it to a plot made with \code{\link[=mira]{mira()}}.
+}
+\details{
+Layer colors are used in the network, grid and map views. In the layer
+view (\code{\link[=mira_mode_layer]{mira_mode_layer()}}) the bubbles follow \code{color_by}, not a constant
+\code{color}. One color per layer (\code{color_by = "layer_name"}) is not a scale:
+its colors are given with \code{color_values}, and \code{color_scale},
+\code{color_palette}, \code{color_reverse} and \code{color_limits} with it are errors.
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

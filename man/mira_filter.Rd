@@ -34,9 +34,17 @@ and the other layers close up the stack. Filters combine: a link is drawn
 when it passes \code{links}, both its nodes pass \code{nodes} and both its layers
 pass \code{layers}. A later \code{mira_filter()} replaces the same argument of an
 earlier one, so combine two conditions on nodes in one: \code{nodes = A & B}.
+\code{NULL} or \code{NA} written in the call removes an earlier filter
+(\code{mira_filter(nodes = NULL)}); a variable that holds \code{NULL} is an error.
 
 Rows where a condition is \code{NA} are dropped. MiRA shows "Data filter
-active" with a button that removes the filter.
+active" with a button that removes the filter. The legends still
+describe the whole network.
+
+Conditions use the columns as they are named in the tables. On a
+bipartite network from \code{emln::load_emln()} the node sets are in \code{type}
+(\code{nodes = type == "bird"}), although MiRA, and \code{\link[=mira_options]{mira_options()}}, call
+that column \code{node_type}.
 
 A condition is evaluated where \code{mira_filter()} is called, like
 \code{\link[=subset]{subset()}}: inside a function, it sees that function's variables. A

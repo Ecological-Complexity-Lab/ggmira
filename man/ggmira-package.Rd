@@ -71,12 +71,12 @@ sizes.
 \section{Data (what is drawn)}{
 
 \itemize{
-\item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes or links (network, grid and map
-modes).
+\item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes, links or layers (network, grid
+and map views; \code{layers} also in the layer view).
 }
 }
 
-\section{Views (modes)}{
+\section{Views (MiRA's modes)}{
 
 One view per plot; the other components still apply where MiRA uses
 them (\link{mira_mode}: the rules, and what applies in each view).
@@ -95,7 +95,7 @@ the nodes and links of the other layers.
 
 \itemize{
 \item \code{\link[=plot_mira]{plot_mira()}}: open a network with no components, in any view
-(\code{plot_multilayer()} is the same, in network mode).
+(\code{plot_multilayer()} is the same, in the network view).
 }
 }
 

@@ -14,12 +14,15 @@ META_SIZE_MAX <- 3
 META_LABEL_SIZE_MIN <- 8
 META_LABEL_SIZE_MAX <- 24
 LATITUDE_COLUMNS <- c("latitude", "Latitude") # as MiRA reads them
+LONGITUDE_COLUMNS <- c("longitude", "Longitude")
 
-#' Views: open the plot in another MiRA mode
+#' Views: open the plot in another of MiRA's views
 #'
-#' MiRA shows a network in several views, its *modes*, each opened by a
-#' button in MiRA's toolbar. A `mira_mode_*()` component opens the plot in
-#' that view; without one, MiRA opens in network mode, the stack of layers.
+#' MiRA shows a network in several views, each opened by a button in MiRA's
+#' toolbar. MiRA calls them *modes*, hence the functions' names; this
+#' documentation says *view*, and both words mean the same thing. A
+#' `mira_mode_*()` component opens the plot in that view; without one, MiRA
+#' opens in the network view (network mode), the stack of layers.
 #' Everything can still be changed in MiRA, including the view.
 #' - [mira_mode_grid()]: the layers side by side.
 #' - [mira_mode_map()]: the layers on a geographic map.
@@ -44,14 +47,18 @@ LATITUDE_COLUMNS <- c("latitude", "Latitude") # as MiRA reads them
 #' | [mira_node()] | yes | yes | yes | | shapes | |
 #' | [mira_intralayer()] | yes | yes | yes | | | |
 #' | [mira_interlayer()] | yes | | yes | | | |
-#' | [mira_layer()] colors | yes | yes | yes | yes | | |
+#' | [mira_layer()] colors | yes | yes | yes | `color_by` | | |
 #' | `mira_node(highlight = )` | yes | yes | yes | | yes | |
 #' | [mira_filter()] | yes | yes | yes | `layers` only | | |
 #' | [mira_camera()] | yes | | | | | |
+#' | [mira_legends()] | yes | yes | yes | `position`, `show = FALSE` | `position`, `show = FALSE` | |
 #'
 #' R warns when [mira_filter()] or [mira_camera()] is combined with a view
 #' that does not use it. The meta-network has its own layer filter, which
-#' dims the other layers instead: `mira_mode_meta(layers = )`.
+#' dims the other layers instead: `mira_mode_meta(layers = )`. The layer
+#' view and the meta-network have their own legends, which start open; the
+#' legend names of [mira_legends()] are those of the network, grid and map
+#' views.
 #'
 #' @seealso [plot_mira()] to open a network in a view with MiRA's defaults.
 #' @family components
@@ -105,7 +112,8 @@ mira_mode_grid <- function(columns) {
 #' opens this view.
 #'
 #' The map needs the layers' coordinates: `latitude` and `longitude`
-#' columns in `net$layers`. Without them R stops with an error. The map's
+#' columns in `net$layers`, with both values for at least one layer.
+#' Without them R stops with an error. The map's
 #' settings (opacity, street map, which layers are drawn) are not
 #' available from R yet; the map opens with MiRA's defaults.
 #'
@@ -235,25 +243,27 @@ mira_mode_data <- function() .mode_piece("data", "mira_mode_data", environment()
 #' @param layout `"circular"`, `"force"` or `"bipartite"` (two rows, one
 #'   per node set; needs `mira(..., bipartite = TRUE)`). MiRA's default is
 #'   `"bipartite"` for bipartite networks and `"circular"` otherwise.
-#' @param color_by Node color: `"uniform"` (MiRA's default: one color, see
-#'   `color`), `"participation"` (the number of layers a node is in) or
-#'   `"degree"` (the number of nodes it links to in the meta-network).
+#' @param color_by Node color: `"uniform"` (MiRA's default: one color),
+#'   `"participation"` (the number of layers a node is in) or `"degree"`
+#'   (the number of nodes it links to in the meta-network). To choose the
+#'   one color, give `color` and leave `color_by` out.
 #' @param size_by Node size: `"degree"` (MiRA's default), `"participation"`
 #'   or `"uniform"`.
 #' @param size Node size multiplier, between 0.2 and 3 (default 1).
 #' @param min_weight Hide links with an aggregated weight below this (a
 #'   number of 0 or more; default 0).
 #' @param nested `TRUE` (default) or `FALSE`: sort each row of the
-#'   bipartite layout by degree. Only for bipartite networks, and only
-#'   used by the `"bipartite"` layout.
+#'   bipartite layout by degree. Only for bipartite networks (an error
+#'   otherwise), and only used by the `"bipartite"` layout (a warning with
+#'   another layout).
 #' @param labels `TRUE` to show node names (default `FALSE`).
 #' @param label_size Size of node names in pixels, a whole number between
 #'   8 and 24 (default 12).
-#' @param color One color for every node (`color_by = "uniform"`), or one
-#'   per node set, named by `node_type` (e.g.
-#'   `c(bird = "orange", plant = "darkgreen")`). Give `color_by` or `color`,
-#'   not both: a later `color` replaces an earlier `color_by`, and the
-#'   other way round.
+#' @param color One color for every node, or one per node set, named by
+#'   `node_type` (e.g. `c(bird = "orange", plant = "darkgreen")`). A color
+#'   makes the node color uniform, so give `color_by` or `color`, not both
+#'   (also not `color_by = "uniform"` with `color`): a later `color`
+#'   replaces an earlier `color_by`, and the other way round.
 #' @param layers Layers to select in the meta-network's *Filter Layers*
 #'   panel: nodes and links not in them are dimmed (not removed, and the
 #'   meta-network is not recomputed). Layer names, or a condition on the
@@ -387,10 +397,13 @@ mira_mode_meta <- function(aggregation, layout, color_by, size_by, size, min_wei
   invisible(NULL)
 }
 
+# At least one layer with both coordinates
 .has_coordinates <- function(net) {
   layers <- as.data.frame(net$layers)
   latitude <- intersect(LATITUDE_COLUMNS, names(layers))
-  length(latitude) > 0 && any(!is.na(layers[[latitude[1]]]))
+  longitude <- intersect(LONGITUDE_COLUMNS, names(layers))
+  length(latitude) > 0 && length(longitude) > 0 &&
+    any(!is.na(layers[[latitude[1]]]) & !is.na(layers[[longitude[1]]]))
 }
 
 #' A mode component of another view replaces the earlier one (one view per

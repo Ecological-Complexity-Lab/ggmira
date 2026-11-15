@@ -18,7 +18,8 @@ opens this view.
 }
 \details{
 The map needs the layers' coordinates: \code{latitude} and \code{longitude}
-columns in \code{net$layers}. Without them R stops with an error. The map's
+columns in \code{net$layers}, with both values for at least one layer.
+Without them R stops with an error. The map's
 settings (opacity, street map, which layers are drawn) are not
 available from R yet; the map opens with MiRA's defaults.
 

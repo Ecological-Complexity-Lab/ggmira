@@ -12,7 +12,10 @@ mira_layout(type, seed, nested)
 \code{mira(..., bipartite = TRUE)}.}
 
 \item{seed}{A whole number. The same seed and the same data give the same
-node positions, so a figure can be reproduced.}
+node positions, so a figure can be reproduced. Without a seed, a layout
+that starts from random positions (\code{"fruchterman"}, MiRA's default for
+a network that is not bipartite, among them) differs each time the
+plot opens.}
 
 \item{nested}{\code{TRUE} or \code{FALSE}. Bipartite layout only: sort nodes by
 degree (nested order).}

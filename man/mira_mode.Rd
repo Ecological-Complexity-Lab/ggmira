@@ -2,11 +2,13 @@
 % Please edit documentation in R/mira_mode.R
 \name{mira_mode}
 \alias{mira_mode}
-\title{Views: open the plot in another MiRA mode}
+\title{Views: open the plot in another of MiRA's views}
 \description{
-MiRA shows a network in several views, its \emph{modes}, each opened by a
-button in MiRA's toolbar. A \verb{mira_mode_*()} component opens the plot in
-that view; without one, MiRA opens in network mode, the stack of layers.
+MiRA shows a network in several views, each opened by a button in MiRA's
+toolbar. MiRA calls them \emph{modes}, hence the functions' names; this
+documentation says \emph{view}, and both words mean the same thing. A
+\verb{mira_mode_*()} component opens the plot in that view; without one, MiRA
+opens in the network view (network mode), the stack of layers.
 Everything can still be changed in MiRA, including the view.
 \itemize{
 \item \code{\link[=mira_mode_grid]{mira_mode_grid()}}: the layers side by side.
@@ -32,16 +34,20 @@ views where MiRA uses them:\tabular{lllllll}{
    \code{\link[=mira_node]{mira_node()}} \tab yes \tab yes \tab yes \tab  \tab shapes \tab  \cr
    \code{\link[=mira_intralayer]{mira_intralayer()}} \tab yes \tab yes \tab yes \tab  \tab  \tab  \cr
    \code{\link[=mira_interlayer]{mira_interlayer()}} \tab yes \tab  \tab yes \tab  \tab  \tab  \cr
-   \code{\link[=mira_layer]{mira_layer()}} colors \tab yes \tab yes \tab yes \tab yes \tab  \tab  \cr
+   \code{\link[=mira_layer]{mira_layer()}} colors \tab yes \tab yes \tab yes \tab \code{color_by} \tab  \tab  \cr
    \code{mira_node(highlight = )} \tab yes \tab yes \tab yes \tab  \tab yes \tab  \cr
    \code{\link[=mira_filter]{mira_filter()}} \tab yes \tab yes \tab yes \tab \code{layers} only \tab  \tab  \cr
    \code{\link[=mira_camera]{mira_camera()}} \tab yes \tab  \tab  \tab  \tab  \tab  \cr
+   \code{\link[=mira_legends]{mira_legends()}} \tab yes \tab yes \tab yes \tab \code{position}, \code{show = FALSE} \tab \code{position}, \code{show = FALSE} \tab  \cr
 }
 
 
 R warns when \code{\link[=mira_filter]{mira_filter()}} or \code{\link[=mira_camera]{mira_camera()}} is combined with a view
 that does not use it. The meta-network has its own layer filter, which
-dims the other layers instead: \code{mira_mode_meta(layers = )}.
+dims the other layers instead: \code{mira_mode_meta(layers = )}. The layer
+view and the meta-network have their own legends, which start open; the
+legend names of \code{\link[=mira_legends]{mira_legends()}} are those of the network, grid and map
+views.
 }
 \seealso{
 \code{\link[=plot_mira]{plot_mira()}} to open a network in a view with MiRA's defaults.

@@ -36,8 +36,10 @@ in the units of the data's \code{weight} column).}
 \item{pairs}{Show only the interlayer links between these pairs of
 layers: \code{list(c("L1", "L2"), c("L2", "L3"))}, by \code{layer_name}; one pair
 may be given as a vector, \code{c("L1", "L2")}. The order within a pair does
-not matter. Also turns interlayer links on, unless the same piece gives
-\code{show = FALSE}.}
+not matter. Also turns interlayer links on, unless the same call gives
+\code{show = FALSE}. A pair of layers with no links between them draws
+nothing. A later \code{pairs} replaces an earlier one; there is no value
+that shows all pairs again.}
 
 \item{color_values}{Colors for values of the \code{color_by} column, named by
 value. See \link{mira_scales}.}
@@ -62,6 +64,11 @@ Styles the links between layers: whether they are drawn (\code{show}; MiRA
 hides them by default), their color, a weight filter, how much they
 curve, and between which layers they are shown (\code{pairs}). Add it to a
 plot made with \code{\link[=mira]{mira()}}.
+}
+\details{
+Interlayer links are drawn only with \code{show = TRUE} or \code{pairs}: the other
+arguments alone style links that stay hidden (a \code{color_by} still shows
+its legend).
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

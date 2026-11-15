@@ -99,6 +99,12 @@ mira_camera <- function(rotate, tilt, zoom, pan) {
 #' needs `mira_node(size_by = )`). In MiRA, legends can still be expanded,
 #' minimized and dragged.
 #'
+#' These are the legends of network mode, which the grid and the map share.
+#' The meta-network and the layer view have their own legends, which start
+#' open: there, `position` and `show = FALSE` apply, and legend names in
+#' `show` do not. A legend describes the whole network, also when
+#' [mira_filter()] draws part of it.
+#'
 #' A later `mira_legends()` changes only the arguments it gives:
 #' `mira_legends(position = "top-right")` moves the legends and leaves an
 #' earlier `show` as it was. With no earlier `show` it opens all of them,
@@ -130,7 +136,7 @@ mira_camera <- function(rotate, tilt, zoom, pan) {
 #'
 #' # No legends
 #' p + mira_legends(show = FALSE)
-mira_legends <- function(show = LEGEND_ALL, position) {
+mira_legends <- function(show = "all", position) {
   piece <- .build_piece("legend", "mira_legends", environment(), list(
     show     = .check_legend_show,
     position = .choice(LEGEND_POSITIONS)

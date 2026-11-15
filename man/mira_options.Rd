@@ -20,7 +20,9 @@ attribute, with columns \code{component}, \code{argument}, \code{attribute}, \co
 the node sets that have the attribute) and \code{values}. It prints grouped
 by component, with MiRA's computed node attributes on one line (the
 data frame has a row for each), and with the sets only when they differ
-between attributes. Filter it as a data frame.
+between attributes. Filter it as a data frame, keeping all its
+columns: rows chosen with \code{opts[opts$argument == "size_by", ]} print
+as the table does; for some columns only, use \code{as.data.frame(opts)}.
 }
 \description{
 Lists the attributes a network offers to each component's arguments: the
@@ -31,6 +33,11 @@ gives it and a summary of its values, to choose a mapping and write
 \code{color_values} before making the plot.
 }
 \details{
+Columns MiRA does not offer are left out (the ones that identify rows,
+\code{weight}, the coordinates; see \code{\link[=mira_node]{mira_node()}}). The node type column is
+listed as \code{node_type}, MiRA's name for it, whatever it is called in
+\code{net$nodes}; conditions in \code{\link[=mira_filter]{mira_filter()}} use the name in the data.
+
 Give the same arguments as to \code{\link[=mira]{mira()}}: they decide what MiRA computes
 (in- and out-degree only on a directed network) and whether nodes can be
 set per set (\code{bipartite = TRUE}).

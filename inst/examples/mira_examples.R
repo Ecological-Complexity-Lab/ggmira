@@ -7,11 +7,8 @@
 
 # Install:   remotes::install_github("Ecological-Complexity-Lab/ggmira")
 # Help:      ?ggmira (the functions by group), ?mira_node, ?mira_scales, ...
-# Site:      from a checkout of the repository (it is not published yet)
-#            pkgdown::build_site("~/GitHub/ecomplab/ggmira", examples = FALSE)
-#            pkgdown::preview_site("~/GitHub/ecomplab/ggmira")
-
-
+# Plots need an internet connection (MiRA loads its drawing libraries and
+# map tiles from the web).
 
 library(emln)
 library(ggmira)
@@ -68,6 +65,10 @@ p1b <- p1 +
   )
 print(p1b)
 
+# Whole layers, by a condition on net$layers (or by name): the two layers
+# north of latitude -0.6; they close up the stack
+print(p1 + mira_filter(layers = latitude > -0.6))
+
 # ---- 1c. Camera, legends, highlight -------------------------------------------
 # Camera values: set the view with the mouse in MiRA, then MiRA's R button
 # (Copy as R code, next to Save Session) gives the code, with mira_camera().
@@ -82,8 +83,9 @@ print(p1c)
 
 # ---- 1d. Views (MiRA's modes) --------------------------------------------------
 # One view per plot: a second mira_mode_*() of another view replaces the first,
-# with a warning. mira_camera() works in network mode only, mira_filter() in
-# network, grid and map modes only (R warns otherwise).
+# with a warning. mira_camera() works in the network view only; mira_filter()
+# in the network, grid and map views, and its `layers` also in the layer view
+# (R warns otherwise).
 
 print(p1b + mira_mode_grid())     # the filter of 1b, in the grid
 
@@ -176,6 +178,32 @@ p3b <- mira(net, bipartite = TRUE, setA_type = "bird") +
   mira_legends(show = c("node_color", "intralayer_color", "layer_color"))
 p3b
 
+# ---- 3b2. Gradients on links and layers ----------------------------------------
+# MiRA does not offer `weight` (it sets the links' width) or the coordinates
+# for mapping: put them in columns of another name
+
+net2 <- net
+net2$extended$log_weight <- log10(net2$extended$weight)
+net2$extended$weight_rank <- rank(net2$extended$weight)
+net2$layers$lat <- net2$layers$latitude
+
+# directed_interlayer = TRUE: arrowheads on the interlayer links too
+p3c <- mira(net2, bipartite = TRUE, setA_type = "bird",
+            directed = TRUE, directed_interlayer = TRUE) +
+  # a gradient from 0.01 to 1 (log10: -2 to 0), dark for strong links
+  mira_intralayer(color_by = "log_weight", color_scale = "continuous",
+                  color_palette = "Blues", color_reverse = FALSE,
+                  color_limits = c(-2, 0)) +
+  # magma reversed: dark for the strongest links
+  mira_interlayer(show = TRUE, color_by = "weight_rank", color_scale = "continuous",
+                  color_palette = "magma", color_reverse = TRUE,
+                  color_limits = c(1, nrow(net2$extended))) +
+  # two latitudes: limits make the scale a gradient, from -1 to 0
+  mira_layer(color_by = "lat", color_palette = "YlGnBu", color_reverse = TRUE,
+             color_limits = c(-1, 0)) +
+  mira_legends()
+print(p3c)
+
 # ---- 3c. Save to a file (needs the chromote package and Chrome) ----------------
 
 mira_save(p3b, "palettes.png")                  # PNG at resolution 2
@@ -183,6 +211,7 @@ mira_save(p3b, "palettes", format = "pdf")      # format given: ".pdf" added
 mira_save(p3b, "palettes-print.jpg", resolution = 4, width = 1600, height = 1000)
 mira_save(p3b, "palettes-clear.png", background = "transparent", legends = FALSE)
 mira_save(p3b + mira_mode_grid(columns = 2), "palettes-grid.png", background = "white")
+mira_save(p3b, "palettes-large.pdf", resolution = 4, timeout = 120) # more time for a large picture
 
 # ---- 4. Constant colors --------------------------------------------------------
 
@@ -192,3 +221,16 @@ p4 <- mira(net, bipartite = TRUE, setA_type = "bird") +
   mira_interlayer(show = TRUE, color = "red") +
   mira_layer(color = "#e5e7eb")
 print(p4)
+
+# ---- 5. Checking and opening a plot --------------------------------------------
+
+mira_spec(p1)               # what the plot sends to MiRA, without opening it
+mira_spec(p1, json = TRUE)  # as MiRA receives it
+
+print(p1, port = 9000)      # another port
+print(p1, viewer = TRUE)    # RStudio's Viewer pane (options(ggmira.viewer = TRUE): always)
+# print(p1, browser = "chrome")    # another browser
+# print(p1, mira_path = "~/MiRA")  # a local copy of MiRA, not the bundled one
+
+# When done
+httpuv::stopAllServers()

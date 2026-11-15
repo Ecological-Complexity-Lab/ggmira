@@ -21,17 +21,22 @@ mira_save(
 \item{plot}{A \code{mira_plot}.}
 
 \item{file}{The file name, such as \code{"fig1.png"}. Without an extension,
-\code{format} is added.}
+\code{format} is added. Its folder must exist, and a file of that name is
+replaced without asking.}
 
-\item{format}{\code{"png"}, \code{"jpg"} or \code{"pdf"}. Without it, the extension of
-\code{file} decides.}
+\item{format}{\code{"png"}, \code{"jpg"} (or \code{"jpeg"}) or \code{"pdf"}. Without it, the
+extension of \code{file} decides.}
 
-\item{resolution}{1 (screen), 2 (high) or 4 (print): the image is
-\code{resolution} times \code{width} by \code{height} pixels. A PDF page is \code{width} by
-\code{height}, with the picture at this resolution.}
+\item{resolution}{A whole number from 1 to 4: 1 (screen), 2 (high, the
+default), 4 (print). The image is \code{resolution} times \code{width} by
+\code{height} pixels. A PDF page is \code{width} by \code{height}, with the picture at
+this resolution.}
 
-\item{width, height}{The size of MiRA's window, in pixels. The plot is
-fitted to it as in the browser.}
+\item{width, height}{The size of MiRA's window, in pixels: whole numbers
+from 100 to 8000. The plot is fitted to it as in the browser. MiRA is
+made for windows of at least 1024 x 600: smaller ones can cut off
+legends and panels, and in a very small one MiRA may not draw at all
+(the save then times out).}
 
 \item{background}{\code{"grid"} (MiRA's grid; the map in map view),
 \code{"white"}, or \code{"transparent"} (PNG only). The map view is saved only
@@ -62,6 +67,25 @@ Needs the chromote package and Google Chrome (or Chromium, or Microsoft
 Edge; chromote finds it, or set the \code{CHROMOTE_CHROME} environment
 variable to its path). MiRA loads its libraries and map tiles from the
 internet, as when a plot opens in the browser.
+
+\strong{What is saved.} Every view except the data view, which is a table
+(an error). The dashboard is saved as its whole page, whatever \code{height}
+is. A map is saved as the map with the layers' markers; the networks
+MiRA draws over it after a click are not part of the plot. When MiRA
+could not use a setting of the plot, R gives MiRA's reason as a warning
+and the file is still saved.
+
+\strong{Sizes.} The file holds \code{resolution} times \code{width} by \code{height} pixels,
+and the browser has to hold that picture in memory: a very large one
+(about 5000 x 4000 at \code{resolution = 4}) can fail with a browser error.
+Reduce \code{resolution} or the size then. Saving takes a few seconds, and
+longer for large pictures (\code{timeout}).
+
+\strong{The look.} Links are drawn opaque and at least one pixel of the file
+wide, so a dense network looks heavier at \code{resolution = 1} than at 4,
+and heavier than on screen. The camera of \code{\link[=mira_camera]{mira_camera()}} is relative to
+the window: values copied from MiRA frame the plot the same way only
+when \code{width} and \code{height} match the browser window they were set in.
 }
 \examples{
 \dontrun{

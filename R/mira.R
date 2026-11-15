@@ -19,15 +19,17 @@ VIEW_SPEC_VERSION <- 1
 #' - [mira_intralayer()]: the links within layers.
 #' - [mira_interlayer()]: the links between layers.
 #' - [mira_layer()]: layer colors, names and arrangement.
-#' - [mira_filter()]: draw only some nodes or links.
+#' - [mira_filter()]: draw only some nodes, links or layers.
 #' - [mira_camera()]: rotate, tilt, zoom and pan the view.
 #' - [mira_legends()]: which legends are open, and where.
+#' - [mira_mode_grid()], [mira_mode_meta()] and the other `mira_mode_*()`:
+#'   open the plot in another of MiRA's views ([mira_mode]).
 #'
 #' In each element component, `color_by` and `size_by` map an attribute of the data (a column
 #' of the network's tables, or one MiRA computes, such as a degree); `color`,
-#' `size` and `shape` set constants. The colors of a mapping are chosen with
-#' `color_values` and `color_scale` in the same component: see
-#' [mira_scales].
+#' `size` and `shape` set constants. The colors of a mapping are chosen in
+#' the same component, with `color_values`, `color_scale`, `color_palette`,
+#' `color_reverse` and `color_limits`: see [mira_scales].
 #'
 #' Anything not set keeps MiRA's default, and everything can still be
 #' changed in MiRA's interface. When the same setting is given twice, the
@@ -40,6 +42,33 @@ VIEW_SPEC_VERSION <- 1
 #' that is not in the network is a warning, and MiRA keeps its default for
 #' that setting. [mira_spec()] shows what a plot sends to MiRA.
 #'
+#' MiRA has the final say. When it cannot use a setting it received, it
+#' keeps its default for that setting and shows a notice when the plot
+#' opens, "Some plot settings from R were ignored", with the reasons;
+#' [mira_save()] gives them as warnings.
+#'
+#' @section Bipartite networks:
+#' `bipartite = TRUE` needs a column in `net$nodes` that says which of two
+#' sets each node is in: `node_type`, or `node_group`, or `type` (what the
+#' networks of `emln::load_emln()` have). MiRA knows it as `node_type`
+#' whatever its name in the data, so `mira_node(color_by = "node_type")`
+#' works for all three. A condition in [mira_filter()] is evaluated on
+#' `net$nodes` itself and uses the column's own name: `type == "bird"` for
+#' a network from `load_emln()`. A network made with
+#' `emln::create_multilayer_network()` has no such column; add one before
+#' the plot:
+#'
+#' ```r
+#' # plants: the names of the plant nodes
+#' net$nodes$node_type <- ifelse(net$nodes$node_name %in% plants, "plant", "pollinator")
+#' ```
+#'
+#' @section What MiRA computes:
+#' Besides the columns of the data, nodes can be colored and sized by
+#' degree and strength, which MiRA computes ([mira_node()] has the names:
+#' `intra_degree_sum`, ...). [mira_options()] lists everything a network
+#' offers.
+#'
 #' @inheritParams plot_mira
 #' @param net A multilayer object (created by `emln::create_multilayer_network()`
 #'   or `emln::load_emln()`). MiRA does not draw links with weight 0 (weight
@@ -47,7 +76,8 @@ VIEW_SPEC_VERSION <- 1
 #' @param directed Logical or NULL. Whether intralayer links are directed.
 #'   If NULL (default): undirected when `bipartite = TRUE` (bipartite edge
 #'   lists usually store each link once, which would look directed);
-#'   otherwise auto-detected from edge symmetry, as in [plot_mira()].
+#'   otherwise auto-detected from edge symmetry, as in [plot_mira()]. R
+#'   prints which one was chosen.
 #' @return A `mira_plot` object.
 #' @seealso [mira_spec()] to see what a plot sends to MiRA;
 #'   [print.mira_plot()] for the browser and port options;
@@ -146,7 +176,16 @@ MAX_CALL_CHARS <- 500
 #' the port or the browser, or to open the plot in RStudio's Viewer pane
 #' (`viewer = TRUE`, or `options(ggmira.viewer = TRUE)` for every plot).
 #' Each print starts a new server (on the next free
-#' port when `port` is taken).
+#' port when `port` is taken), and shows where MiRA is served from, the
+#' plot's address (`http://localhost:8080?autoload=true`) and where to
+#' report issues. MiRA loads its drawing libraries from the web, so the
+#' plot needs an internet connection.
+#'
+#' **In a script.** When R is not interactive (`Rscript`, R Markdown,
+#' `R CMD check`) nothing opens and `print()` returns `NULL`, with a
+#' message: no one would see the plot, and its server would stop with the
+#' script. Use [mira_save()] for a file, or give `browser` to open the plot
+#' anyway.
 #'
 #' In MiRA, the plot can still be changed. MiRA's **R** button (Copy as R
 #' code, next to Save Session) shows the ggmira code for the current view,
@@ -166,7 +205,8 @@ MAX_CALL_CHARS <- 500
 #' @param ... Not used.
 #' @return Invisibly, the server handle. Stop it with
 #'   `httpuv::stopServer(handle)`, or stop all servers with
-#'   `httpuv::stopAllServers()`.
+#'   `httpuv::stopAllServers()`. `NULL` when nothing was opened (R is not
+#'   interactive and `browser` was not given).
 #' @export
 #' @examplesIf requireNamespace("emln", quietly = TRUE)
 #' library(emln)
@@ -176,7 +216,7 @@ MAX_CALL_CHARS <- 500
 #' p        # the same as print(p)
 #'
 #' print(p, port = 9000)            # another port
-#' # print(p, browser = "firefox")  # another browser
+#' # print(p, browser = "chrome")   # another browser
 #' # print(p, viewer = TRUE)        # RStudio's Viewer pane
 #' # options(ggmira.viewer = TRUE)  # the pane for every plot
 #' # print(p, mira_path = "~/MiRA") # a local copy of MiRA, not the bundled one
@@ -185,7 +225,7 @@ MAX_CALL_CHARS <- 500
 #' httpuv::stopAllServers()
 print.mira_plot <- function(x, port = 8080, mira_path = NULL,
                             browser = getOption("browser"),
-                            viewer = getOption(VIEWER_OPTION, FALSE), ...) {
+                            viewer = getOption("ggmira.viewer", FALSE), ...) {
   viewer <- .use_viewer(viewer, !missing(browser), "print")
   if (!.should_serve(browser_given = !missing(browser))) return(invisible(NULL))
   message("Please report issues at ",
@@ -198,6 +238,22 @@ print.mira_plot <- function(x, port = 8080, mira_path = NULL,
 #'
 #' Shows the settings a plot sends to MiRA: those of its components, after
 #' merging. Useful to check a plot before opening it.
+#'
+#' The list has one element per part of the plot that was set (`layout`,
+#' `node`, `intralayer`, `interlayer`, `layer`, `filter`, `camera`,
+#' `legend`, `mode`), each with the arguments given, and `version`, the
+#' version of the format. Some settings are shown as MiRA receives them, not
+#' as they were written:
+#' - colors as `"#rrggbb"`;
+#' - a [mira_filter()] condition as the names it keeps (node names, layer
+#'   names, links as layer and node names);
+#' - `color_values`, `color_scale`, `color_palette`, `color_reverse` and
+#'   `color_limits` under `scales`, one entry per attribute name, merged
+#'   over the components ([mira_scales]); one color per layer under
+#'   `layer$colors`.
+#'
+#' The network itself is not included. A plot with no components sends only
+#' `version`: MiRA's default view.
 #'
 #' @param x A `mira_plot`.
 #' @param json `FALSE` (default) for an R list, `TRUE` for the JSON string

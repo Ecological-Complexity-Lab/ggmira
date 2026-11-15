@@ -28,9 +28,10 @@ layer).}
 per node set; needs \code{mira(..., bipartite = TRUE)}). MiRA's default is
 \code{"bipartite"} for bipartite networks and \code{"circular"} otherwise.}
 
-\item{color_by}{Node color: \code{"uniform"} (MiRA's default: one color, see
-\code{color}), \code{"participation"} (the number of layers a node is in) or
-\code{"degree"} (the number of nodes it links to in the meta-network).}
+\item{color_by}{Node color: \code{"uniform"} (MiRA's default: one color),
+\code{"participation"} (the number of layers a node is in) or \code{"degree"}
+(the number of nodes it links to in the meta-network). To choose the
+one color, give \code{color} and leave \code{color_by} out.}
 
 \item{size_by}{Node size: \code{"degree"} (MiRA's default), \code{"participation"}
 or \code{"uniform"}.}
@@ -41,19 +42,20 @@ or \code{"uniform"}.}
 number of 0 or more; default 0).}
 
 \item{nested}{\code{TRUE} (default) or \code{FALSE}: sort each row of the
-bipartite layout by degree. Only for bipartite networks, and only
-used by the \code{"bipartite"} layout.}
+bipartite layout by degree. Only for bipartite networks (an error
+otherwise), and only used by the \code{"bipartite"} layout (a warning with
+another layout).}
 
 \item{labels}{\code{TRUE} to show node names (default \code{FALSE}).}
 
 \item{label_size}{Size of node names in pixels, a whole number between
 8 and 24 (default 12).}
 
-\item{color}{One color for every node (\code{color_by = "uniform"}), or one
-per node set, named by \code{node_type} (e.g.
-\code{c(bird = "orange", plant = "darkgreen")}). Give \code{color_by} or \code{color},
-not both: a later \code{color} replaces an earlier \code{color_by}, and the
-other way round.}
+\item{color}{One color for every node, or one per node set, named by
+\code{node_type} (e.g. \code{c(bird = "orange", plant = "darkgreen")}). A color
+makes the node color uniform, so give \code{color_by} or \code{color}, not both
+(also not \code{color_by = "uniform"} with \code{color}): a later \code{color}
+replaces an earlier \code{color_by}, and the other way round.}
 
 \item{layers}{Layers to select in the meta-network's \emph{Filter Layers}
 panel: nodes and links not in them are dimmed (not removed, and the

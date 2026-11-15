@@ -18,7 +18,8 @@ mira_intralayer(
 }
 \arguments{
 \item{color_by}{Link column to color intralayer links by (a column of
-\code{net$extended}, e.g. \code{"type"}). \code{NULL} or \code{NA} = default.}
+\code{net$extended}, e.g. \code{"type"}; not \code{weight}, which sets the links'
+width). \code{NULL} or \code{NA} = default.}
 
 \item{color}{A constant link color: a color name or \code{"#rrggbb"}. Give
 \code{color_by} or \code{color}, not both.}

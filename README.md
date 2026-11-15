@@ -10,7 +10,11 @@ ggmira is an R interface to [MiRA](https://mira.ecomplab.com/), the
 browser-based multilayer network visualizer. Its syntax follows ggplot2:
 start from a base plot with `mira()` and add components with `+` to control
 the nodes, links, layers and more. Using MiRA as the engine makes the plot
-both reproducible, because it is described in code, and interactive, because it opens in MiRA, where you can keep exploring and adjusting it.  It also enables using the seven visualization models of MIRA as well as a suite of other features such as node highlighting.
+both reproducible, because it is described in code, and interactive,
+because it opens in MiRA, where you can keep exploring and adjusting it.
+A plot can open in any of MiRA's seven views (the stack of layers, a grid,
+a map, a layer view, the meta-network, a dashboard and the data tables),
+and use MiRA's other features, such as highlighting a node.
 
 ggmira works with the multilayer objects of the
 [emln](https://emln.ecomplab.com/) package, and includes its own copy of
