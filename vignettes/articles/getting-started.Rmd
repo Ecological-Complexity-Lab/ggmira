@@ -53,11 +53,8 @@ Plots open in the browser. In RStudio they can open in the Viewer pane
 instead: `print(p, viewer = TRUE)` for one plot, or
 `options(ggmira.viewer = TRUE)` for every plot (put it in your `.Rprofile`
 to keep it). Give the pane room: drag it wider, maximize it, or click its
-*Show in new window* button to move the plot to the browser.
-
-```{r, echo = FALSE, eval = file.exists("figures/rstudio-viewer.png"), out.width = "100%", fig.alt = "RStudio with ggmira code in the script and the plot open in MiRA in the Viewer pane"}
-knitr::include_graphics("figures/rstudio-viewer.png")
-```
+*Show in new window* button to move the plot to the browser. The
+[home page](../index.html#in-rstudio) has a screenshot.
 
 ## 1. The plot
 
