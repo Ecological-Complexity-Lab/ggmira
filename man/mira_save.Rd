@@ -34,12 +34,15 @@ mira_save(
 fitted to it as in the browser.}
 
 \item{background}{\code{"grid"} (MiRA's grid; the map in map view),
-\code{"white"}, or \code{"transparent"} (PNG only).}
+\code{"white"}, or \code{"transparent"} (PNG only). The map view is saved only
+with \code{"grid"}; the meta-network and the dashboard not with
+\code{"transparent"}.}
 
 \item{legends}{\code{TRUE} to include the legends (as \code{\link[=mira_legends]{mira_legends()}} sets
 them) and any open panels of the layer view.}
 
-\item{timeout}{Seconds to wait for MiRA to draw and save the plot.}
+\item{timeout}{Seconds to wait for MiRA to draw and save the plot. Large
+pictures at \code{resolution = 4} can need more than the default.}
 
 \item{mira_path}{Character. Path to the MiRA web-app directory. If NULL
 (default), uses the copy bundled with the package

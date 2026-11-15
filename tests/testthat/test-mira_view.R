@@ -66,9 +66,12 @@ test_that("a later mira_legends() changes only the arguments it gives", {
   expect_equal(mira_spec(p + mira_legends(position = "top-right"))$legend,
                list(show = list("node_color"), position = "top-right"))
   expect_equal(format(mira_legends(position = "top-right")), 'mira_legends(position = "top-right")')
-  # without an earlier show, MiRA keeps the legends minimized
+  # without an earlier show: the default, all legends open
   expect_equal(mira_spec(view_plot() + mira_legends(position = "bottom-left"))$legend,
-               list(position = "bottom-left"))
+               list(position = "bottom-left", show = "all"))
+  # FALSE is a `show` too, and stays
+  expect_equal(mira_spec(view_plot() + mira_legends(show = FALSE) + mira_legends(position = "top-right"))$legend,
+               list(show = FALSE, position = "top-right"))
 })
 
 test_that("a highlighted node hidden by the filter is a warning, in either order", {

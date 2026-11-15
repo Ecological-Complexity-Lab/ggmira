@@ -58,6 +58,11 @@ script. What R cannot set is listed in comments under the code. By
 default the code ends with \code{print(p, viewer = TRUE)}, which opens the
 plot in RStudio's Viewer pane; untick the box under the code for the
 browser.
+
+Every printed plot is served by its own small server, on its own port.
+ggmira keeps the servers of the 10 most recent plots and stops older
+ones: an older plot stays on screen, but reloading its page fails. Print
+it again to reopen it.
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

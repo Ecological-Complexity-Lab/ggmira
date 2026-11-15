@@ -14,7 +14,8 @@ both reproducible, because it is described in code, and interactive, because it 
 
 ggmira works with the multilayer objects of the
 [emln](https://emln.ecomplab.com/) package, and includes its own copy of
-MiRA, so plots open without an internet connection.
+MiRA, so there is nothing else to install. Plots need an internet
+connection: MiRA loads its drawing libraries and map tiles from the web.
 
 
 ## Installation

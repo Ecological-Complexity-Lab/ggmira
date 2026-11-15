@@ -6,7 +6,9 @@
 #' the plot should look in code, use [mira()] instead.
 #'
 #' `plot_multilayer()` is the same function without `mode` (always network
-#' mode), under the name emln uses.
+#' mode), under the name emln uses. While emln has a function of that name
+#' too, the package attached last provides it: after `library(emln)`, write
+#' `ggmira::plot_multilayer()`, or use `plot_mira()`.
 #'
 #' **From MiRA back to R.** Change the plot in MiRA, then click MiRA's **R**
 #' button (Copy as R code, next to Save Session): it shows the [mira()] code
@@ -81,8 +83,8 @@
 #' The server runs in the background. Call \code{httpuv::stopServer(handle)} or
 #' close R to stop it. The JSON data is kept in memory and never written to disk.
 #'
-#' `plot_multilayer()` replaces \code{emln::plot_multilayer()}, with the
-#' same arguments and behavior.
+#' `plot_multilayer()` replaces \code{emln::plot_multilayer()}: the same
+#' arguments and behavior, plus `viewer`.
 #'
 #' @seealso [mira()] to describe the plot in code; [mira_mode] for the
 #'   views; \code{emln::load_emln}, \code{emln::multilayer_to_json}
@@ -110,8 +112,9 @@
 #' # In RStudio's Viewer pane
 #' # plot_mira(net, bipartite = TRUE, setA_type = "bird", viewer = TRUE)
 #'
-#' # The same as plot_mira(net, bipartite = TRUE, setA_type = "bird")
-#' plot_multilayer(net, bipartite = TRUE, setA_type = "bird")
+#' # The same as plot_mira(net, bipartite = TRUE, setA_type = "bird").
+#' # ggmira:: because emln, attached above, has a plot_multilayer() too
+#' ggmira::plot_multilayer(net, bipartite = TRUE, setA_type = "bird")
 #'
 #' # When done, stop the servers
 #' httpuv::stopAllServers()
