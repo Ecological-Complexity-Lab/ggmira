@@ -7,8 +7,10 @@
 A scale turns the values of a mapped attribute into colors or sizes. In
 ggmira the scale lives in the component that maps the attribute: in
 \code{\link[=mira_node]{mira_node()}}, \code{\link[=mira_intralayer]{mira_intralayer()}}, \code{\link[=mira_interlayer]{mira_interlayer()}} and \code{\link[=mira_layer]{mira_layer()}},
-\code{color_by} chooses what is colored, and \code{color_values} and \code{color_scale}
-in the same call choose the colors.
+\code{color_by} chooses what is colored, and five arguments in the same call
+choose the colors: \code{color_scale} (one color per value, or a gradient),
+\code{color_palette} and \code{color_reverse} (which colors), \code{color_limits} (the
+ends of a gradient) and \code{color_values} (colors given by hand).
 }
 \section{Color}{
 
@@ -16,13 +18,18 @@ in the same call choose the colors.
 \item \code{color_scale = "categorical"} gives each value its own color (MiRA's
 Dark2 palette); \code{"continuous"} a gradient (Viridis, from the column's
 minimum to its maximum; numeric columns only). Without it, MiRA decides
-from the data: a gradient for a numeric column with many values, one
-color per value otherwise.
+from the data: text gets one color per value; numbers get a gradient
+when they have more than two values or a name that sounds like a
+measure (containing \code{weight}, \code{abundance}, \code{degree}, \code{strength},
+\code{mass}, \code{size} or \code{value}), unless the name marks groups (\code{module},
+\code{group}, \code{cluster}, \code{community}, \code{partition}). \code{\link[=mira_options]{mira_options()}} shows
+the type MiRA picks for each attribute.
 \item \code{color_palette} chooses the palette by name (matched without case):
 \itemize{
 \item categorical: \code{"Dark2"} (MiRA's default), \code{"Set1"}, \code{"Set2"},
 \code{"Set3"}, \code{"Paired"}, \code{"Accent"}, \code{"Okabe-Ito"} (colorblind-safe).
-Columns with more values than colors reuse them.
+Columns with more values than colors reuse them, so two values can
+share a color (the palettes have 8 to 12 colors).
 \item continuous, sequential: \code{"viridis"} (MiRA's default), \code{"magma"},
 \code{"cividis"} (colorblind-optimized), \code{"Blues"}, \code{"Greens"}, \code{"Reds"},
 \code{"Purples"}, \code{"Oranges"}, \code{"Greys"}, \code{"YlOrRd"}, \code{"YlGnBu"}.
@@ -45,14 +52,20 @@ attributes MiRA computes (\code{intra_degree_sum}, ...).
 \code{c("1" = "red", "3" = "#1f77b4")} (numbers need quotes as names). Values
 not listed keep the palette's color. It gives a categorical scale, so it
 cannot be combined with \code{color_scale = "continuous"}.
-\item On a bipartite network, \code{mira_node()} takes both per node set:
+\item On a bipartite network, \code{mira_node()} takes all five per node set:
 \code{color_scale = c(bird = "continuous")},
-\code{color_values = list(plant = c(species = "blue"))}.
+\code{color_palette = c(bird = "magma")}, \code{color_reverse = c(bird = TRUE)},
+\code{color_limits = list(bird = c(0, 10))},
+\code{color_values = list(plant = c(species = "blue"))}. They differ between
+the sets only when the sets are colored by different attributes (one
+scale per attribute name, below).
 \item Two special mappings take colors named by element rather than by
 value: \code{mira_layer(color_by = "layer_name", color_values = c(L1 = "red"))}
 colors layers one by one, and
 \code{mira_node(color_by = ".set", color_values = c(bird = "red"))} colors
-the two node sets.
+the two node sets. These two are not scales: they take \code{color_values}
+only, and \code{color_scale}, \code{color_palette}, \code{color_reverse} and
+\code{color_limits} with them are errors.
 }
 
 \strong{One scale per attribute name.} MiRA keeps one color scale (type,
@@ -73,7 +86,8 @@ column, drops that component's earlier \code{color_values} and \code{color_scale
 \code{mira_node(size_by = )} sizes nodes by a numeric attribute, scaled by
 MiRA from the smallest to the largest value; \code{size} sets the base size
 (and the only size, without \code{size_by}). Link width always follows the
-\code{weight} column. A size range from R is planned.
+\code{weight} column, which is why \code{weight} cannot color links. A size range
+from R is planned.
 }
 
 \examples{

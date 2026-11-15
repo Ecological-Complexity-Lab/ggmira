@@ -39,10 +39,10 @@
 #' - [mira_legends()]: which legends are open, and where.
 #'
 #' @section Data (what is drawn):
-#' - [mira_filter()]: draw only some nodes or links (network, grid and map
-#'   modes).
+#' - [mira_filter()]: draw only some nodes, links or layers (network, grid
+#'   and map views; `layers` also in the layer view).
 #'
-#' @section Views (modes):
+#' @section Views (MiRA's modes):
 #' One view per plot; the other components still apply where MiRA uses
 #' them ([mira_mode]: the rules, and what applies in each view).
 #' - [mira_mode_grid()]: the layers side by side.
@@ -55,7 +55,7 @@
 #'
 #' @section Opening a network with MiRA's defaults:
 #' - [plot_mira()]: open a network with no components, in any view
-#'   (`plot_multilayer()` is the same, in network mode).
+#'   (`plot_multilayer()` is the same, in the network view).
 #'
 #' @section Beta testing:
 #' - [mira_feedback()]: send feedback as a filled-in GitHub issue. The

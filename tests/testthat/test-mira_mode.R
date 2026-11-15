@@ -66,6 +66,21 @@ test_that("arguments are checked", {
   expect_error(mira_mode_meta(labels = "yes"), "TRUE or FALSE")
 })
 
+test_that("the map needs both coordinates, for at least one layer", {
+  with_layers <- function(...) {
+    net <- mode_net()
+    net$layers <- cbind(net$layers, ...)
+    suppressMessages(mira(net))
+  }
+  expect_error(with_layers(latitude = c(10, 11)) + mira_mode_map(), "the map needs the layers' coordinates")
+  expect_error(with_layers(longitude = c(20, 21)) + mira_mode_map(), "the map needs the layers' coordinates")
+  # no layer has both
+  expect_error(with_layers(latitude = c(10, NA), longitude = c(NA, 21)) + mira_mode_map(),
+               "the map needs the layers' coordinates")
+  expect_silent(with_layers(latitude = c(10, NA), longitude = c(20, NA)) + mira_mode_map())
+  expect_silent(with_layers(Latitude = c(10, 11), Longitude = c(20, 21)) + mira_mode_map())
+})
+
 test_that("checks against the network: map coordinates, bipartite-only settings, set names", {
   expect_error(mode_plot() + mira_mode_map(), "the map needs the layers' coordinates")
   expect_error(mode_plot(bipartite = FALSE) + mira_mode_meta(layout = "bipartite"),

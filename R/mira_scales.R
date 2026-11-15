@@ -14,19 +14,26 @@
 #' A scale turns the values of a mapped attribute into colors or sizes. In
 #' ggmira the scale lives in the component that maps the attribute: in
 #' [mira_node()], [mira_intralayer()], [mira_interlayer()] and [mira_layer()],
-#' `color_by` chooses what is colored, and `color_values` and `color_scale`
-#' in the same call choose the colors.
+#' `color_by` chooses what is colored, and five arguments in the same call
+#' choose the colors: `color_scale` (one color per value, or a gradient),
+#' `color_palette` and `color_reverse` (which colors), `color_limits` (the
+#' ends of a gradient) and `color_values` (colors given by hand).
 #'
 #' @section Color:
 #' - `color_scale = "categorical"` gives each value its own color (MiRA's
 #'   Dark2 palette); `"continuous"` a gradient (Viridis, from the column's
 #'   minimum to its maximum; numeric columns only). Without it, MiRA decides
-#'   from the data: a gradient for a numeric column with many values, one
-#'   color per value otherwise.
+#'   from the data: text gets one color per value; numbers get a gradient
+#'   when they have more than two values or a name that sounds like a
+#'   measure (containing `weight`, `abundance`, `degree`, `strength`,
+#'   `mass`, `size` or `value`), unless the name marks groups (`module`,
+#'   `group`, `cluster`, `community`, `partition`). [mira_options()] shows
+#'   the type MiRA picks for each attribute.
 #' - `color_palette` chooses the palette by name (matched without case):
 #'   - categorical: `"Dark2"` (MiRA's default), `"Set1"`, `"Set2"`,
 #'     `"Set3"`, `"Paired"`, `"Accent"`, `"Okabe-Ito"` (colorblind-safe).
-#'     Columns with more values than colors reuse them.
+#'     Columns with more values than colors reuse them, so two values can
+#'     share a color (the palettes have 8 to 12 colors).
 #'   - continuous, sequential: `"viridis"` (MiRA's default), `"magma"`,
 #'     `"cividis"` (colorblind-optimized), `"Blues"`, `"Greens"`, `"Reds"`,
 #'     `"Purples"`, `"Oranges"`, `"Greys"`, `"YlOrRd"`, `"YlGnBu"`.
@@ -48,14 +55,20 @@
 #'   `c("1" = "red", "3" = "#1f77b4")` (numbers need quotes as names). Values
 #'   not listed keep the palette's color. It gives a categorical scale, so it
 #'   cannot be combined with `color_scale = "continuous"`.
-#' - On a bipartite network, `mira_node()` takes both per node set:
+#' - On a bipartite network, `mira_node()` takes all five per node set:
 #'   `color_scale = c(bird = "continuous")`,
-#'   `color_values = list(plant = c(species = "blue"))`.
+#'   `color_palette = c(bird = "magma")`, `color_reverse = c(bird = TRUE)`,
+#'   `color_limits = list(bird = c(0, 10))`,
+#'   `color_values = list(plant = c(species = "blue"))`. They differ between
+#'   the sets only when the sets are colored by different attributes (one
+#'   scale per attribute name, below).
 #' - Two special mappings take colors named by element rather than by
 #'   value: `mira_layer(color_by = "layer_name", color_values = c(L1 = "red"))`
 #'   colors layers one by one, and
 #'   `mira_node(color_by = ".set", color_values = c(bird = "red"))` colors
-#'   the two node sets.
+#'   the two node sets. These two are not scales: they take `color_values`
+#'   only, and `color_scale`, `color_palette`, `color_reverse` and
+#'   `color_limits` with them are errors.
 #'
 #' **One scale per attribute name.** MiRA keeps one color scale (type,
 #' palette, reversal, limits and colors) per attribute name, used wherever
@@ -73,7 +86,8 @@
 #' `mira_node(size_by = )` sizes nodes by a numeric attribute, scaled by
 #' MiRA from the smallest to the largest value; `size` sets the base size
 #' (and the only size, without `size_by`). Link width always follows the
-#' `weight` column. A size range from R is planned.
+#' `weight` column, which is why `weight` cannot color links. A size range
+#' from R is planned.
 #'
 #' @name mira_scales
 #' @seealso [mira()] for how components combine.

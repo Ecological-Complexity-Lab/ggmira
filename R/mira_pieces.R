@@ -42,7 +42,10 @@ LAYER_NAME_COLUMN <- "layer_name"   # mira_layer(color_by = "layer_name") = ".in
 #'   `"circle"`, `"grid"`, `"random"`. `"bipartite"` needs
 #'   `mira(..., bipartite = TRUE)`.
 #' @param seed A whole number. The same seed and the same data give the same
-#'   node positions, so a figure can be reproduced.
+#'   node positions, so a figure can be reproduced. Without a seed, a layout
+#'   that starts from random positions (`"fruchterman"`, MiRA's default for
+#'   a network that is not bipartite, among them) differs each time the
+#'   plot opens.
 #' @param nested `TRUE` or `FALSE`. Bipartite layout only: sort nodes by
 #'   degree (nested order).
 #' @return A component, to add to a plot with `+`.
@@ -78,25 +81,53 @@ mira_layout <- function(type, seed, nested) {
 #' default.
 #'
 #' **Per set.** On a bipartite network (`mira(..., bipartite = TRUE)`),
-#' `color_by`, `size_by`, `shape` and `color_scale` also take a vector named
-#' by the `node_type` values, giving each set its own setting, e.g.
-#' `color_by = c(pollinator = "module", plant = NA)`; `color_values` takes a
-#' list named the same way, `list(pollinator = c("1" = "red"))`. When color
-#' or size is per set and `shape` is not given, MiRA draws one set as
-#' circles and the other as squares.
+#' `color_by`, `size_by`, `shape`, `color_scale`, `color_palette` and
+#' `color_reverse` also take a vector named by the `node_type` values,
+#' giving each set its own setting, e.g.
+#' `color_by = c(pollinator = "module", plant = NA)`; `color_values` and
+#' `color_limits` take a list named the same way,
+#' `list(pollinator = c("1" = "red"))`. A set that is not named keeps
+#' MiRA's default, and a later per-set value replaces an earlier one whole:
+#' name both sets in one call. The scale settings of the two sets differ
+#' only when the sets are colored by different attributes, because MiRA
+#' keeps one scale per attribute name ([mira_scales]). When color or size
+#' is per set and `shape` is not given, MiRA draws one set as circles and
+#' the other as squares.
+#'
+#' **Computed attributes.** MiRA computes each node's degree (its number of
+#' links) and strength (the sum of their weights), within layers (`intra_`)
+#' and between layers (`inter_`, when the network has interlayer links). For
+#' each node in each layer (a state node): `intra_degree`, `intra_strength`,
+#' `inter_degree`, `inter_strength`. For each node over all its layers,
+#' their sum and their mean: `intra_degree_sum`, `intra_degree_mean`, and
+#' so on. On a directed network the names carry the direction instead:
+#' `intra_in_degree`, `intra_out_degree`, `intra_in_strength_sum`, ... R
+#' warns when a name is not computed for the network, and suggests the ones
+#' that are; [mira_options()] lists them.
+#'
+#' **Columns that cannot be mapped.** MiRA does not offer the columns that
+#' identify the rows: `node_id`, `node_name`, `layer_id`, `layer_name` and
+#' `layers_present` for nodes; `layer_from`, `node_from`, `layer_to`,
+#' `node_to`, `weight` and `directed` for links; `layer_id`, `bipartite`,
+#' `latitude` and `longitude` for layers. To map one, copy it to a column
+#' of another name (`net$layers$lat <- net$layers$latitude`).
 #'
 #' @param color_by Column to color nodes by: a node or state-node column
 #'   (e.g. `"module"`) or a MiRA-computed attribute (e.g.
 #'   `"intra_degree_sum"`). `".set"` colors by set membership (bipartite
 #'   networks). `NULL` or `NA` = MiRA's default.
 #' @param color A constant node color: a color name (`"red"`) or `"#rrggbb"`.
-#'   Give `color_by` or `color`, not both.
+#'   Give `color_by` or `color`, not both. Colors are opaque: the
+#'   transparency of a color such as `"#ff000080"` is ignored, with a
+#'   warning (here and in every other color argument).
 #' @param size_by Numeric column to size nodes by. `NULL` or `NA` = default.
-#' @param size Base node size, a whole number between 3 and 25.
+#' @param size Base node size, a whole number between 3 and 25 (10 = MiRA's
+#'   default).
 #' @param shape `"circle"`, `"square"`, `"triangle"` or `"diamond"`. Every
 #'   shape has the circle's area, so node sizes stay comparable.
 #' @param labels `TRUE` or `FALSE`: show node names.
-#' @param label_size Node name size, a whole number between 8 and 24.
+#' @param label_size Node name size, a whole number between 8 and 24 (12 =
+#'   MiRA's default). Used when node names are shown.
 #' @param perspective `TRUE` or `FALSE`: draw nodes in the layers' 3D
 #'   perspective (MiRA's default) or flat.
 #' @param color_values Colors for values of the `color_by` column, named by
@@ -181,7 +212,8 @@ mira_node <- function(color_by, color, size_by, size, shape, labels, label_size,
 #' (`arrow_size`). Add it to a plot made with [mira()].
 #'
 #' @param color_by Link column to color intralayer links by (a column of
-#'   `net$extended`, e.g. `"type"`). `NULL` or `NA` = default.
+#'   `net$extended`, e.g. `"type"`; not `weight`, which sets the links'
+#'   width). `NULL` or `NA` = default.
 #' @param color A constant link color: a color name or `"#rrggbb"`. Give
 #'   `color_by` or `color`, not both.
 #' @param min_weight Hide links with weight below this value (0 or more,
@@ -244,6 +276,10 @@ mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_value
 #' curve, and between which layers they are shown (`pairs`). Add it to a
 #' plot made with [mira()].
 #'
+#' Interlayer links are drawn only with `show = TRUE` or `pairs`: the other
+#' arguments alone style links that stay hidden (a `color_by` still shows
+#' its legend).
+#'
 #' @param show `TRUE` or `FALSE`: draw interlayer links.
 #' @inheritParams mira_intralayer
 #' @param color_by Link column to color interlayer links by. `NULL` or `NA`
@@ -253,8 +289,10 @@ mira_intralayer <- function(color_by, color, min_weight, arrow_size, color_value
 #' @param pairs Show only the interlayer links between these pairs of
 #'   layers: `list(c("L1", "L2"), c("L2", "L3"))`, by `layer_name`; one pair
 #'   may be given as a vector, `c("L1", "L2")`. The order within a pair does
-#'   not matter. Also turns interlayer links on, unless the same piece gives
-#'   `show = FALSE`.
+#'   not matter. Also turns interlayer links on, unless the same call gives
+#'   `show = FALSE`. A pair of layers with no links between them draws
+#'   nothing. A later `pairs` replaces an earlier one; there is no value
+#'   that shows all pairs again.
 #' @return A component, to add to a plot with `+`.
 #' @seealso [mira_intralayer()] for the links within layers;
 #'   [mira_scales] for `color_values` and `color_scale`.
@@ -301,6 +339,12 @@ mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs,
 #' constant), their names and the node set names, and how they are stacked
 #' and spaced. Add it to a plot made with [mira()].
 #'
+#' Layer colors are used in the network, grid and map views. In the layer
+#' view ([mira_mode_layer()]) the bubbles follow `color_by`, not a constant
+#' `color`. One color per layer (`color_by = "layer_name"`) is not a scale:
+#' its colors are given with `color_values`, and `color_scale`,
+#' `color_palette`, `color_reverse` and `color_limits` with it are errors.
+#'
 #' @param color_by Layer column to color layers by (a column of
 #'   `net$layers`), or `"layer_name"` for one color per layer
 #'   (`".individual"` works too). `NULL` or `NA` = default.
@@ -314,7 +358,8 @@ mira_interlayer <- function(show, color_by, color, min_weight, curvature, pairs,
 #'   `color_by = "layer_name"`. See [mira_scales].
 #' @inheritParams mira_intralayer
 #' @param labels `TRUE` or `FALSE`: show layer names.
-#' @param label_size Layer name size, a whole number between 8 and 32.
+#' @param label_size Layer name size, a whole number between 8 and 32 (14 =
+#'   MiRA's default). Used when layer names are shown.
 #' @param set_labels `TRUE` or `FALSE`: show node set names (bipartite
 #'   layout only; needs `mira(..., bipartite = TRUE)`).
 #' @param stack `"horizontal"` or `"vertical"`: how layers are stacked.

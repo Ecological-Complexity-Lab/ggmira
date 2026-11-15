@@ -19,8 +19,10 @@ or \code{emln::load_emln()}). MiRA does not draw links with weight 0 (weight
 
 \item{bipartite}{Logical. Whether the network is bipartite. Defaults to
 \code{FALSE}. Bipartite is not auto-detected. When \code{TRUE}, the nodes
-table must contain a \code{node_type} (or legacy \code{node_group})
-column with exactly two distinct values across the network.}
+table must contain a \code{node_type} column (or \code{node_group}, or
+\code{type}, as in the networks of \code{load_emln}) with exactly two
+distinct values across the network. MiRA knows the column as
+\code{node_type}, whatever its name in the data.}
 
 \item{setA_type}{Optional character. The \code{node_type} value to render
 as Set A (top row) in MiRA's bipartite layout. By ecological convention
@@ -31,10 +33,13 @@ this is the higher trophic level (e.g. \code{"pollinator"},
 \item{directed}{Logical or NULL. Whether intralayer links are directed.
 If NULL (default): undirected when \code{bipartite = TRUE} (bipartite edge
 lists usually store each link once, which would look directed);
-otherwise auto-detected from edge symmetry, as in \code{\link[=plot_mira]{plot_mira()}}.}
+otherwise auto-detected from edge symmetry, as in \code{\link[=plot_mira]{plot_mira()}}. R
+prints which one was chosen.}
 
 \item{directed_interlayer}{Logical or NULL. Whether interlayer links are
-directed. If NULL (default), inherits from \code{directed}.}
+directed. If NULL (default), inherits from \code{directed}. Interlayer
+links are directed whenever intralayer links are, so \code{FALSE} has
+no effect on a directed network.}
 }
 \value{
 A \code{mira_plot} object.
@@ -54,16 +59,18 @@ Each component sets one part of the plot. Add them in any order:
 \item \code{\link[=mira_intralayer]{mira_intralayer()}}: the links within layers.
 \item \code{\link[=mira_interlayer]{mira_interlayer()}}: the links between layers.
 \item \code{\link[=mira_layer]{mira_layer()}}: layer colors, names and arrangement.
-\item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes or links.
+\item \code{\link[=mira_filter]{mira_filter()}}: draw only some nodes, links or layers.
 \item \code{\link[=mira_camera]{mira_camera()}}: rotate, tilt, zoom and pan the view.
 \item \code{\link[=mira_legends]{mira_legends()}}: which legends are open, and where.
+\item \code{\link[=mira_mode_grid]{mira_mode_grid()}}, \code{\link[=mira_mode_meta]{mira_mode_meta()}} and the other \verb{mira_mode_*()}:
+open the plot in another of MiRA's views (\link{mira_mode}).
 }
 
 In each element component, \code{color_by} and \code{size_by} map an attribute of the data (a column
 of the network's tables, or one MiRA computes, such as a degree); \code{color},
-\code{size} and \code{shape} set constants. The colors of a mapping are chosen with
-\code{color_values} and \code{color_scale} in the same component: see
-\link{mira_scales}.
+\code{size} and \code{shape} set constants. The colors of a mapping are chosen in
+the same component, with \code{color_values}, \code{color_scale}, \code{color_palette},
+\code{color_reverse} and \code{color_limits}: see \link{mira_scales}.
 
 Anything not set keeps MiRA's default, and everything can still be
 changed in MiRA's interface. When the same setting is given twice, the
@@ -75,6 +82,36 @@ that cannot work (per-set values or the bipartite layout without
 \code{bipartite = TRUE}, a layer name that does not exist) are errors; a column
 that is not in the network is a warning, and MiRA keeps its default for
 that setting. \code{\link[=mira_spec]{mira_spec()}} shows what a plot sends to MiRA.
+
+MiRA has the final say. When it cannot use a setting it received, it
+keeps its default for that setting and shows a notice when the plot
+opens, "Some plot settings from R were ignored", with the reasons;
+\code{\link[=mira_save]{mira_save()}} gives them as warnings.
+}
+
+\section{Bipartite networks}{
+
+\code{bipartite = TRUE} needs a column in \code{net$nodes} that says which of two
+sets each node is in: \code{node_type}, or \code{node_group}, or \code{type} (what the
+networks of \code{emln::load_emln()} have). MiRA knows it as \code{node_type}
+whatever its name in the data, so \code{mira_node(color_by = "node_type")}
+works for all three. A condition in \code{\link[=mira_filter]{mira_filter()}} is evaluated on
+\code{net$nodes} itself and uses the column's own name: \code{type == "bird"} for
+a network from \code{load_emln()}. A network made with
+\code{emln::create_multilayer_network()} has no such column; add one before
+the plot:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# plants: the names of the plant nodes
+net$nodes$node_type <- ifelse(net$nodes$node_name \%in\% plants, "plant", "pollinator")
+}\if{html}{\out{</div>}}
+}
+
+\section{What MiRA computes}{
+
+Besides the columns of the data, nodes can be colored and sized by
+degree and strength, which MiRA computes (\code{\link[=mira_node]{mira_node()}} has the names:
+\code{intra_degree_sum}, ...). \code{\link[=mira_options]{mira_options()}} lists everything a network
+offers.
 }
 
 \examples{

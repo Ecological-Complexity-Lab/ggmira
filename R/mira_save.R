@@ -27,16 +27,40 @@ SAVE_POLL_SECONDS <- 0.1
 #' variable to its path). MiRA loads its libraries and map tiles from the
 #' internet, as when a plot opens in the browser.
 #'
+#' **What is saved.** Every view except the data view, which is a table
+#' (an error). The dashboard is saved as its whole page, whatever `height`
+#' is. A map is saved as the map with the layers' markers; the networks
+#' MiRA draws over it after a click are not part of the plot. When MiRA
+#' could not use a setting of the plot, R gives MiRA's reason as a warning
+#' and the file is still saved.
+#'
+#' **Sizes.** The file holds `resolution` times `width` by `height` pixels,
+#' and the browser has to hold that picture in memory: a very large one
+#' (about 5000 x 4000 at `resolution = 4`) can fail with a browser error.
+#' Reduce `resolution` or the size then. Saving takes a few seconds, and
+#' longer for large pictures (`timeout`).
+#'
+#' **The look.** Links are drawn opaque and at least one pixel of the file
+#' wide, so a dense network looks heavier at `resolution = 1` than at 4,
+#' and heavier than on screen. The camera of [mira_camera()] is relative to
+#' the window: values copied from MiRA frame the plot the same way only
+#' when `width` and `height` match the browser window they were set in.
+#'
 #' @param plot A `mira_plot`.
 #' @param file The file name, such as `"fig1.png"`. Without an extension,
-#'   `format` is added.
-#' @param format `"png"`, `"jpg"` or `"pdf"`. Without it, the extension of
-#'   `file` decides.
-#' @param resolution 1 (screen), 2 (high) or 4 (print): the image is
-#'   `resolution` times `width` by `height` pixels. A PDF page is `width` by
-#'   `height`, with the picture at this resolution.
-#' @param width,height The size of MiRA's window, in pixels. The plot is
-#'   fitted to it as in the browser.
+#'   `format` is added. Its folder must exist, and a file of that name is
+#'   replaced without asking.
+#' @param format `"png"`, `"jpg"` (or `"jpeg"`) or `"pdf"`. Without it, the
+#'   extension of `file` decides.
+#' @param resolution A whole number from 1 to 4: 1 (screen), 2 (high, the
+#'   default), 4 (print). The image is `resolution` times `width` by
+#'   `height` pixels. A PDF page is `width` by `height`, with the picture at
+#'   this resolution.
+#' @param width,height The size of MiRA's window, in pixels: whole numbers
+#'   from 100 to 8000. The plot is fitted to it as in the browser. MiRA is
+#'   made for windows of at least 1024 x 600: smaller ones can cut off
+#'   legends and panels, and in a very small one MiRA may not draw at all
+#'   (the save then times out).
 #' @param background `"grid"` (MiRA's grid; the map in map view),
 #'   `"white"`, or `"transparent"` (PNG only). The map view is saved only
 #'   with `"grid"`; the meta-network and the dashboard not with

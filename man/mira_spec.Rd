@@ -19,6 +19,25 @@ A list, or a JSON string.
 Shows the settings a plot sends to MiRA: those of its components, after
 merging. Useful to check a plot before opening it.
 }
+\details{
+The list has one element per part of the plot that was set (\code{layout},
+\code{node}, \code{intralayer}, \code{interlayer}, \code{layer}, \code{filter}, \code{camera},
+\code{legend}, \code{mode}), each with the arguments given, and \code{version}, the
+version of the format. Some settings are shown as MiRA receives them, not
+as they were written:
+\itemize{
+\item colors as \code{"#rrggbb"};
+\item a \code{\link[=mira_filter]{mira_filter()}} condition as the names it keeps (node names, layer
+names, links as layer and node names);
+\item \code{color_values}, \code{color_scale}, \code{color_palette}, \code{color_reverse} and
+\code{color_limits} under \code{scales}, one entry per attribute name, merged
+over the components (\link{mira_scales}); one color per layer under
+\code{layer$colors}.
+}
+
+The network itself is not included. A plot with no components sends only
+\code{version}: MiRA's default view.
+}
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 library(emln)

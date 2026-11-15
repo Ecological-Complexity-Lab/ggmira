@@ -21,9 +21,17 @@ NAMES_SHOWN <- 5 # node names listed in an error message
 #' when it passes `links`, both its nodes pass `nodes` and both its layers
 #' pass `layers`. A later `mira_filter()` replaces the same argument of an
 #' earlier one, so combine two conditions on nodes in one: `nodes = A & B`.
+#' `NULL` or `NA` written in the call removes an earlier filter
+#' (`mira_filter(nodes = NULL)`); a variable that holds `NULL` is an error.
 #'
 #' Rows where a condition is `NA` are dropped. MiRA shows "Data filter
-#' active" with a button that removes the filter.
+#' active" with a button that removes the filter. The legends still
+#' describe the whole network.
+#'
+#' Conditions use the columns as they are named in the tables. On a
+#' bipartite network from `emln::load_emln()` the node sets are in `type`
+#' (`nodes = type == "bird"`), although MiRA, and [mira_options()], call
+#' that column `node_type`.
 #'
 #' A condition is evaluated where `mira_filter()` is called, like
 #' [subset()]: inside a function, it sees that function's variables. A

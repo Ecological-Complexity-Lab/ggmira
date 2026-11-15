@@ -9,7 +9,7 @@
   port = 8080,
   mira_path = NULL,
   browser = getOption("browser"),
-  viewer = getOption(VIEWER_OPTION, FALSE),
+  viewer = getOption("ggmira.viewer", FALSE),
   ...
 )
 }
@@ -23,14 +23,17 @@
 (\code{system.file("MiRA", package = "ggmira")}).}
 
 \item{browser}{Choose the specific browser to open MiRA in. Defaults to
-the system default via \code{getOption("browser")}. Can be a browser
-name (e.g. "chrome", "firefox") or a command
-(e.g. "open -a 'Google Chrome'").}
+the system default via \code{getOption("browser")}. A command that
+opens a page, as for \code{\link[utils]{browseURL}}: a browser's name
+where that is a command (e.g. "firefox" on Linux), or on macOS
+"open -a Firefox". "chrome" works on macOS too. When R is not
+interactive (a script), a plot opens only when \code{browser} is given.}
 
 \item{viewer}{\code{TRUE} to open MiRA in RStudio's Viewer pane instead of the
 browser (outside RStudio, the browser opens). Defaults to \code{FALSE}, or to
 \code{getOption("ggmira.viewer")}: put \code{options(ggmira.viewer = TRUE)} in
-your \code{.Rprofile} to always use the pane. A \code{browser} given in the call
+your \code{.Rprofile} to always use the pane (the option must be \code{TRUE} or
+\code{FALSE}; anything else is an error). A \code{browser} given in the call
 wins. MiRA needs room (at least 1024 x 600 pixels): maximize the pane,
 or click its \emph{Show in new window} button to move the plot to the
 browser.}
@@ -40,7 +43,8 @@ browser.}
 \value{
 Invisibly, the server handle. Stop it with
 \code{httpuv::stopServer(handle)}, or stop all servers with
-\code{httpuv::stopAllServers()}.
+\code{httpuv::stopAllServers()}. \code{NULL} when nothing was opened (R is not
+interactive and \code{browser} was not given).
 }
 \description{
 Starts a local server with the network and its view spec and opens MiRA.
@@ -48,9 +52,18 @@ Typing a plot's name at the console does this; call \code{print()} to choose
 the port or the browser, or to open the plot in RStudio's Viewer pane
 (\code{viewer = TRUE}, or \code{options(ggmira.viewer = TRUE)} for every plot).
 Each print starts a new server (on the next free
-port when \code{port} is taken).
+port when \code{port} is taken), and shows where MiRA is served from, the
+plot's address (\verb{http://localhost:8080?autoload=true}) and where to
+report issues. MiRA loads its drawing libraries from the web, so the
+plot needs an internet connection.
 }
 \details{
+\strong{In a script.} When R is not interactive (\code{Rscript}, R Markdown,
+\verb{R CMD check}) nothing opens and \code{print()} returns \code{NULL}, with a
+message: no one would see the plot, and its server would stop with the
+script. Use \code{\link[=mira_save]{mira_save()}} for a file, or give \code{browser} to open the plot
+anyway.
+
 In MiRA, the plot can still be changed. MiRA's \strong{R} button (Copy as R
 code, next to Save Session) shows the ggmira code for the current view,
 starting with the \code{mira()} call that made the plot, to paste into a
@@ -73,7 +86,7 @@ p <- mira(net, bipartite = TRUE, setA_type = "bird")
 p        # the same as print(p)
 
 print(p, port = 9000)            # another port
-# print(p, browser = "firefox")  # another browser
+# print(p, browser = "chrome")   # another browser
 # print(p, viewer = TRUE)        # RStudio's Viewer pane
 # options(ggmira.viewer = TRUE)  # the pane for every plot
 # print(p, mira_path = "~/MiRA") # a local copy of MiRA, not the bundled one

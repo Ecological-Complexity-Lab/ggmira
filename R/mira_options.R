@@ -19,6 +19,11 @@ META_MEASURE_TYPES <- c(participation = "continuous", degree = "continuous", uni
 #' gives it and a summary of its values, to choose a mapping and write
 #' `color_values` before making the plot.
 #'
+#' Columns MiRA does not offer are left out (the ones that identify rows,
+#' `weight`, the coordinates; see [mira_node()]). The node type column is
+#' listed as `node_type`, MiRA's name for it, whatever it is called in
+#' `net$nodes`; conditions in [mira_filter()] use the name in the data.
+#'
 #' Give the same arguments as to [mira()]: they decide what MiRA computes
 #' (in- and out-degree only on a directed network) and whether nodes can be
 #' set per set (`bipartite = TRUE`).
@@ -44,7 +49,9 @@ META_MEASURE_TYPES <- c(participation = "continuous", degree = "continuous", uni
 #'   the node sets that have the attribute) and `values`. It prints grouped
 #'   by component, with MiRA's computed node attributes on one line (the
 #'   data frame has a row for each), and with the sets only when they differ
-#'   between attributes. Filter it as a data frame.
+#'   between attributes. Filter it as a data frame, keeping all its
+#'   columns: rows chosen with `opts[opts$argument == "size_by", ]` print
+#'   as the table does; for some columns only, use `as.data.frame(opts)`.
 #' @seealso [mira()] to start a plot; [mira_node()] and the other
 #'   components for the arguments; [mira_scales] for `color_values`,
 #'   `color_scale`, `color_palette`, `color_reverse` and `color_limits`.

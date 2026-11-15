@@ -4,7 +4,7 @@
 \alias{mira_legends}
 \title{Legends: which are open, and where}
 \usage{
-mira_legends(show = LEGEND_ALL, position)
+mira_legends(show = "all", position)
 }
 \arguments{
 \item{show}{\code{"all"} (default; \code{TRUE} is the same), the legends to open
@@ -28,6 +28,12 @@ needs \code{mira_node(size_by = )}). In MiRA, legends can still be expanded,
 minimized and dragged.
 }
 \details{
+These are the legends of network mode, which the grid and the map share.
+The meta-network and the layer view have their own legends, which start
+open: there, \code{position} and \code{show = FALSE} apply, and legend names in
+\code{show} do not. A legend describes the whole network, also when
+\code{\link[=mira_filter]{mira_filter()}} draws part of it.
+
 A later \code{mira_legends()} changes only the arguments it gives:
 \code{mira_legends(position = "top-right")} moves the legends and leaves an
 earlier \code{show} as it was. With no earlier \code{show} it opens all of them,
