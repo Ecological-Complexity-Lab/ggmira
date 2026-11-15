@@ -1,4 +1,4 @@
-/* Beta feedback on the docs (pkgdown/extra.js) */
+/* Feedback on the docs (pkgdown/extra.js) */
 
 .fb-page {
   position: fixed;
@@ -139,4 +139,18 @@ h3:hover > .fb-heading,
 
 @media print {
   .fb-page, .fb-bubble, .fb-heading { display: none; }
+}
+
+/* A highlighted note in the articles: ::: {.ggmira-note} */
+
+.ggmira-note {
+  margin: 1.25rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--bs-primary, #0d6efd);
+  border-radius: 0 6px 6px 0;
+  background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.08);
+}
+
+.ggmira-note > p:last-child {
+  margin-bottom: 0;
 }

@@ -57,9 +57,9 @@
 #' - [plot_mira()]: open a network with no components, in any view
 #'   (`plot_multilayer()` is the same, in the network view).
 #'
-#' @section Beta testing:
-#' - [mira_feedback()]: send feedback as a filled-in GitHub issue. The
-#'   documentation pages have a *Feedback* button too.
+#' @section Feedback:
+#' - [mira_feedback()]: send feedback as a filled-in GitHub issue (with a
+#'   GitHub account). The documentation pages have a *Feedback* button too.
 #'
 #' @section Networks:
 #' ggmira works with the multilayer objects of the emln package

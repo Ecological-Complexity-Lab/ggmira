@@ -19,7 +19,7 @@ every row; the other components of the plot do not apply (see
 \link{mira_mode}). In MiRA, the data button (a table) opens this view.
 }
 \details{
-\if{html}{\figure{mira_mode_data.jpg}{options: width="100\%" alt="Network 17 in data mode: the nodes table with its attributes"}}
+\if{html}{\figure{mira_mode_data.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in data mode: the nodes table with its attributes"}}
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

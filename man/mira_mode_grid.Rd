@@ -26,7 +26,7 @@ button (four squares) opens this view.
 A plot opens in one view: see \link{mira_mode} for the rules and for what
 applies in each view.
 
-\if{html}{\figure{mira_mode_grid.jpg}{options: width="100\%" alt="Network 17 in grid mode: four layer panels, birds as squares and plants as circles"}}
+\if{html}{\figure{mira_mode_grid.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in grid mode: four layer panels, birds as squares and plants as circles"}}
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

@@ -99,11 +99,11 @@ the nodes and links of the other layers.
 }
 }
 
-\section{Beta testing}{
+\section{Feedback}{
 
 \itemize{
-\item \code{\link[=mira_feedback]{mira_feedback()}}: send feedback as a filled-in GitHub issue. The
-documentation pages have a \emph{Feedback} button too.
+\item \code{\link[=mira_feedback]{mira_feedback()}}: send feedback as a filled-in GitHub issue (with a
+GitHub account). The documentation pages have a \emph{Feedback} button too.
 }
 }
 
@@ -126,7 +126,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Shai Pilosof \email{pilos@bgu.ac.il} (\href{https://orcid.org/0000-0003-0430-5568}{ORCID})
+\strong{Maintainer}: Geut Galai \email{geutg@post.bgu.ac.il}
 
 Authors:
 \itemize{

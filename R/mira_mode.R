@@ -77,7 +77,7 @@ NULL
 #' A plot opens in one view: see [mira_mode] for the rules and for what
 #' applies in each view.
 #'
-#' \if{html}{\figure{mira_mode_grid.jpg}{options: width="100\%" alt="Network 17 in grid mode: four layer panels, birds as squares and plants as circles"}}
+#' \if{html}{\figure{mira_mode_grid.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in grid mode: four layer panels, birds as squares and plants as circles"}}
 #'
 #' @param columns Number of columns of layers, a whole number between 1 and
 #'   8. MiRA's default is the square root of the number of layers, rounded
@@ -120,7 +120,7 @@ mira_mode_grid <- function(columns) {
 #' A plot opens in one view: see [mira_mode] for the rules and for what
 #' applies in each view.
 #'
-#' \if{html}{\figure{mira_mode_map.jpg}{options: width="100\%" alt="Network 17 in map mode: the Galapagos, with the layers' two islands marked"}}
+#' \if{html}{\figure{mira_mode_map.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in map mode: the Galapagos, with the layers' two islands marked"}}
 #'
 #' @return A component, to add to a plot with `+`.
 #' @seealso [mira_mode] for the other views; [mira_mode_layer()], which
@@ -157,7 +157,7 @@ mira_mode_map <- function() .mode_piece("map", "mira_mode_map", environment(), l
 #' A plot opens in one view: see [mira_mode] for the rules and for what
 #' applies in each view.
 #'
-#' \if{html}{\figure{mira_mode_layer.jpg}{options: width="100\%" alt="Network 17 in the layer view: four bubbles on the map of the Galapagos, linked"}}
+#' \if{html}{\figure{mira_mode_layer.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in the layer view: four bubbles on the map of the Galapagos, linked"}}
 #'
 #' @return A component, to add to a plot with `+`.
 #' @seealso [mira_mode] for the other views.
@@ -186,7 +186,7 @@ mira_mode_layer <- function() .mode_piece("layer", "mira_mode_layer", environmen
 #' other components of the plot do not apply (see [mira_mode]). In MiRA,
 #' the dashboard button (a bar chart) opens this view.
 #'
-#' \if{html}{\figure{mira_mode_dashboard.jpg}{options: width="100\%" alt="Network 17 in the dashboard: summary numbers, per-layer charts and link weight distributions"}}
+#' \if{html}{\figure{mira_mode_dashboard.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in the dashboard: summary numbers, per-layer charts and link weight distributions"}}
 #'
 #' @return A component, to add to a plot with `+`.
 #' @seealso [mira_mode] for the other views.
@@ -208,7 +208,7 @@ mira_mode_dashboard <- function() .mode_piece("dashboard", "mira_mode_dashboard"
 #' every row; the other components of the plot do not apply (see
 #' [mira_mode]). In MiRA, the data button (a table) opens this view.
 #'
-#' \if{html}{\figure{mira_mode_data.jpg}{options: width="100\%" alt="Network 17 in data mode: the nodes table with its attributes"}}
+#' \if{html}{\figure{mira_mode_data.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in data mode: the nodes table with its attributes"}}
 #'
 #' @return A component, to add to a plot with `+`.
 #' @seealso [mira_filter()] to filter from R; [mira_mode] for the other
@@ -234,7 +234,7 @@ mira_mode_data <- function() .mode_piece("data", "mira_mode_data", environment()
 #' when the node sets have different shapes. The `"force"` layout is random: it differs each time the plot
 #' opens.
 #'
-#' \if{html}{\figure{mira_mode_meta.jpg}{options: width="100\%" alt="Network 17 as a meta-network: birds in one row, plants in the other, sized by degree"}}
+#' \if{html}{\figure{mira_mode_meta.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 as a meta-network: birds in one row, plants in the other, sized by degree"}}
 #'
 #' @param aggregation How links of different layers combine into one:
 #'   `"occurrence"` (MiRA's default: the number of layers with the link),

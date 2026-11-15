@@ -33,16 +33,31 @@ library(ggmira)
 net <- load_emln(17)
 ```
 
+::: {.ggmira-note}
+**MiRA is best viewed on a large screen.** It needs a window of at least
+1024 x 600 pixels; in a smaller one, MiRA warns that buttons and panels may
+be cut off. Plots also need an internet connection: MiRA loads its drawing
+libraries and map tiles from the web.
+:::
+
 Each plot starts a small local server; stop them all with
-`httpuv::stopAllServers()`. Plots open in the browser; in RStudio, to open
-them in the Viewer pane instead, run `options(ggmira.viewer = TRUE)` (or
-`print(p, viewer = TRUE)` for one plot). MiRA needs at least 1024 x 600
-pixels, so maximize the pane. Plots need an internet connection: MiRA loads
-its drawing libraries and map tiles from the web.
+`httpuv::stopAllServers()`.
 
 emln has a `plot_multilayer()` of its own, and with emln attached after
 ggmira that is the one R finds. Use ggmira's `plot_mira()`, or write
 `ggmira::plot_multilayer()`.
+
+### In RStudio
+
+Plots open in the browser. In RStudio they can open in the Viewer pane
+instead: `print(p, viewer = TRUE)` for one plot, or
+`options(ggmira.viewer = TRUE)` for every plot (put it in your `.Rprofile`
+to keep it). Give the pane room: drag it wider, maximize it, or click its
+*Show in new window* button to move the plot to the browser.
+
+```{r, echo = FALSE, eval = file.exists("figures/rstudio-viewer.png"), out.width = "100%", fig.alt = "RStudio with ggmira code in the script and the plot open in MiRA in the Viewer pane"}
+knitr::include_graphics("figures/rstudio-viewer.png")
+```
 
 ## 1. The plot
 
@@ -228,7 +243,7 @@ p + mira_legends(show = c("node_color", "layer_color"), position = "top-right") 
   mira_node(highlight = "Geospiza_fortis")
 ```
 
-```{r, echo = FALSE, eval = TRUE, out.width = "100%", fig.alt = "The plot turned and tilted, the node color and layer color legends open at the top right, one finch and its neighbors highlighted"}
+```{r, echo = FALSE, eval = TRUE, out.width = "100%", fig.alt = "The plot turned and tilted, the node color legend open at the top right, one finch and its neighbors highlighted"}
 knitr::include_graphics("figures/step-7-view.png")
 ```
 
@@ -381,21 +396,6 @@ same layout on every run.
 ```{r, echo = FALSE, eval = TRUE, out.width = "100%", fig.alt = "MiRA's R code for this view window: the mira() call and its components, each element in its color, with a Copy button"}
 knitr::include_graphics("figures/step-10-copy.png")
 ```
-
-## Check what a plot sends
-
-`mira_spec()` shows the settings a plot sends to MiRA, after its components
-are merged, without opening it: filter conditions as the names they keep,
-colors as `"#rrggbb"`, and the color scales together under `scales`.
-
-```{r}
-mira_spec(p)
-mira_spec(p, json = TRUE) # as MiRA receives it
-```
-
-When MiRA cannot use a setting it received, it keeps its default for that
-setting and shows a notice as the plot opens, "Some plot settings from R
-were ignored", with the reasons.
 
 ## Scales: how values become colors
 

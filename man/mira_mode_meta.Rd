@@ -82,7 +82,7 @@ the data. Node shapes follow \code{mira_node(shape = )}, with a shape legend
 when the node sets have different shapes. The \code{"force"} layout is random: it differs each time the plot
 opens.
 
-\if{html}{\figure{mira_mode_meta.jpg}{options: width="100\%" alt="Network 17 as a meta-network: birds in one row, plants in the other, sized by degree"}}
+\if{html}{\figure{mira_mode_meta.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 as a meta-network: birds in one row, plants in the other, sized by degree"}}
 }
 \examples{
 \dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}

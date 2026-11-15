@@ -2,7 +2,7 @@
 % Please edit documentation in R/mira_feedback.R
 \name{mira_feedback}
 \alias{mira_feedback}
-\title{Send feedback on ggmira (beta testing)}
+\title{Send feedback on ggmira}
 \usage{
 mira_feedback(topic, comment, type = "bug")
 }
