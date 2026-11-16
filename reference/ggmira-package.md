@@ -120,8 +120,8 @@ MiRA reads their four tables; a column added to `net$nodes`,
 other.
 
 The full list of functions:
-[`help(package = "ggmira")`](https://rdrr.io/pkg/ggmira/man). Please
-report MiRA issues at
+[`help(package = "ggmira")`](https://ggmira.ecomplab.com/reference).
+Please report MiRA issues at
 <https://github.com/Ecological-Complexity-Lab/MiRA/issues>.
 
 ## See also
