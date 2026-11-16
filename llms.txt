@@ -1,0 +1,222 @@
+# ggmira
+
+## Overview
+
+ggmira is an R interface to [MiRA](https://mira.ecomplab.com/), the
+browser-based multilayer network visualizer. Its syntax follows ggplot2:
+start from a base plot with
+[`mira()`](https://ggmira.ecomplab.com/reference/mira.md) and add
+components with `+` to control the nodes, links, layers and more. Using
+MiRA as the engine makes the plot both reproducible, because it is
+described in code, and interactive, because it opens in MiRA, where you
+can keep exploring and adjusting it. A plot can open in any of MiRA’s
+seven views (the stack of layers, a grid, a map, a layer view, the
+meta-network, a dashboard and the data tables), and use MiRA’s other
+features, such as highlighting a node.
+
+ggmira works with the multilayer objects of the
+[emln](https://emln.ecomplab.com/) package, and includes its own copy of
+MiRA, so there is nothing else to install. Plots need an internet
+connection: MiRA loads its drawing libraries and map tiles from the web.
+
+## Installation
+
+ggmira is not on CRAN yet. Install the development version from GitHub:
+
+``` r
+
+install.packages("emln")
+# install.packages("remotes")
+remotes::install_github("Ecological-Complexity-Lab/ggmira")
+```
+
+## Usage
+
+``` r
+
+library(emln)
+library(ggmira)
+
+net <- load_emln(17) # 4 layers; birds and plants
+
+mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_layout("bipartite", seed = 42, nested = TRUE) +
+  mira_node(color_by = "verification_level",
+            color_values = c(genus = "red", species = "#1f77b4"),
+            size_by = "intra_degree_sum", size = 8,
+            shape = c(bird = "square", plant = "circle")) +
+  mira_intralayer(color_by = "type", min_weight = 0.01) +
+  mira_layer(color_by = "layer_name", labels = TRUE) +
+  mira_legends(show = c("node_color", "intralayer_color"))
+```
+
+![The plot in MiRA: four stacked layers, birds as squares and plants as
+circles, links colored by interaction
+type](reference/figures/README-network.jpg)
+
+`plot_mira(net)` opens a network with MiRA’s defaults; adjust it in
+MiRA, and MiRA’s R button gives the
+[`mira()`](https://ggmira.ecomplab.com/reference/mira.md) code for the
+view.
+[`mira_save()`](https://ggmira.ecomplab.com/reference/mira_save.md)
+saves a plot as a PNG, JPG or PDF file. *Get started* builds a plot step
+by step; the reference lists every component.
+
+MiRA is best viewed on a large screen: it needs a window of at least
+1024 x 600 pixels.
+
+### In RStudio
+
+Plots open in the browser, or in RStudio’s Viewer pane, next to your
+code: `print(p, viewer = TRUE)` for one plot, or
+`options(ggmira.viewer = TRUE)` for every plot. Give the pane room, or
+click its *Show in new window* button to move the plot to the browser.
+
+![RStudio with ggmira code in the script and the plot open in MiRA in
+the Viewer pane](reference/figures/README-rstudio.png)
+
+## Lifecycle
+
+ggmira is in beta (version 0.9): it works and is being tested, and its
+interface may still change before version 1.0.
+
+## Getting help
+
+Report problems and suggestions at
+<https://github.com/Ecological-Complexity-Lab/ggmira/issues>, with the
+code you ran and a screenshot of MiRA. Problems in MiRA itself go to
+<https://github.com/Ecological-Complexity-Lab/MiRA/issues>.
+
+# Package index
+
+## Plot basics
+
+Start a plot from a multilayer network, see what each component can be
+set to and what the plot sends to MiRA, open it in the browser, and save
+it to a file.
+
+- [![](icons/mira.png)](https://ggmira.ecomplab.com/reference/mira.md)
+  [`mira()`](https://ggmira.ecomplab.com/reference/mira.md) : Start a
+  plot: a multilayer network to draw in MiRA
+- [![](icons/mira_options.png)](https://ggmira.ecomplab.com/reference/mira_options.md)
+  [`mira_options()`](https://ggmira.ecomplab.com/reference/mira_options.md)
+  : What each component can be set to, for a network
+- [![](icons/mira_spec.png)](https://ggmira.ecomplab.com/reference/mira_spec.md)
+  [`mira_spec()`](https://ggmira.ecomplab.com/reference/mira_spec.md) :
+  What a plot sends to MiRA
+- [![](icons/print.mira_plot.png)](https://ggmira.ecomplab.com/reference/print.mira_plot.md)
+  [`print(`*`<mira_plot>`*`)`](https://ggmira.ecomplab.com/reference/print.mira_plot.md)
+  : Open a mira plot in the browser
+- [![](icons/mira_save.png)](https://ggmira.ecomplab.com/reference/mira_save.md)
+  [`mira_save()`](https://ggmira.ecomplab.com/reference/mira_save.md) :
+  Save a mira plot as an image file
+
+## Elements: nodes, links, layers
+
+One component per element of the plot. `color_by` and `size_by` map an
+attribute of the data; `color`, `size` and `shape` set constants.
+
+- [![](icons/mira_node.png)](https://ggmira.ecomplab.com/reference/mira_node.md)
+  [`mira_node()`](https://ggmira.ecomplab.com/reference/mira_node.md) :
+  Nodes: color, size, shape and labels
+- [![](icons/mira_intralayer.png)](https://ggmira.ecomplab.com/reference/mira_intralayer.md)
+  [`mira_intralayer()`](https://ggmira.ecomplab.com/reference/mira_intralayer.md)
+  : Intralayer links: color, weight filter and arrowheads
+- [![](icons/mira_interlayer.png)](https://ggmira.ecomplab.com/reference/mira_interlayer.md)
+  [`mira_interlayer()`](https://ggmira.ecomplab.com/reference/mira_interlayer.md)
+  : Interlayer links: show, color, curvature and layer pairs
+- [![](icons/mira_layer.png)](https://ggmira.ecomplab.com/reference/mira_layer.md)
+  [`mira_layer()`](https://ggmira.ecomplab.com/reference/mira_layer.md)
+  : Layers: color, names and arrangement
+
+## Scales
+
+How data values become colors and sizes.
+
+- [![](icons/mira_scales.png)](https://ggmira.ecomplab.com/reference/mira_scales.md)
+  [`mira_scales`](https://ggmira.ecomplab.com/reference/mira_scales.md)
+  : Scales: how data values become colors and sizes
+
+## Layout
+
+Where the nodes go.
+
+- [![](icons/mira_layout.png)](https://ggmira.ecomplab.com/reference/mira_layout.md)
+  [`mira_layout()`](https://ggmira.ecomplab.com/reference/mira_layout.md)
+  : Layout: where the nodes go
+
+## Camera
+
+How the stack of layers is looked at.
+
+- [![](icons/mira_camera.png)](https://ggmira.ecomplab.com/reference/mira_camera.md)
+  [`mira_camera()`](https://ggmira.ecomplab.com/reference/mira_camera.md)
+  : Camera: rotate, tilt, zoom and pan the view
+
+## Legends
+
+Which legends are open, and where.
+
+- [![](icons/mira_legends.png)](https://ggmira.ecomplab.com/reference/mira_legends.md)
+  [`mira_legends()`](https://ggmira.ecomplab.com/reference/mira_legends.md)
+  : Legends: which are open, and where
+
+## Data: what is drawn
+
+Draw only part of the network.
+
+- [![](icons/mira_filter.png)](https://ggmira.ecomplab.com/reference/mira_filter.md)
+  [`mira_filter()`](https://ggmira.ecomplab.com/reference/mira_filter.md)
+  : Filter: draw only some nodes, links or layers
+
+## Views: MiRA’s modes
+
+Open the plot in another view. A plot opens in one view; the other
+components still apply.
+
+- [![](icons/mira_mode.png)](https://ggmira.ecomplab.com/reference/mira_mode.md)
+  [`mira_mode`](https://ggmira.ecomplab.com/reference/mira_mode.md) :
+  Views: open the plot in another of MiRA's views
+- [![](icons/mira_mode_grid.png)](https://ggmira.ecomplab.com/reference/mira_mode_grid.md)
+  [`mira_mode_grid()`](https://ggmira.ecomplab.com/reference/mira_mode_grid.md)
+  : Grid: open the plot with the layers side by side
+- [![](icons/mira_mode_map.png)](https://ggmira.ecomplab.com/reference/mira_mode_map.md)
+  [`mira_mode_map()`](https://ggmira.ecomplab.com/reference/mira_mode_map.md)
+  : Map: open the plot with the layers on a geographic map
+- [![](icons/mira_mode_layer.png)](https://ggmira.ecomplab.com/reference/mira_mode_layer.md)
+  [`mira_mode_layer()`](https://ggmira.ecomplab.com/reference/mira_mode_layer.md)
+  : Layer view: open the plot with one bubble per layer
+- [![](icons/mira_mode_meta.png)](https://ggmira.ecomplab.com/reference/mira_mode_meta.md)
+  [`mira_mode_meta()`](https://ggmira.ecomplab.com/reference/mira_mode_meta.md)
+  : Meta-network: open the plot as the network aggregated over layers
+- [![](icons/mira_mode_dashboard.png)](https://ggmira.ecomplab.com/reference/mira_mode_dashboard.md)
+  [`mira_mode_dashboard()`](https://ggmira.ecomplab.com/reference/mira_mode_dashboard.md)
+  : Dashboard: open the plot as summary charts
+- [![](icons/mira_mode_data.png)](https://ggmira.ecomplab.com/reference/mira_mode_data.md)
+  [`mira_mode_data()`](https://ggmira.ecomplab.com/reference/mira_mode_data.md)
+  : Data: open the plot as the data tables
+
+## Opening a network with MiRA’s defaults
+
+- [![](icons/plot_mira.png)](https://ggmira.ecomplab.com/reference/plot_mira.md)
+  [`plot_mira()`](https://ggmira.ecomplab.com/reference/plot_mira.md)
+  [`plot_multilayer()`](https://ggmira.ecomplab.com/reference/plot_mira.md)
+  : Open a network in MiRA with MiRA's defaults
+
+## Feedback
+
+Send feedback from R, with a GitHub account. On these pages: select text
+and click Feedback, click the speech bubble next to a heading, or use
+the Feedback button.
+
+- [![](icons/mira_feedback.png)](https://ggmira.ecomplab.com/reference/mira_feedback.md)
+  [`mira_feedback()`](https://ggmira.ecomplab.com/reference/mira_feedback.md)
+  : Send feedback on ggmira
+
+# Articles
+
+### Articles
+
+- [Getting
+  started](https://ggmira.ecomplab.com/articles/getting-started.md):
+- [Beta testing](https://ggmira.ecomplab.com/articles/beta-testing.md):
