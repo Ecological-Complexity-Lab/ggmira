@@ -24,22 +24,7 @@ R 4.1 or later, and Google Chrome (or Chromium, or Microsoft Edge), which
 `mira_save()` uses to draw the files:
 
 ```r
-install.packages(c("remotes", "emln", "chromote", "pkgdown", "rmarkdown",
-                   "usethis", "gitcreds"))
-```
-
-The repository is private until the release, so installing from it needs
-a GitHub account with access to it (ask us) and a token, once per
-computer:
-
-```r
-usethis::create_github_token() # opens GitHub: keep the defaults, click "Generate token", copy it
-gitcreds::gitcreds_set()       # paste the token
-```
-
-Then install ggmira:
-
-```r
+install.packages(c("remotes", "emln", "chromote"))
 remotes::install_github("Ecological-Complexity-Lab/ggmira")
 ```
 
@@ -47,21 +32,9 @@ To get fixes and new features later, run `install_github()` again and
 restart R. Plots need an internet connection: MiRA loads its drawing
 libraries and map tiles from the web.
 
-### Build the manual
-
-The site is not published yet; build it from a clone of the repository:
-
-```bash
-git clone https://github.com/Ecological-Complexity-Lab/ggmira.git
-```
-
-```r
-pkgdown::build_site("path/to/ggmira", examples = FALSE)
-pkgdown::preview_site("path/to/ggmira")
-```
-
-*Get started* builds one plot step by step; read it first. *Reference* has
-a page per function, with every argument.
+The manual is this site, <https://ggmira.ecomplab.com>. *Get started*
+builds one plot step by step; read it first. *Reference* has a page per
+function, with every argument.
 
 ### The first plot
 

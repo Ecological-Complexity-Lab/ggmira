@@ -1,4 +1,4 @@
-url: ~
+url: https://ggmira.ecomplab.com
 template:
   bootstrap: 5
 
@@ -19,8 +19,6 @@ home:
     href: https://mira.ecomplab.com/
   - text: emln (multilayer networks in R)
     href: https://emln.ecomplab.com/
-  - text: Report a bug
-    href: https://github.com/Ecological-Complexity-Lab/ggmira/issues
 
 authors:
   sidebar:
