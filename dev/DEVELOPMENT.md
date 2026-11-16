@@ -47,25 +47,6 @@ devtools::check(document = FALSE, args = c("--no-tests", "--no-manual"))
 The check's only expected NOTE lists files in this folder that are not part
 of the package (a tester's scripts and data). Never commit those.
 
-## Sharing a build while the repository is private
-
-Build from a clean copy of `main`, so local files are not packed in:
-
-```bash
-mkdir -p /tmp/ggmira-share/clean && cd /tmp/ggmira-share
-git -C ~/GitHub/ecomplab/ggmira archive main | tar -x -C clean
-R CMD build --no-build-vignettes clean          # ggmira_<version>.tar.gz
-Rscript -e 'pkgdown::build_site(pkg = "clean", examples = FALSE, preview = FALSE, new_process = FALSE)'
-cp -R clean/docs ggmira-site && zip -qr ggmira-<version>-documentation.zip ggmira-site
-```
-
-Email often blocks `.tar.gz` attachments: share both files through a
-Drive or Dropbox link. The recipient installs the dependencies
-(`install.packages(c("emln", "httpuv", "cli", "chromote"))`), then the
-file (RStudio: Tools > Install Packages > Package Archive File, or
-`install.packages(file.choose(), repos = NULL, type = "source")`), and
-opens `ggmira-site/index.html`.
-
 Design notes, decisions and the roadmap live in the
 [MiRA repository](https://github.com/Ecological-Complexity-Lab/MiRA)
 (`development` branch, `dev/ggmira/`). Please report MiRA issues at
