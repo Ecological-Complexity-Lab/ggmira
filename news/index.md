@@ -51,3 +51,5 @@ components with `+`.
   [`mira_feedback()`](https://ggmira.ecomplab.com/reference/mira_feedback.md)
   and the documentation’s Feedback buttons open a filled-in GitHub
   issue.
+- **MiRA:** bundles [MiRA
+  1.2](https://github.com/Ecological-Complexity-Lab/MiRA/releases/tag/v1.2).
