@@ -52,4 +52,6 @@ components with `+`.
   and the documentation’s Feedback buttons open a filled-in GitHub
   issue.
 - **MiRA:** bundles [MiRA
-  1.2](https://github.com/Ecological-Complexity-Lab/MiRA/releases/tag/v1.2).
+  1.2](https://github.com/Ecological-Complexity-Lab/MiRA/releases/tag/v1.2),
+  with one later change: in RStudio’s Viewer pane, MiRA’s top bar keeps
+  only the lab logo, leaving room for the plot.
