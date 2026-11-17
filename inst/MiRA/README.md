@@ -3,11 +3,12 @@
 [![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![R package: ggmira](https://img.shields.io/badge/R%20package-ggmira-blue.svg)](https://ggmira.ecomplab.com)
 [![R package: emln](https://img.shields.io/badge/R%20package-emln-blue.svg)](https://github.com/Ecological-Complexity-Lab/emln)
 [![arXiv](https://img.shields.io/badge/arXiv-2605.09597-b31b1b.svg)](https://doi.org/10.48550/arXiv.2605.09597)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22096810.svg)](https://doi.org/10.5281/zenodo.22096810)
 
-MiRA (Multilayer Interactive Rendering Application) is a free, browser-based, installation-free tool for interactive visualization of multilayer networks in ecology and biology. While developed with biology in mind, MiRA can render any multilayer network. Available as a standalone web app and also fully integrated into the [`emln`](https://github.com/Ecological-Complexity-Lab/emln) R package.
+MiRA (Multilayer Interactive Rendering Application) is a free, browser-based, installation-free tool for interactive visualization of multilayer networks in ecology and biology. While developed with biology in mind, MiRA can render any multilayer network. Available as a standalone web app, and from R in both directions with the [`ggmira`](https://ggmira.ecomplab.com) package: a plot written in R opens in MiRA, and MiRA's R button turns the view back into R code.
 
 
 ## 📝 Citation
@@ -17,9 +18,9 @@ Nehoray SM, Bloch Y and Pilosof S (2026). **Interactively visualizing biological
 
 To cite the software itself (archived release), use the Zenodo DOI:
 
-Nehoray SM, Bloch Y and Pilosof S (2026). **MiRA — Multilayer Interactive Rendering Application** (v1.1). _Zenodo_. [https://doi.org/10.5281/zenodo.22096810](https://doi.org/10.5281/zenodo.22096810)
+Nehoray SM, Bloch Y and Pilosof S (2026). **MiRA — Multilayer Interactive Rendering Application** (v1.2). _Zenodo_. [https://doi.org/10.5281/zenodo.22096810](https://doi.org/10.5281/zenodo.22096810)
 
-> The DOI above is the **concept DOI** — it always resolves to the latest release. To cite this exact version, use [10.5281/zenodo.22096811](https://doi.org/10.5281/zenodo.22096811).
+> The DOI above is the **concept DOI** — it always resolves to the latest release. Each version also has its own DOI, listed on the [Zenodo record](https://doi.org/10.5281/zenodo.22096810); what changed between versions is in [CHANGELOG.md](CHANGELOG.md).
 
 <details>
 <summary>BibTeX</summary>
@@ -41,7 +42,7 @@ Nehoray SM, Bloch Y and Pilosof S (2026). **MiRA — Multilayer Interactive Rend
   title        = {MiRA — Multilayer Interactive Rendering Application},
   author       = {Nehoray, Shir Miryam and Bloch, Yuval and Pilosof, Shai},
   year         = {2026},
-  version      = {1.1},
+  version      = {1.2},
   publisher    = {Zenodo},
   doi          = {10.5281/zenodo.22096810},
   url          = {https://doi.org/10.5281/zenodo.22096810}
@@ -106,19 +107,26 @@ Nine empirical multilayer networks are bundled for immediate exploration, from s
 
 See the [manual](https://mira.ecomplab.com/docs/manual.html#data-import) for schemas.
 
-## 🔗 Integration with the R Package `emln`
+## 🔗 From R: `ggmira` and `emln`
 
-MiRA is bundled inside the [`emln`](https://github.com/Ecological-Complexity-Lab/emln) R package. Launch directly from R with:
+The [`ggmira`](https://ggmira.ecomplab.com) R package opens multilayer networks in MiRA from R, with the plot described in code (layout, nodes, links, layers, filters, view), in a ggplot2-like syntax. In MiRA, the **R** button (Copy as R code) gives back the ggmira code for the current view, including changes made with the mouse; `mira_save()` writes PNG, JPG or PDF figures from a script.
 
 ```r
-plot_multilayer(net, bipartite = TRUE, directed = FALSE)
+remotes::install_github("Ecological-Complexity-Lab/ggmira")
+library(emln); library(ggmira)
+net <- load_emln(17)
+p <- mira(net, bipartite = TRUE, setA_type = "bird") +
+  mira_layout("kamada_kawai", seed = 42) +
+  mira_node(color_by = "intra_degree_sum")
+p                           # opens in MiRA
+mira_save(p, "figure.pdf")  # writes the figure
 ```
 
-Or export to JSON/CSV for manual loading:
+The [`emln`](https://github.com/Ecological-Complexity-Lab/emln) R package exports networks to MiRA's JSON/CSV formats for loading with **Load Data**:
 
 ```r
 multilayer_to_json(net, file = "my_network.json", bipartite = TRUE)
-multilayer_to_csv(net, path = "my_network/")
+multilayer_to_csv(net, dir = "my_network/")
 ```
 
 ## App development process
