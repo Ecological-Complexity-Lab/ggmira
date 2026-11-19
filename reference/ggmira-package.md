@@ -128,7 +128,12 @@ Please report MiRA issues at
 
 Useful links:
 
+- <https://ggmira.ecomplab.com>
+
 - <https://github.com/Ecological-Complexity-Lab/ggmira>
+
+- Report bugs at
+  <https://github.com/Ecological-Complexity-Lab/ggmira/issues>
 
 ## Author
 
