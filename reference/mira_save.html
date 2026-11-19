@@ -124,10 +124,14 @@ pictures at <code>resolution = 4</code> can need more than the default.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Needs the chromote package and Google Chrome (or Chromium, or Microsoft
-Edge; chromote finds it, or set the <code>CHROMOTE_CHROME</code> environment
-variable to its path). MiRA loads its libraries and map tiles from the
-internet, as when a plot opens in the browser.</p>
+    <p>Needs the optional chromote package and a Chromium-based browser. If
+chromote is missing, an interactive session asks before installing it;
+in scripts install it first with <code>install.packages("chromote")</code>.
+On Windows, Chrome and standard installations of Brave and Microsoft
+Edge are detected. For another installation, set <code>CHROMOTE_CHROME</code> to
+the full path of the browser executable before calling <code>mira_save()</code>.
+MiRA loads its libraries and map tiles from the internet, as when a plot
+opens in the browser.</p>
 <p><strong>What is saved.</strong> Every view except the data view, which is a table
 (an error). The dashboard is saved as its whole page, whatever <code>height</code>
 is. A map is saved as the map with the layers' markers; the networks

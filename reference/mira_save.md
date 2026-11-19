@@ -82,10 +82,14 @@ The path of the file, invisibly.
 
 ## Details
 
-Needs the chromote package and Google Chrome (or Chromium, or Microsoft
-Edge; chromote finds it, or set the `CHROMOTE_CHROME` environment
-variable to its path). MiRA loads its libraries and map tiles from the
-internet, as when a plot opens in the browser.
+Needs the optional chromote package and a Chromium-based browser. If
+chromote is missing, an interactive session asks before installing it;
+in scripts install it first with `install.packages("chromote")`. On
+Windows, Chrome and standard installations of Brave and Microsoft Edge
+are detected. For another installation, set `CHROMOTE_CHROME` to the
+full path of the browser executable before calling `mira_save()`. MiRA
+loads its libraries and map tiles from the internet, as when a plot
+opens in the browser.
 
 **What is saved.** Every view except the data view, which is a table (an
 error). The dashboard is saved as its whole page, whatever `height` is.

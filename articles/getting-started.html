@@ -352,7 +352,13 @@ the later component wins, so
 window and saves MiRA’s own export: the picture of the camera button,
 with the legends and the “Visualized with MiRA” mark. It works in
 scripts and R Markdown, where printing a plot does nothing. It needs the
-chromote package and Google Chrome (or Chromium, or Edge).</p>
+optional chromote package and a Chromium-based browser. If chromote is
+missing, interactive R asks before installing it; for scripts, install
+it first with <code>install.packages("chromote")</code>. On Windows,
+Chrome and standard Brave and Edge installations are detected. For
+another browser or installation location, set
+<code>CHROMOTE_CHROME</code> to the full path of its executable before
+saving.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mira_save.html">mira_save</a></span><span class="op">(</span><span class="va">p</span>, <span class="st">"network.png"</span><span class="op">)</span>                     <span class="co"># PNG, at high resolution (2)</span></span>
 <span><span class="fu"><a href="../reference/mira_save.html">mira_save</a></span><span class="op">(</span><span class="va">p</span>, <span class="st">"network.pdf"</span><span class="op">)</span>                     <span class="co"># the format from the extension</span></span>
