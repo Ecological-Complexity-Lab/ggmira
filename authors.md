@@ -12,7 +12,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/Ecological-Complexity-Lab/ggmira/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/Ecological-Complexity-Lab/ggmira/blob/v1.0.0/inst/CITATION)
 
 Nehoray S. M., Bloch Y. and Pilosof S. (2026). Interactively visualizing
 biological multilayer networks using MiRA. arXiv.
