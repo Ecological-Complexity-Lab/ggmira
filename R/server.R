@@ -9,7 +9,7 @@ NETWORK_ENDPOINT <- "/api/network.json"
 VIEW_ENDPOINT <- "/api/view.json"
 MAX_PORT_ATTEMPTS <- 50
 MAX_OPEN_PLOTS <- 10 # printed plots whose servers are kept; older ones are stopped
-RSTUDIO_PANE_QUERY <- "&pane=rstudio" # MiRA's small-window warning then talks about the pane
+RSTUDIO_PANE_QUERY <- "&pane=rstudio"
 
 CONTENT_TYPES <- c(
   html = "text/html; charset=utf-8",
