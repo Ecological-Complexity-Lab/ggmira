@@ -22,10 +22,14 @@ SAVE_POLL_SECONDS <- 0.1
 #' button, with the legends and the "Visualized with MiRA" mark. Works in
 #' scripts and R Markdown, where printing a plot does nothing.
 #'
-#' Needs the chromote package and Google Chrome (or Chromium, or Microsoft
-#' Edge; chromote finds it, or set the `CHROMOTE_CHROME` environment
-#' variable to its path). MiRA loads its libraries and map tiles from the
-#' internet, as when a plot opens in the browser.
+#' Needs the optional chromote package and a Chromium-based browser. If
+#' chromote is missing, an interactive session asks before installing it;
+#' in scripts install it first with `install.packages("chromote")`.
+#' On Windows, Chrome and standard installations of Brave and Microsoft
+#' Edge are detected. For another installation, set `CHROMOTE_CHROME` to
+#' the full path of the browser executable before calling `mira_save()`.
+#' MiRA loads its libraries and map tiles from the internet, as when a plot
+#' opens in the browser.
 #'
 #' **What is saved.** Every view except the data view, which is a table
 #' (an error). The dashboard is saved as its whole page, whatever `height`
@@ -99,9 +103,7 @@ mira_save <- function(plot, file, format = NULL, resolution = 2, width = 1500, h
   }
   legends <- .check_flag(legends, "legends", fn)
   .check_save_view(mira_spec(plot)$mode$view, target$format, background, fn)
-  if (!requireNamespace("chromote", quietly = TRUE)) {
-    .abort_piece(fn, 'needs the chromote package: install.packages("chromote")')
-  }
+  .ensure_chromote()
 
   received <- new.env()
   app <- .mira_app(plot$network_json, .view_json(plot), .resolve_mira_path(mira_path),
@@ -110,8 +112,9 @@ mira_save <- function(plot, file, format = NULL, resolution = 2, width = 1500, h
   on.exit(httpuv::stopServer(server$handle), add = TRUE)
 
   browser <- tryCatch(
-    chromote::ChromoteSession$new(width = width, height = height),
-    error = function(e) .abort_piece(fn, paste("could not start Chrome:", conditionMessage(e)))
+    .save_browser_session(width, height),
+    error = function(e) .abort_piece(fn, paste("could not start a Chromium-based browser:",
+      conditionMessage(e), "Install Chrome, Brave, or Edge, or set CHROMOTE_CHROME to the full path of a Chromium-based browser executable."))
   )
   on.exit(browser$close(), add = TRUE)
 
@@ -134,6 +137,45 @@ mira_save <- function(plot, file, format = NULL, resolution = 2, width = 1500, h
   if (is.null(received$image)) .abort_piece(fn, "MiRA sent no image")
   writeBin(received$image, target$file)
   invisible(target$file)
+}
+
+.has_chromote <- function() requireNamespace("chromote", quietly = TRUE)
+
+.ensure_chromote <- function() {
+  if (.has_chromote()) return(invisible(NULL))
+  install_hint <- 'needs the chromote package: install.packages("chromote")'
+  if (!.is_interactive() || !isTRUE(utils::askYesNo(
+    "mira_save() needs the chromote package. Install it now?", default = FALSE
+  ))) .abort_piece("mira_save", install_hint)
+  tryCatch(utils::install.packages("chromote"), error = function(e) {
+    .abort_piece("mira_save", paste("could not install chromote:", conditionMessage(e),
+                                    'Try install.packages("chromote") manually.'))
+  })
+  if (!.has_chromote()) .abort_piece("mira_save", paste("chromote installation did not succeed;", install_hint))
+  invisible(NULL)
+}
+
+.save_browser_session <- function(width, height) {
+  if (.Platform$OS.type == "windows") {
+    browser_path <- .windows_browser_fallback()
+    if (!is.null(browser_path)) {
+      previous <- Sys.getenv("CHROMOTE_CHROME", unset = NA_character_)
+      Sys.setenv(CHROMOTE_CHROME = browser_path)
+      on.exit(if (is.na(previous)) Sys.unsetenv("CHROMOTE_CHROME") else Sys.setenv(CHROMOTE_CHROME = previous), add = TRUE)
+    }
+  }
+  chromote::ChromoteSession$new(width = width, height = height)
+}
+
+.windows_browser_fallback <- function(configured = Sys.getenv("CHROMOTE_CHROME"),
+                                      find_chrome = chromote::find_chrome,
+                                      roots = Sys.getenv(c("PROGRAMFILES(X86)", "PROGRAMFILES", "LOCALAPPDATA"))) {
+  if (nzchar(configured) || !is.null(suppressMessages(find_chrome()))) return(NULL)
+  roots <- unname(roots[nzchar(roots)])
+  paths <- c(file.path(roots, "BraveSoftware", "Brave-Browser", "Application", "brave.exe"),
+             file.path(roots, "Microsoft", "Edge", "Application", "msedge.exe"))
+  paths <- paths[file.exists(paths) & !dir.exists(paths)]
+  if (length(paths)) paths[[1]] else NULL
 }
 
 #' The file and format to save: `format`, or the extension of `file`

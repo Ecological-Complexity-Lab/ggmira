@@ -63,10 +63,14 @@ button, with the legends and the "Visualized with MiRA" mark. Works in
 scripts and R Markdown, where printing a plot does nothing.
 }
 \details{
-Needs the chromote package and Google Chrome (or Chromium, or Microsoft
-Edge; chromote finds it, or set the \code{CHROMOTE_CHROME} environment
-variable to its path). MiRA loads its libraries and map tiles from the
-internet, as when a plot opens in the browser.
+Needs the optional chromote package and a Chromium-based browser. If
+chromote is missing, an interactive session asks before installing it;
+in scripts install it first with \code{install.packages("chromote")}.
+On Windows, Chrome and standard installations of Brave and Microsoft
+Edge are detected. For another installation, set \code{CHROMOTE_CHROME} to
+the full path of the browser executable before calling \code{mira_save()}.
+MiRA loads its libraries and map tiles from the internet, as when a plot
+opens in the browser.
 
 \strong{What is saved.} Every view except the data view, which is a table
 (an error). The dashboard is saved as its whole page, whatever \code{height}

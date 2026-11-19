@@ -15,6 +15,54 @@ save_net <- function() {
 }
 save_plot <- function() suppressMessages(mira(save_net(), bipartite = TRUE, setA_type = "parasite"))
 
+test_that("chromote installation requires interactive approval", {
+  installed <- FALSE
+  asked <- FALSE
+  local_mocked_bindings(.has_chromote = function() installed, .is_interactive = function() FALSE)
+  local_mocked_bindings(askYesNo = function(...) { asked <<- TRUE; TRUE },
+                        install.packages = function(...) installed <<- TRUE, .package = "utils")
+  expect_error(.ensure_chromote(), 'install.packages("chromote")', fixed = TRUE)
+  expect_false(asked)
+  expect_false(installed)
+  local_mocked_bindings(.is_interactive = function() TRUE)
+  local_mocked_bindings(askYesNo = function(...) { asked <<- TRUE; FALSE }, .package = "utils")
+  expect_error(.ensure_chromote(), 'install.packages("chromote")', fixed = TRUE)
+  expect_true(asked)
+  expect_false(installed)
+  local_mocked_bindings(askYesNo = function(...) TRUE, .package = "utils")
+  expect_no_error(.ensure_chromote())
+  expect_true(installed)
+})
+
+test_that("failed chromote installation reports a manual remedy", {
+  local_mocked_bindings(.has_chromote = function() FALSE, .is_interactive = function() TRUE)
+  local_mocked_bindings(askYesNo = function(...) TRUE, install.packages = function(...) NULL, .package = "utils")
+  expect_error(.ensure_chromote(), "installation did not succeed")
+  local_mocked_bindings(install.packages = function(...) stop("network error"), .package = "utils")
+  expect_error(.ensure_chromote(), "network error")
+})
+
+test_that("Windows falls back to Brave or Edge only when Chrome is not configured or found", {
+  root <- tempfile("browsers-")
+  edge_dir <- file.path(root, "Microsoft", "Edge", "Application")
+  dir.create(edge_dir, recursive = TRUE)
+  edge <- file.path(edge_dir, "msedge.exe")
+  file.create(edge)
+  absent <- function() NULL
+  found <- function() "chrome.exe"
+
+  expect_equal(.windows_browser_fallback("", absent, root), edge)
+  brave_dir <- file.path(root, "BraveSoftware", "Brave-Browser", "Application")
+  dir.create(brave_dir, recursive = TRUE)
+  brave <- file.path(brave_dir, "brave.exe")
+  file.create(brave)
+  expect_equal(.windows_browser_fallback("", absent, root), brave)
+  expect_null(.windows_browser_fallback("custom-browser.exe", absent, root))
+  expect_null(.windows_browser_fallback("", found, root))
+  expect_null(.windows_browser_fallback("", absent, tempfile()))
+  expect_null(.windows_browser_fallback("", absent, ""))
+})
+
 test_that("the format comes from the extension, or `format` adds one", {
   expect_equal(.save_target("a.png", NULL, "f"), list(file = "a.png", format = "png"))
   expect_equal(.save_target("a.JPEG", NULL, "f"), list(file = "a.JPEG", format = "jpg"))

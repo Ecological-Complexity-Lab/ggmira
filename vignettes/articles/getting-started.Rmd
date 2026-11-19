@@ -332,8 +332,12 @@ nodes of `p` and keeps everything else.
 `mira_save()` draws the plot in MiRA without opening a window and saves
 MiRA's own export: the picture of the camera button, with the legends and
 the "Visualized with MiRA" mark. It works in scripts and R Markdown, where
-printing a plot does nothing. It needs the chromote package and Google
-Chrome (or Chromium, or Edge).
+printing a plot does nothing. It needs the optional chromote package and a
+Chromium-based browser. If chromote is missing, interactive R asks before
+installing it; for scripts, install it first with `install.packages("chromote")`.
+On Windows, Chrome and standard Brave and Edge installations are detected.
+For another browser or installation location, set `CHROMOTE_CHROME` to the
+full path of its executable before saving.
 
 ```{r}
 mira_save(p, "network.png")                     # PNG, at high resolution (2)
