@@ -121,7 +121,9 @@ MiRA issues at \url{https://github.com/Ecological-Complexity-Lab/MiRA/issues}.
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://ggmira.ecomplab.com}
   \item \url{https://github.com/Ecological-Complexity-Lab/ggmira}
+  \item Report bugs at \url{https://github.com/Ecological-Complexity-Lab/ggmira/issues}
 }
 
 }

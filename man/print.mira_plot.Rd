@@ -78,7 +78,7 @@ ones: an older plot stays on screen, but reloading its page fails. Print
 it again to reopen it.
 }
 \examples{
-\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(emln)
 net <- load_emln(17) # 4 layers; bird and plant nodes
 p <- mira(net, bipartite = TRUE, setA_type = "bird")

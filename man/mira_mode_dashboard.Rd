@@ -20,7 +20,7 @@ the dashboard button (a bar chart) opens this view.
 \if{html}{\figure{mira_mode_dashboard.jpg}{options: style="max-width: 100\%; height: auto;" alt="Network 17 in the dashboard: summary numbers, per-layer charts and link weight distributions"}}
 }
 \examples{
-\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(emln)
 net <- load_emln(17)
 mira(net, bipartite = TRUE, setA_type = "bird") + mira_mode_dashboard()
@@ -29,20 +29,20 @@ mira(net, bipartite = TRUE, setA_type = "bird") + mira_mode_dashboard()
 \seealso{
 \link{mira_mode} for the other views.
 
-Other components:
-\code{\link[=mira_camera]{mira_camera()}},
-\code{\link[=mira_filter]{mira_filter()}},
-\code{\link[=mira_interlayer]{mira_interlayer()}},
-\code{\link[=mira_intralayer]{mira_intralayer()}},
-\code{\link[=mira_layer]{mira_layer()}},
-\code{\link[=mira_layout]{mira_layout()}},
-\code{\link[=mira_legends]{mira_legends()}},
+Other components: 
+\code{\link{mira_camera}()},
+\code{\link{mira_filter}()},
+\code{\link{mira_interlayer}()},
+\code{\link{mira_intralayer}()},
+\code{\link{mira_layer}()},
+\code{\link{mira_layout}()},
+\code{\link{mira_legends}()},
 \code{\link{mira_mode}},
-\code{\link[=mira_mode_data]{mira_mode_data()}},
-\code{\link[=mira_mode_grid]{mira_mode_grid()}},
-\code{\link[=mira_mode_layer]{mira_mode_layer()}},
-\code{\link[=mira_mode_map]{mira_mode_map()}},
-\code{\link[=mira_mode_meta]{mira_mode_meta()}},
-\code{\link[=mira_node]{mira_node()}}
+\code{\link{mira_mode_data}()},
+\code{\link{mira_mode_grid}()},
+\code{\link{mira_mode_layer}()},
+\code{\link{mira_mode_map}()},
+\code{\link{mira_mode_meta}()},
+\code{\link{mira_node}()}
 }
 \concept{components}

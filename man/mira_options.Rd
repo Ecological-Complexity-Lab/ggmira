@@ -54,7 +54,7 @@ node set, one color per layer. Columns for conditions have the type of
 their values: \code{"number"}, \code{"text"} or \code{"logical"}.
 }
 \examples{
-\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(emln)
 net <- load_emln(17) # 4 layers; bird and plant nodes
 

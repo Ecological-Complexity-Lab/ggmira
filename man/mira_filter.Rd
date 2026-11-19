@@ -58,7 +58,7 @@ is shown, with a warning. The meta-network has its own layer filter,
 which dims layers instead: \code{mira_mode_meta(layers = )}.
 }
 \examples{
-\dontshow{if (requireNamespace("emln", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+\dontshow{if (requireNamespace("emln", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(emln)
 net <- load_emln(17) # 4 layers; bird and plant nodes
 p <- mira(net, bipartite = TRUE, setA_type = "bird")
@@ -86,20 +86,20 @@ p + mira_filter(layers = latitude > -0.6)
 \code{\link[=mira_intralayer]{mira_intralayer()}} and \code{\link[=mira_interlayer]{mira_interlayer()}} for \code{min_weight},
 which hides weak links without a filter.
 
-Other components:
-\code{\link[=mira_camera]{mira_camera()}},
-\code{\link[=mira_interlayer]{mira_interlayer()}},
-\code{\link[=mira_intralayer]{mira_intralayer()}},
-\code{\link[=mira_layer]{mira_layer()}},
-\code{\link[=mira_layout]{mira_layout()}},
-\code{\link[=mira_legends]{mira_legends()}},
+Other components: 
+\code{\link{mira_camera}()},
+\code{\link{mira_interlayer}()},
+\code{\link{mira_intralayer}()},
+\code{\link{mira_layer}()},
+\code{\link{mira_layout}()},
+\code{\link{mira_legends}()},
 \code{\link{mira_mode}},
-\code{\link[=mira_mode_dashboard]{mira_mode_dashboard()}},
-\code{\link[=mira_mode_data]{mira_mode_data()}},
-\code{\link[=mira_mode_grid]{mira_mode_grid()}},
-\code{\link[=mira_mode_layer]{mira_mode_layer()}},
-\code{\link[=mira_mode_map]{mira_mode_map()}},
-\code{\link[=mira_mode_meta]{mira_mode_meta()}},
-\code{\link[=mira_node]{mira_node()}}
+\code{\link{mira_mode_dashboard}()},
+\code{\link{mira_mode_data}()},
+\code{\link{mira_mode_grid}()},
+\code{\link{mira_mode_layer}()},
+\code{\link{mira_mode_map}()},
+\code{\link{mira_mode_meta}()},
+\code{\link{mira_node}()}
 }
 \concept{components}
