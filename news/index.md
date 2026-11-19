@@ -1,6 +1,19 @@
 # Changelog
 
-## ggmira 0.9.0
+## ggmira 1.0.0 (2026-11-19)
+
+- Fixed browser access on Windows
+  ([\#36](https://github.com/Ecological-Complexity-Lab/ggmira/issues/36)).
+- Fixed buttons in the browser
+  ([\#35](https://github.com/Ecological-Complexity-Lab/ggmira/issues/35)).
+- Smaller package: only the images used by MiRA’s app are bundled
+  ([\#34](https://github.com/Ecological-Complexity-Lab/ggmira/issues/34)).
+- Bundled MiRA 1.2; in RStudio’s Viewer pane the top bar now shows only
+  the lab logo, leaving room for the plot
+  ([\#33](https://github.com/Ecological-Complexity-Lab/ggmira/issues/33));
+  removed the small-window warning.
+
+## ggmira 0.9.0 (2026-11-15)
 
 The first release. ggmira draws multilayer networks in
 [MiRA](https://mira.ecomplab.com/), the browser-based multilayer network

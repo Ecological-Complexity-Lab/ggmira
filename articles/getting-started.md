@@ -23,9 +23,10 @@ net <- load_emln(17)
 ```
 
 **MiRA is best viewed on a large screen.** It needs a window of at least
-1024 x 600 pixels; in a smaller one, MiRA warns that buttons and panels
-may be cut off. Plots also need an internet connection: MiRA loads its
-drawing libraries and map tiles from the web.
+1024 x 600 pixels; in a smaller browser window, MiRA warns that buttons
+and panels may be cut off. The warning is not shown in RStudio’s Viewer
+pane. Plots also need an internet connection: MiRA loads its drawing
+libraries and map tiles from the web.
 
 Each plot starts a small local server; stop them all with
 [`httpuv::stopAllServers()`](https://rstudio.github.io/httpuv/reference/stopAllServers.html).
