@@ -75,11 +75,6 @@ click its *Show in new window* button to move the plot to the browser.
 ![RStudio with ggmira code in the script and the plot open in MiRA in
 the Viewer pane](reference/figures/README-rstudio.png)
 
-## Lifecycle
-
-ggmira is in beta (version 0.9): it works and is being tested, and its
-interface may still change before version 1.0.
-
 ## Getting help
 
 Report problems and suggestions at
