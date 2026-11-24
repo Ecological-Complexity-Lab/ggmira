@@ -70,11 +70,6 @@ button to move the plot to the browser.
 
 <img src="man/figures/README-rstudio.png" width="100%" alt="RStudio with ggmira code in the script and the plot open in MiRA in the Viewer pane" />
 
-## Lifecycle
-
-ggmira is in beta (version 0.9): it works and is being tested, and its
-interface may still change before version 1.0.
-
 ## Getting help
 
 Report problems and suggestions at
