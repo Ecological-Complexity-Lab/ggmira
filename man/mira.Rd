@@ -15,7 +15,10 @@ mira(
 \arguments{
 \item{net}{A multilayer object (created by \code{emln::create_multilayer_network()}
 or \code{emln::load_emln()}). MiRA does not draw links with weight 0 (weight
-0 means "no link" in MiRA); R warns how many there are.}
+0 means "no link" in MiRA); R warns how many there are. MiRA also
+ignores self-loops (a node linked to itself within a layer): it neither
+draws them nor counts them in degree, strength, density or layer
+similarity, and R warns how many there are.}
 
 \item{bipartite}{Logical. Whether the network is bipartite. Defaults to
 \code{FALSE}. Bipartite is not auto-detected. When \code{TRUE}, the nodes

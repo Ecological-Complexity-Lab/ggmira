@@ -148,6 +148,7 @@ plot_mira <- function(multilayer, bipartite = FALSE, setA_type = NULL,
   message("Please report issues at ",
           "https://github.com/Ecological-Complexity-Lab/MiRA/issues")
   .warn_zero_weight(multilayer, "plot_mira")
+  .warn_self_loops(multilayer, "plot_mira")
   network_json <- .network_json(
     multilayer,
     bipartite           = bipartite,
@@ -178,6 +179,7 @@ plot_multilayer <- function(multilayer, bipartite = FALSE, setA_type = NULL,
   message("Please report issues at ",
           "https://github.com/Ecological-Complexity-Lab/MiRA/issues")
   .warn_zero_weight(multilayer, "plot_multilayer")
+  .warn_self_loops(multilayer, "plot_multilayer")
   network_json <- .network_json(
     multilayer,
     bipartite           = bipartite,

@@ -457,6 +457,13 @@ test_that("mira() warns about links with weight 0", {
   expect_no_warning(toy_plot())
 })
 
+test_that("mira() warns about self-loops", {
+  net <- toy_net()
+  net$extended$node_to[1] <- net$extended$node_from[1]
+  expect_warning(suppressMessages(mira(net, bipartite = TRUE, setA_type = "parasite")),
+                 "1 of 4 links are self-loops")
+})
+
 # ---- Palettes, reversal, limits ----
 
 test_that("a palette, its reversal and limits go to the attribute's scale, with the type they need", {

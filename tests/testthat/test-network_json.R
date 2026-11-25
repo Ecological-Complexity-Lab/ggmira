@@ -65,3 +65,21 @@ test_that("links with weight 0, which MiRA does not draw, give a warning", {
   no_weight <- structure(list(extended = data.frame(layer_from = "L1")), class = "multilayer")
   expect_no_warning(.warn_zero_weight(no_weight, "mira"))
 })
+
+test_that("self-loops, which MiRA ignores, give a warning", {
+  net <- function(...) structure(list(extended = data.frame(...)), class = "multilayer")
+  loops <- net(layer_from = c("L1", "L1", "L2", "L1"), node_from = c("a", "a", "b", "a"),
+               layer_to   = c("L1", "L1", "L2", "L2"), node_to   = c("b", "a", "b", "a"),
+               weight = c(1, 2, 1, 1))
+  expect_warning(.warn_self_loops(loops, "mira"),
+                 'mira\\(\\): MiRA ignores self-loops .*: 2 of 4 links are self-loops, in layers "L1", "L2"')
+  one <- net(layer_from = "L1", node_from = "a", layer_to = "L1", node_to = "a")
+  expect_warning(.warn_self_loops(one, "plot_mira"), 'plot_mira\\(\\): .*1 of 1 links .*in layer "L1"')
+  # a self-loop with weight 0 is left to the weight-0 warning, as in MiRA
+  zero <- net(layer_from = "L1", node_from = "a", layer_to = "L1", node_to = "a", weight = 0)
+  expect_no_warning(.warn_self_loops(zero, "mira"))
+  # a node linked to itself in another layer is an interlayer link
+  inter <- net(layer_from = "L1", node_from = "a", layer_to = "L2", node_to = "a", weight = 1)
+  expect_no_warning(.warn_self_loops(inter, "mira"))
+  expect_no_warning(.warn_self_loops(net(layer_from = "L1"), "mira"))
+})
