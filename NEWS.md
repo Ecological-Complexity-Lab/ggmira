@@ -1,3 +1,16 @@
+# ggmira (development version)
+
+* MiRA now ignores self-loops (a node linked to itself within a layer): they
+  are not drawn and not counted in degree, strength, density or layer
+  similarity. Before, density counted them, so a layer's density could be
+  above 1. `mira()`, `plot_mira()` and `plot_multilayer()` warn how many
+  self-loops a network has.
+* In MiRA's manual, the links to the tutorials and the data format page
+  open the MiRA website; before, they led to pages that ggmira does not
+  include.
+* `inst/MiRA` is now only changed by syncing from MiRA, and a check fails
+  if it was edited by hand (see `.github/CONTRIBUTING.md`).
+
 # ggmira 1.0.0 (2026-11-19)
 
 * Fixed browser access on Windows (#36).

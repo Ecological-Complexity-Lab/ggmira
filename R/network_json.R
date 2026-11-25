@@ -260,3 +260,27 @@
                          "To draw them, give them a weight above 0 in net$extended."),
                   fn, zero, length(weight)), call. = FALSE)
 }
+
+#' Warn about self-loops (a node linked to itself within a layer): MiRA
+#' ignores them in drawing and in every calculation (dataParser.js drops
+#' them, with a "Data warnings" alert). Links with weight 0 are left to
+#' `.warn_zero_weight()`, as in MiRA. A link from a node to itself in
+#' another layer is an interlayer link, not a self-loop.
+#' @keywords internal
+#' @noRd
+.warn_self_loops <- function(multilayer, fn) {
+  ext <- as.data.frame(multilayer$extended)
+  if (!all(c("layer_from", "layer_to", "node_from", "node_to") %in% names(ext))) return(invisible(NULL))
+  loop <- as.character(ext$layer_from) == as.character(ext$layer_to) &
+    as.character(ext$node_from) == as.character(ext$node_to)
+  if (!is.null(ext$weight)) loop <- loop & !(suppressWarnings(as.numeric(ext$weight)) %in% 0)
+  loop <- loop %in% TRUE
+  n <- sum(loop)
+  if (n == 0) return(invisible(NULL))
+  layers <- unique(as.character(ext$layer_from[loop]))
+  warning(sprintf(paste0("%s(): MiRA ignores self-loops (a node linked to itself within a layer): ",
+                         "%d of %d links are self-loops, in %s %s.\n",
+                         "They are not drawn and not counted in degree, strength, density or layer similarity."),
+                  fn, n, nrow(ext), if (length(layers) == 1) "layer" else "layers",
+                  paste0('"', layers, '"', collapse = ", ")), call. = FALSE)
+}

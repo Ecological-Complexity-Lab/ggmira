@@ -1,0 +1,67 @@
+# inst/MiRA is MiRA's web app, copied by MiRA's scripts/sync-ggmira.sh.
+# It is never edited by hand here: changes are made in MiRA, merged to
+# MiRA's main, and synced. This check re-syncs from the commit recorded in
+# inst/MiRA/MIRA_COMMIT and fails if the bundle differs.
+on:
+  push:
+    branches: [main, master]
+    paths: ['inst/MiRA/**']
+  pull_request:
+    paths: ['inst/MiRA/**']
+  workflow_dispatch:
+
+name: mira-bundle.yaml
+
+permissions: read-all
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: ggmira
+
+      - name: Read the bundled MiRA commit
+        id: bundled
+        run: |
+          f=ggmira/inst/MiRA/MIRA_COMMIT
+          if [ ! -f "$f" ]; then
+            echo "::error::inst/MiRA/MIRA_COMMIT is missing. Sync the bundle with MiRA's scripts/sync-ggmira.sh."
+            exit 1
+          fi
+          sha=$(tr -d '[:space:]' < "$f")
+          case "$sha" in *-dirty)
+            echo "::error::inst/MiRA was synced from uncommitted MiRA changes ($sha). Commit them in MiRA, merge to main and sync again."
+            exit 1;;
+          esac
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v6
+        with:
+          repository: Ecological-Complexity-Lab/MiRA
+          path: MiRA
+          fetch-depth: 0
+
+      - name: The bundled commit is on MiRA's main
+        working-directory: MiRA
+        run: |
+          sha=${{ steps.bundled.outputs.sha }}
+          if ! git merge-base --is-ancestor "$sha" origin/main; then
+            echo "::error::inst/MiRA was synced from MiRA@$sha, which is not on MiRA's main. Merge the change in MiRA first, then sync from main."
+            exit 1
+          fi
+          git checkout --quiet "$sha"
+
+      - name: inst/MiRA is an unedited sync of that commit
+        run: |
+          bash MiRA/scripts/sync-ggmira.sh
+          cd ggmira
+          changed=$(git status --porcelain -- inst/MiRA)
+          if [ -n "$changed" ]; then
+            echo "$changed"
+            git diff --stat -- inst/MiRA
+            echo "::error::inst/MiRA differs from a fresh sync of MiRA@${{ steps.bundled.outputs.sha }}. Make the change in MiRA, merge it and sync; do not edit inst/MiRA by hand."
+            exit 1
+          fi
+          echo "inst/MiRA matches MiRA@${{ steps.bundled.outputs.sha }}"
