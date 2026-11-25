@@ -63,7 +63,10 @@ its name at the console) opens it in the browser.</p>
 <dl><dt id="arg-net">net<a class="anchor" aria-label="anchor" href="#arg-net"></a></dt>
 <dd><p>A multilayer object (created by <code><a href="https://rdrr.io/pkg/emln/man/create_multilayer_network.html" class="external-link">emln::create_multilayer_network()</a></code>
 or <code><a href="https://rdrr.io/pkg/emln/man/load_emln.html" class="external-link">emln::load_emln()</a></code>). MiRA does not draw links with weight 0 (weight
-0 means "no link" in MiRA); R warns how many there are.</p></dd>
+0 means "no link" in MiRA); R warns how many there are. MiRA also
+ignores self-loops (a node linked to itself within a layer): it neither
+draws them nor counts them in degree, strength, density or layer
+similarity, and R warns how many there are.</p></dd>
 
 
 <dt id="arg-bipartite">bipartite<a class="anchor" aria-label="anchor" href="#arg-bipartite"></a></dt>

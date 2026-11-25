@@ -26,7 +26,10 @@ mira(
   or
   [`emln::load_emln()`](https://rdrr.io/pkg/emln/man/load_emln.html)).
   MiRA does not draw links with weight 0 (weight 0 means "no link" in
-  MiRA); R warns how many there are.
+  MiRA); R warns how many there are. MiRA also ignores self-loops (a
+  node linked to itself within a layer): it neither draws them nor
+  counts them in degree, strength, density or layer similarity, and R
+  warns how many there are.
 
 - bipartite:
 
