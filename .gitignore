@@ -4,5 +4,5 @@
 .DS_Store
 docs
 .positai
-ggmira_1.0.0.tar.gz
+ggmira_*.tar.gz
 /ggmira.Rcheck
