@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ggmira</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,8 +32,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="ggmira-development-version">ggmira (development version)<a class="anchor" aria-label="anchor" href="#ggmira-development-version"></a></h2>
-<ul><li>MiRA now ignores self-loops (a node linked to itself within a layer): they are not drawn and not counted in degree, strength, density or layer similarity. Before, density counted them, so a layer’s density could be above 1. <code><a href="../reference/mira.html">mira()</a></code>, <code><a href="../reference/plot_mira.html">plot_mira()</a></code> and <code><a href="../reference/plot_mira.html">plot_multilayer()</a></code> warn how many self-loops a network has.</li>
+<h2 class="pkg-version" data-toc-text="1.0.1" id="ggmira-101-2026-11-25">ggmira 1.0.1 (2026-11-25)<a class="anchor" aria-label="anchor" href="#ggmira-101-2026-11-25"></a></h2>
+<ul><li>Bundles <a href="https://github.com/Ecological-Complexity-Lab/MiRA/releases/tag/v1.2.1" class="external-link">MiRA 1.2.1</a>.</li>
+<li>MiRA now ignores self-loops (a node linked to itself within a layer): they are not drawn and not counted in degree, strength, density or layer similarity. Before, density counted them, so a layer’s density could be above 1. <code><a href="../reference/mira.html">mira()</a></code>, <code><a href="../reference/plot_mira.html">plot_mira()</a></code> and <code><a href="../reference/plot_mira.html">plot_multilayer()</a></code> warn how many self-loops a network has.</li>
 <li>In MiRA’s manual, the links to the tutorials and the data format page open the MiRA website; before, they led to pages that ggmira does not include.</li>
 <li>
 <code>inst/MiRA</code> is now only changed by syncing from MiRA, and a check fails if it was edited by hand (see <code>.github/CONTRIBUTING.md</code>).</li>

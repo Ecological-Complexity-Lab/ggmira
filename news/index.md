@@ -1,7 +1,9 @@
 # Changelog
 
-## ggmira (development version)
+## ggmira 1.0.1 (2026-11-25)
 
+- Bundles [MiRA
+  1.2.1](https://github.com/Ecological-Complexity-Lab/MiRA/releases/tag/v1.2.1).
 - MiRA now ignores self-loops (a node linked to itself within a layer):
   they are not drawn and not counted in degree, strength, density or
   layer similarity. Before, density counted them, so a layer’s density
