@@ -12,7 +12,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/Ecological-Complexity-Lab/ggmira/blob/v1.0.1/inst/CITATION)
+[`inst/CITATION`](https://github.com/Ecological-Complexity-Lab/ggmira/blob/main/inst/CITATION)
 
 Nehoray S. M., Bloch Y. and Pilosof S. (2026). Interactively visualizing
 biological multilayer networks using MiRA. arXiv.
@@ -27,13 +27,13 @@ https://doi.org/10.48550/arXiv.2605.09597
     }
 
 Pilosof S. and Nehoray S. M. (2026). ggmira: Plot Multilayer Networks in
-MiRA from R. R package version 1.0.1.
+MiRA from R. R package version 1.0.1.9000.
 https://github.com/Ecological-Complexity-Lab/ggmira
 
     @Manual{,
       title = {ggmira: Plot Multilayer Networks in MiRA from R},
       author = {Shai Pilosof and Shir Miryam Nehoray},
       year = {2026},
-      note = {R package version 1.0.1},
+      note = {R package version 1.0.1.9000},
       url = {https://github.com/Ecological-Complexity-Lab/ggmira},
     }
