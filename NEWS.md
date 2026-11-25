@@ -1,3 +1,9 @@
+# ggmira (development version)
+
+* MiRA's Feedback dialog has a *Send us an email* button next to *Open on
+  GitHub*: it shows the address, subject and message to copy into a new
+  email, so no GitHub account is needed.
+
 # ggmira 1.0.1 (2026-11-25)
 
 * Bundles [MiRA 1.2.1](https://github.com/Ecological-Complexity-Lab/MiRA/releases/tag/v1.2.1).
